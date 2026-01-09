@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+           http://maven.apache.org/POM/4.0.0
+           https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ========================= -->
+    <!-- Coordinates -->
+    <!-- ========================= -->
+    <groupId>io.hypercriteria</groupId>
+    <artifactId>hypercriteria</artifactId>
+    <version>0.1.0</version>
+    <packaging>jar</packaging>
+
+    <name>HyperCriteria</name>
+    <description>
+        HyperCriteria offers a fluent, expressive query builder for JPA Criteria, 
+        reducing boilerplate and complexity while staying fully provider-agnostic and free of framework dependencies.
+    </description>
+    <url>https://github.com/roberto-rodriguez/hypercriteria</url>
+
+    <!-- ========================= -->
+    <!-- License -->
+    <!-- ========================= -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <!-- ========================= -->
+    <!-- Developers -->
+    <!-- ========================= -->
+    <developers>
+        <developer>
+            <id>roberto-rodriguez</id>
+            <name>Roberto Rodriguez</name>
+            <url>https://github.com/roberto-rodriguez</url>
+        </developer>
+    </developers>
+
+    <!-- ========================= -->
+    <!-- SCM -->
+    <!-- ========================= -->
+    <scm>
+        <url>https://github.com/roberto-rodriguez/hypercriteria</url>
+        <connection>scm:git:git://github.com/roberto-rodriguez/hypercriteria.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:roberto-rodriguez/hypercriteria.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <!-- ========================= -->
+    <!-- Issue Management -->
+    <!-- ========================= -->
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/roberto-rodriguez/hypercriteria/issues</url>
+    </issueManagement>
+
+    <!-- ========================= -->
+    <!-- Properties -->
+    <!-- ========================= -->
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <jpa.version>2.2</jpa.version>
+        <jakarta.jpa.version>3.1.0</jakarta.jpa.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
+        <lombok.version>1.18.30</lombok.version>
+        <junit.jupiter.version>5.10.1</junit.jupiter.version>
+        <h2.version>2.2.224</h2.version>
+    </properties>
+
+    <!-- ========================= -->
+    <!-- Dependencies -->
+    <!-- ========================= -->
+    <dependencies>
+
+        <!-- JPA API only -->
+        <dependency>
+            <groupId>javax.persistence</groupId>
+            <artifactId>javax.persistence-api</artifactId>
+            <version>${jpa.version}</version>
+        </dependency>
+
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- Test-only -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ========================= -->
+    <!-- Build -->
+    <!-- ========================= -->
+    <build>
+        <plugins>
+
+            <!-- Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                </configuration>
+            </plugin>
+
+            <!-- Tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+            </plugin>
+
+            <!-- Sources -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- ========================= -->
+    <!-- Jakarta profile -->
+    <!-- ========================= -->
+    <profiles>
+
+        <profile>
+            <id>jakarta</id>
+
+            <build>
+                <finalName>${project.artifactId}-${project.version}-jakarta</finalName>
+
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>filter-java</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>
+                                        ${project.build.directory}/generated-sources/jakarta
+                                    </outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/java</directory>
+                                            <filtering>true</filtering>
+                                            <includes>
+                                                <include>**/*.java</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                    <filters>
+                                        <filter>src/main/filters/jakarta.properties</filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-generated-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>
+                                            ${project.build.directory}/generated-sources/jakarta
+                                        </source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>jakarta.persistence</groupId>
+                    <artifactId>jakarta.persistence-api</artifactId>
+                    <version>${jakarta.jpa.version}</version>
+                </dependency>
+            </dependencies>
+
+        </profile>
+
+    </profiles>
+
+</project>
