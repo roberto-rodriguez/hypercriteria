@@ -10,20 +10,19 @@ import java.util.List;
 class SelectAbsUsingDAOTest extends BaseSelectAbsTest {
 
     @Override
-    <T extends Number> List<T> absByProperty(String propertyName, Class<T> resultType) {
-        return paymentDAO.select(abs(propertyName, resultType)).list();
+    List absByProperty(String fieldPath) {
+        return paymentDAO.select(abs(fieldPath)).getResultList();
     }
 
     @Override
-    <T extends Number> List<T> absByNestedProperty(String propertyName, Class<T> resultType) {
-        return userDAO.select(abs(propertyName, resultType)).list();
+    List absByNestedProperty(String fieldPath) {
+        return userDAO.select(abs(fieldPath)).getResultList();
     }
 
 //    @Override
-//    <T extends Number> T absSumByProperty(String propertyName, Class<T> resultType) {
+//    <T extends Number> T absSumByProperty(String fieldPath, Class<T> resultType) {
 //        return (T) userDAO.abs(
-//                sum(propertyName, resultType)
+//                sum(fieldPath, resultType)
 //        ).getSingleResult();
 //    }
-
 }

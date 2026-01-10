@@ -9,14 +9,14 @@ import static io.hypercriteria.HyperCriteria.avg;
 class SelectAvgUsingDAOTest extends BaseSelectAvgTest {
 
     @Override
-    Double avgByProperty(String propertyName) {
-        return (Double) paymentDAO.select(avg(propertyName))
+    Double avgByProperty(String fieldPath) {
+        return (Double) paymentDAO.select(avg(fieldPath))
                 .getSingleResult();
     }
 
     @Override
-    Double avgByNestedProperty(String propertyName) {
-        return (Double) userDAO.select(avg(propertyName))
+    Double avgByNestedProperty(String fieldPath) {
+        return (Double) userDAO.select(avg(fieldPath))
                 .getSingleResult();
     }
 

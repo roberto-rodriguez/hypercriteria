@@ -38,8 +38,8 @@ public class HyperCriteria implements Selectable {
     }
 
     @Override
-    public Criteria select(String property) {
-        return new Criteria(entityManager, Projections.property(property));
+    public Criteria select(String fieldPath) {
+        return new Criteria(entityManager, property(fieldPath));
     }
 
     @Override
@@ -57,12 +57,12 @@ public class HyperCriteria implements Selectable {
         return new ProjectionList();
     }
 
-    public static PropertyProjection property(String propertyName) {
-        return new PropertyProjection(propertyName);
+    public static PropertyProjection property(String fieldPath) {
+        return new PropertyProjection(fieldPath);
     }
 
-    public static PropertyProjection groupProperty(String propertyName) {
-        PropertyProjection propertyProjection = new PropertyProjection(propertyName);
+    public static PropertyProjection groupProperty(String fieldPath) {
+        PropertyProjection propertyProjection = new PropertyProjection(fieldPath);
         propertyProjection.setGroupBy(true);
         return propertyProjection;
     }
@@ -71,37 +71,36 @@ public class HyperCriteria implements Selectable {
         return new Count();
     }
 
-    public static Count count(String propertyName) {
-        return new Count(propertyName);
+    public static Count count(String fieldPath) {
+        return new Count(fieldPath);
     }
 
     public static CountDistinct countDistinct() {
         return new CountDistinct();
     }
 
-    public static CountDistinct countDistinct(String propertyName) {
-        return new CountDistinct(propertyName);
+    public static CountDistinct countDistinct(String fieldPath) {
+        return new CountDistinct(fieldPath);
     }
 
-    public static Sum sum(String propertyName, Class resultType) {
-        NumericType numericType = NumericType.from(resultType);
-        return new Sum(propertyName, numericType.getPromotionTypeWhenSuming());
+    public static Sum sum(String fieldPath) {
+        return new Sum(fieldPath);
     }
 
-    public static Max max(String propertyName, Class resultType) {
-        return new Max(propertyName, resultType);
+    public static Max max(String fieldPath) {
+        return new Max(fieldPath);
     }
 
-    public static Min min(String propertyName, Class resultType) {
-        return new Min(propertyName, resultType);
+    public static Min min(String fieldPath) {
+        return new Min(fieldPath);
     }
 
-    public static Avg avg(String propertyName) {
-        return new Avg(propertyName);
+    public static Avg avg(String fieldPath) {
+        return new Avg(fieldPath);
     }
 
-    public static Abs abs(String propertyName, Class resultType) {
-        return new Abs(propertyName, resultType);
+    public static Abs abs(String fieldPath) {
+        return new Abs(fieldPath);
     }
 
     public static Abs abs(SimpleProjection simpleProjection) {

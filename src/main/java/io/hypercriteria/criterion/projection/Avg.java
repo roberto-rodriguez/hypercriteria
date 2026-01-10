@@ -16,10 +16,10 @@ import java.util.Map;
  *
  * @author rrodriguez
  */
-public class Avg extends TypedSimpleProjection<Double> {
+public class Avg extends TypedSimpleProjection {
 
-    public Avg(String propertyName) {
-        super(propertyName, Double.class);
+    public Avg(String fieldPath) {
+        super(fieldPath, Double.class);
     }
 
     @Override

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package io.hypercriteria.criterion.projection;
- 
+
 import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,16 +15,15 @@ import java.util.Map;
 /**
  *
  * @author rrodriguez
- * @param <T>
  */
-public class Min<T> extends TypedSimpleProjection<T> {
+public class Min extends TypedSimpleProjection {
 
-    public Min(String propertyName, Class<T> returnType) {
-        super(propertyName, returnType);
+    public Min(String fieldPath) {
+        super(fieldPath);
     }
 
     @Override
-    public Expression<T> build(CriteriaBuilder builder, Expression expression) {
+    public Expression build(CriteriaBuilder builder, Expression expression) {
         return builder.min(expression);
     }
 

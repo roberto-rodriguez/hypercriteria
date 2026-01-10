@@ -32,7 +32,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
         return HyperCriteria.using(entityManager)
                 .select()
                 .from(User.class)
-                .list();
+                .getResultList();
     }
 
     @Override
@@ -41,7 +41,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .select()
                 .from(User.class)
                 .fetch(fetchPath)
-                .list();
+                .getResultList();
     }
 
     @Override
@@ -51,7 +51,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .distinct()
                 .from(User.class)
                 .fetch(fetchPath)
-                .list();
+                .getResultList();
     }
 
 }

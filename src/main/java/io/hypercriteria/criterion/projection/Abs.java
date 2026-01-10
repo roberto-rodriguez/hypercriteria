@@ -17,10 +17,10 @@ import java.util.Map;
  *
  * @author rrodriguez
  */
-public class Abs<T> extends TypedSimpleProjection<T> {
+public class Abs extends TypedSimpleProjection {
 
-    public Abs(String propertyName, Class<T> returnType) {
-        super(propertyName, returnType);
+    public Abs(String fieldPath) {
+        super(fieldPath);
     }
 
     public Abs(SimpleProjection nestedProjection) {
@@ -28,7 +28,7 @@ public class Abs<T> extends TypedSimpleProjection<T> {
     }
 
     @Override
-    public Expression<T> build(CriteriaBuilder builder, Expression expression) {
+    public Expression build(CriteriaBuilder builder, Expression expression) {
         return builder.abs(expression);
     }
 

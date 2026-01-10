@@ -9,14 +9,14 @@ import static io.hypercriteria.HyperCriteria.sum;
 class SelectSumUsingDAOTest extends BaseSelectSumTest {
 
     @Override
-    <T extends Number> T sumByProperty(String propertyName, Class<T> resultType) {
-        return (T) paymentDAO.select(sum(propertyName, resultType))
+    Object sumByProperty(String fieldPath) {
+        return paymentDAO.select(sum(fieldPath))
                 .getSingleResult();
     }
 
     @Override
-    <T extends Number> T sumByNestedProperty(String propertyName, Class<T> resultType) {
-        return (T) userDAO.select(sum(propertyName, resultType))
+    Object sumByNestedProperty(String fieldPath) {
+        return userDAO.select(sum(fieldPath))
                 .getSingleResult();
     }
 

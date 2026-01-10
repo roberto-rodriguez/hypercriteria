@@ -16,13 +16,13 @@ import javax.persistence.criteria.Root;
 class SelectAvgUsingJPATest extends BaseSelectAvgTest {
 
     @Override
-    Double avgByProperty(String propertyName) {
+    Double avgByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Double> cq = cb.createQuery(Double.class);
 
         Root<Payment> root = cq.from(Payment.class);
 
-        Expression<Double> avgExpr = cb.avg(root.get(propertyName));
+        Expression<Double> avgExpr = cb.avg(root.get(fieldPath));
 
         cq.select(avgExpr);
 
@@ -30,8 +30,8 @@ class SelectAvgUsingJPATest extends BaseSelectAvgTest {
     }
 
     @Override
-    Double avgByNestedProperty(String propertyName) {
-        String[] parts = propertyName.split("\\.");
+    Double avgByNestedProperty(String fieldPath) {
+        String[] parts = fieldPath.split("\\.");
         String entity = parts[0];
         String property = parts[1];
 

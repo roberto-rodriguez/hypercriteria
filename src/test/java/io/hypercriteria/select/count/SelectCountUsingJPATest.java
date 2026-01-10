@@ -16,12 +16,12 @@ import javax.persistence.criteria.Root;
 class SelectCountUsingJPATest extends BaseSelectCountTest {
 
     @Override
-    Long countByProperty(String propertyName) {
+    Long countByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = resolveJoinAwarePath(root, propertyName);
+        Path<?> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(cb.count(path));
 
@@ -29,12 +29,12 @@ class SelectCountUsingJPATest extends BaseSelectCountTest {
     }
 
     @Override
-    Long countDistinctByProperty(String propertyName) {
+    Long countDistinctByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = resolveJoinAwarePath(root, propertyName);
+        Path<?> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(cb.countDistinct(path));
 

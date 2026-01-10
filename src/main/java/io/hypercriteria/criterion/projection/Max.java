@@ -6,7 +6,6 @@
 package io.hypercriteria.criterion.projection;
 
 import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
-import io.hypercriteria.Criteria;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -17,14 +16,14 @@ import java.util.Map;
  *
  * @author rrodriguez
  */
-public class Max<T> extends TypedSimpleProjection<T> {
+public class Max extends TypedSimpleProjection {
 
-    public Max(String propertyName, Class<T> returnType) {
-        super(propertyName, returnType);
+    public Max(String fieldPath) {
+        super(fieldPath);
     }
 
     @Override
-    public Expression<T> build(CriteriaBuilder builder, Expression expression) {
+    public Expression build(CriteriaBuilder builder, Expression expression) {
         return builder.max(expression);
     }
 

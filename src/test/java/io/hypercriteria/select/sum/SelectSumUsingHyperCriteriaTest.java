@@ -12,17 +12,17 @@ import io.sample.model.User;
 class SelectSumUsingHyperCriteriaTest extends BaseSelectSumTest {
 
     @Override
-    <T extends Number> T sumByProperty(String propertyName, Class<T> resultType) {
-        return (T) HyperCriteria.using(entityManager)
-                .select(sum(propertyName, resultType))
+    Object sumByProperty(String fieldPath ) {
+        return HyperCriteria.using(entityManager)
+                .select(sum(fieldPath))
                 .from(Payment.class)
                 .getSingleResult();
     }
 
     @Override
-    <T extends Number> T sumByNestedProperty(String propertyName, Class<T> resultType) {
-        return (T) HyperCriteria.using(entityManager)
-                .select(sum(propertyName, resultType))
+ Object sumByNestedProperty(String fieldPath ) {
+        return  HyperCriteria.using(entityManager)
+                .select(sum(fieldPath))
                 .from(User.class)
                 .getSingleResult();
     }

@@ -30,9 +30,9 @@ abstract class BaseSelectMaxTest extends BaseTest {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(2);
     }
 
-    abstract <T extends Number> T maxByProperty(String propertyName, Class<T> resultType);
+    abstract Object maxByProperty(String fieldPath);
 
-    abstract <T extends Number> T maxByNestedProperty(String propertyName, Class<T> resultType);
+    abstract Object maxByNestedProperty(String fieldPath);
 
     @Override
     protected void beforeEach() {
@@ -46,42 +46,42 @@ abstract class BaseSelectMaxTest extends BaseTest {
     @Test
     void testMaxInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Integer result = maxByProperty("intValue", Integer.class);
+        Integer result = (Integer) maxByProperty("intValue");
         assertEquals(2, result);
     }
 
     @Test
     void testMaxLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Long result = maxByProperty("longValue", Long.class);
+        Long result = (Long) maxByProperty("longValue");
         assertEquals(2L, result);
     }
 
     @Test
     void testMaxFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Float result = maxByProperty("floatValue", Float.class);
+        Float result = (Float) maxByProperty("floatValue");
         assertEquals(2F, result);
     }
 
     @Test
     void testMaxDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Double result = maxByProperty("doubleValue", Double.class);
+        Double result = (Double) maxByProperty("doubleValue");
         assertEquals(2D, result);
     }
 
     @Test
     void testMaxBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigInteger result = maxByProperty("bigInteger", BigInteger.class);
+        BigInteger result = (BigInteger) maxByProperty("bigInteger");
         assertEquals(new BigInteger("2"), result);
     }
 
     @Test
     void testMaxBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigDecimal result = maxByProperty("bigDecimal", BigDecimal.class);
+        BigDecimal result = (BigDecimal) maxByProperty("bigDecimal");
         assertEquals(new BigDecimal("2.00"), result);
     }
 
@@ -89,42 +89,42 @@ abstract class BaseSelectMaxTest extends BaseTest {
     @Test
     void testMaxNestedInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Integer result = maxByNestedProperty("payments.intValue", Integer.class);
+        Integer result = (Integer) maxByNestedProperty("payments.intValue");
         assertEquals(2, result);
     }
 
     @Test
     void testMaxNestedLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Long result = maxByNestedProperty("payments.longValue", Long.class);
+        Long result = (Long) maxByNestedProperty("payments.longValue");
         assertEquals(2L, result);
     }
 
     @Test
     void testMaxNestedFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Float result = maxByNestedProperty("payments.floatValue", Float.class);
+        Float result = (Float) maxByNestedProperty("payments.floatValue");
         assertEquals(2F, result);
     }
 
     @Test
     void testMaxNestedDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Double result = maxByNestedProperty("payments.doubleValue", Double.class);
+        Double result = (Double) maxByNestedProperty("payments.doubleValue");
         assertEquals(2D, result);
     }
 
     @Test
     void testMaxNestedBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigInteger result = maxByNestedProperty("payments.bigInteger", BigInteger.class);
+        BigInteger result = (BigInteger) maxByNestedProperty("payments.bigInteger");
         assertEquals(new BigInteger("2"), result);
     }
 
     @Test
     void testMaxNestedBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigDecimal result = maxByNestedProperty("payments.bigDecimal", BigDecimal.class);
+        BigDecimal result = (BigDecimal) maxByNestedProperty("payments.bigDecimal");
         assertEquals(new BigDecimal("2.00"), result);
     }
 

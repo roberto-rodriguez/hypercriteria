@@ -19,13 +19,13 @@ import javax.persistence.criteria.Root;
 class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
 
     @Override
-    Object selectByProperty(String propertyName) {
+    Object selectByProperty(String fieldPath) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = resolveJoinAwarePath(root, propertyName);
+        Path<?> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(path);
 
@@ -33,13 +33,13 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
     }
 
     @Override
-    List<String> listByProperty(String propertyName) {
+    List<String> listByProperty(String fieldPath) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
         Root<User> root = cq.from(User.class);
-        Path<String> path = resolveJoinAwarePath(root, propertyName);
+        Path<String> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(path);
 
@@ -47,13 +47,13 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
     }
 
     @Override
-    List<String> listDistinctByProperty(String propertyName) {
+    List<String> listDistinctByProperty(String fieldPath) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
         Root<User> root = cq.from(User.class);
-        Path<String> path = resolveJoinAwarePath(root, propertyName);
+        Path<String> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(path)
           .distinct(true)

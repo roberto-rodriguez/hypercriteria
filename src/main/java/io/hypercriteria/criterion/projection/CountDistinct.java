@@ -13,14 +13,14 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public class CountDistinct extends TypedSimpleProjection<Long> {
+public class CountDistinct extends TypedSimpleProjection {
 
     public CountDistinct() {
         super("", Long.class);//Will produce root
     }
 
-    public CountDistinct(String propertyName) {
-        super(propertyName, Long.class);
+    public CountDistinct(String fieldPath) {
+        super(fieldPath, Long.class);
     }
 
     @Override

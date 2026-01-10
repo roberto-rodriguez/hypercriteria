@@ -9,14 +9,14 @@ import static io.hypercriteria.HyperCriteria.min;
 class SelectMinUsingDAOTest extends BaseSelectMinTest {
 
     @Override
-    <T extends Number> T minByProperty(String propertyName, Class<T> resultType) {
-        return (T) paymentDAO.select(min(propertyName, resultType))
+    Object minByProperty(String fieldPath) {
+        return paymentDAO.select(min(fieldPath))
                 .getSingleResult();
     }
 
     @Override
-    <T extends Number> T minByNestedProperty(String propertyName, Class<T> resultType) {
-        return (T) userDAO.select(min(propertyName, resultType))
+    Object minByNestedProperty(String fieldPath) {
+        return userDAO.select(min(fieldPath))
                 .getSingleResult();
     }
 

@@ -14,7 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Selection;
-import java.util.Map; 
+import java.util.Map;
 
 /**
  *
@@ -22,6 +22,7 @@ import java.util.Map;
  */
 public abstract class SimpleProjection implements Projection {
 
+    protected String fieldPath;
     protected String joinName = "";
     protected String propertyName;
     protected String alias;
@@ -32,18 +33,20 @@ public abstract class SimpleProjection implements Projection {
     public SimpleProjection() {
     }
 
-    public SimpleProjection(String propertyName) {
-        if (propertyName.contains(".") || propertyName.contains(">") || propertyName.contains("<>")) {
+    public SimpleProjection(String fieldPath) {
+        this.fieldPath = fieldPath;
+
+        if (fieldPath.contains(".") || fieldPath.contains(">") || fieldPath.contains("<>")) {
             // joinName will be the last two paths. 
             // Example for a.b.c.d 
             // joinName = c.d
-            // propertyName = d
+            // fieldPath = d
             // fieldsMappingToAliasJoinTypeMap = {a:a, a.b:b, b.c:c, c.d:d}
-            String[] lastTwoPaths = ProjectionBuilder.extractAliasAndJoinType(propertyName, fieldsMappingToAliasJoinTypeMap).split("\\.");
+            String[] lastTwoPaths = ProjectionBuilder.extractAliasAndJoinType(fieldPath, fieldsMappingToAliasJoinTypeMap).split("\\.");
             this.joinName = lastTwoPaths[0];
             this.propertyName = lastTwoPaths[1];
         } else {
-            this.propertyName = propertyName;
+            this.propertyName = fieldPath;
         }
     }
 
@@ -84,6 +87,10 @@ public abstract class SimpleProjection implements Projection {
 
     public LinkedHashMap<String, AliasJoinType> getFieldsMappingToAliasJoinTypeMap() {
         return fieldsMappingToAliasJoinTypeMap;
+    }
+
+    public String getFieldPath() {
+        return fieldPath;
     }
 
 }

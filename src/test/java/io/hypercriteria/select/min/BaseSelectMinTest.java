@@ -30,9 +30,9 @@ abstract class BaseSelectMinTest extends BaseTest {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(2);
     }
 
-    abstract <T extends Number> T minByProperty(String propertyName, Class<T> resultType);
+    abstract Object minByProperty(String fieldPath);
 
-    abstract <T extends Number> T minByNestedProperty(String propertyName, Class<T> resultType);
+    abstract Object minByNestedProperty(String fieldPath);
 
     @Override
     protected void beforeEach() {
@@ -46,42 +46,42 @@ abstract class BaseSelectMinTest extends BaseTest {
     @Test
     void testSumInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Integer result = minByProperty("intValue", Integer.class);
+        Integer result = (Integer) minByProperty("intValue");
         assertEquals(1, result);
     }
 
     @Test
     void testSumLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Long result = minByProperty("longValue", Long.class);
+        Long result = (Long) minByProperty("longValue");
         assertEquals(1L, result);
     }
 
     @Test
     void testSumFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Float result = minByProperty("floatValue", Float.class);
+        Float result = (Float) minByProperty("floatValue");
         assertEquals(1F, result);
     }
 
     @Test
     void testSumDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Double result = minByProperty("doubleValue", Double.class);
+        Double result = (Double) minByProperty("doubleValue");
         assertEquals(1D, result);
     }
 
     @Test
     void testSumBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigInteger result = minByProperty("bigInteger", BigInteger.class);
+        BigInteger result = (BigInteger) minByProperty("bigInteger");
         assertEquals(new BigInteger("1"), result);
     }
 
     @Test
     void testSumBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigDecimal result = minByProperty("bigDecimal", BigDecimal.class);
+        BigDecimal result = (BigDecimal) minByProperty("bigDecimal");
         assertEquals(new BigDecimal("1.00"), result);
     }
 
@@ -89,42 +89,42 @@ abstract class BaseSelectMinTest extends BaseTest {
     @Test
     void testSumNestedInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Integer result = minByNestedProperty("payments.intValue", Integer.class);
+        Integer result = (Integer) minByNestedProperty("payments.intValue");
         assertEquals(1, result);
     }
 
     @Test
     void testSumNestedLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Long result = minByNestedProperty("payments.longValue", Long.class);
+        Long result = (Long) minByNestedProperty("payments.longValue");
         assertEquals(1L, result);
     }
 
     @Test
     void testSumNestedFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Float result = minByNestedProperty("payments.floatValue", Float.class);
+        Float result = (Float) minByNestedProperty("payments.floatValue");
         assertEquals(1F, result);
     }
 
     @Test
     void testSumNestedDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        Double result = minByNestedProperty("payments.doubleValue", Double.class);
+        Double result = (Double) minByNestedProperty("payments.doubleValue");
         assertEquals(1D, result);
     }
 
     @Test
     void testSumNestedBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigInteger result = minByNestedProperty("payments.bigInteger", BigInteger.class);
+        BigInteger result = (BigInteger) minByNestedProperty("payments.bigInteger");
         assertEquals(new BigInteger("1"), result);
     }
 
     @Test
     void testSumNestedBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        BigDecimal result = minByNestedProperty("payments.bigDecimal", BigDecimal.class);
+        BigDecimal result = (BigDecimal) minByNestedProperty("payments.bigDecimal");
         assertEquals(new BigDecimal("1.00"), result);
     }
 

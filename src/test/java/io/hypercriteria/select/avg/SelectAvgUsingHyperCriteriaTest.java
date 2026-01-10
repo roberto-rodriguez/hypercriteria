@@ -12,17 +12,17 @@ import io.sample.model.User;
 class SelectAvgUsingHyperCriteriaTest extends BaseSelectAvgTest {
 
     @Override
-    Double avgByProperty(String propertyName) {
+    Double avgByProperty(String fieldPath) {
         return (Double) HyperCriteria.using(entityManager)
-                .select(avg(propertyName))
+                .select(avg(fieldPath))
                 .from(Payment.class)
                 .getSingleResult();
     }
 
     @Override
-    Double avgByNestedProperty(String propertyName) {
+    Double avgByNestedProperty(String fieldPath) {
         return (Double) HyperCriteria.using(entityManager)
-                .select(avg(propertyName))
+                .select(avg(fieldPath))
                 .from(User.class)
                 .getSingleResult();
     }

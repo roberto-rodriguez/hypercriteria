@@ -3,10 +3,11 @@ package io.hypercriteria.util;
 import io.hypercriteria.Annotations;
 import io.hypercriteria.Annotations.ConstructorName;
 import io.hypercriteria.Criteria;
+import io.hypercriteria.HyperCriteria;
 import io.hypercriteria.criterion.ProjectionList;
-import io.hypercriteria.Projections; 
 import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.criterion.projection.base.SimpleProjection;
+import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -36,6 +37,15 @@ public class ProjectionBuilder {
         if (userSpecifiedProjection.isPresent()) {
             projection = userSpecifiedProjection.get();
 
+            if (projection instanceof TypedSimpleProjection typedSimpleProjection
+                    && typedSimpleProjection.getReturnType().isEmpty()) {
+                String fieldPath = typedSimpleProjection.getFieldPath();
+                Class<?> rootEntityClass = criteria.getEntityType();
+
+                Class<?> attributeType = TypeUtil.inferAttributeType(criteria.getEntityManager(), rootEntityClass, fieldPath);
+                typedSimpleProjection.setReturnType(attributeType);
+            }
+
             if (projection instanceof SimpleProjection simpleProjection) {
                 criteria.getJoinToAliasJoinTypeMap().putAll(simpleProjection.getFieldsMappingToAliasJoinTypeMap());
             }
@@ -48,7 +58,7 @@ public class ProjectionBuilder {
         if (projection == null) {
             return Optional.empty();
         }
- 
+
         return Optional.of(projection);
     }
 
@@ -78,7 +88,7 @@ public class ProjectionBuilder {
 
             fieldPath = extractAliasAndJoinType(fieldPath, criteria.getJoinToAliasJoinTypeMap());
 
-            projectionList.add(Projections.property(fieldPath).as(valueName));
+            projectionList.add(HyperCriteria.property(fieldPath).as(valueName));
         }
 
         return projectionList;

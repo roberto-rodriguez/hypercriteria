@@ -2,7 +2,6 @@ package io.hypercriteria.select.abs;
 
 import io.hypercriteria.HyperCriteria;
 import static io.hypercriteria.HyperCriteria.abs;
-import static io.hypercriteria.Projections.sum;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
@@ -14,26 +13,26 @@ import java.util.List;
 class SelectAbsUsingHyperCriteriaTest extends BaseSelectAbsTest {
 
     @Override
-    <T extends Number> List<T> absByProperty(String propertyName, Class<T> resultType) {
+    List absByProperty(String fieldPath) {
         return HyperCriteria.using(entityManager)
-                .select(abs(propertyName, resultType))
+                .select(abs(fieldPath))
                 .from(Payment.class)
-                .list();
+                .getResultList();
     }
 
     @Override
-    <T extends Number> List<T> absByNestedProperty(String propertyName, Class<T> resultType) {
+    List absByNestedProperty(String fieldPath) {
         return HyperCriteria.using(entityManager)
-                .select(abs(propertyName, resultType))
+                .select(abs(fieldPath))
                 .from(User.class)
-                .list();
+                .getResultList();
     }
 
 //    @Override
-//    <T extends Number> T absSumByProperty(String propertyName, Class<T> resultType) {
+//    <T extends Number> T absSumByProperty(String fieldPath, Class<T> resultType) {
 //        return (T) HyperCriteria.using(entityManager)
 //                .abs(
-//                        sum(propertyName, resultType) 
+//                        sum(fieldPath, resultType) 
 //                )
 //                .from(Payment.class)
 //                .getSingleResult();

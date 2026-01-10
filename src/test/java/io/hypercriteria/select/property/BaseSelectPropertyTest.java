@@ -64,11 +64,11 @@ abstract class BaseSelectPropertyTest extends BaseTest {
             )
             .build();
 
-    abstract Object selectByProperty(String propertyName);
+    abstract Object selectByProperty(String fieldPath);
 
-    abstract List<String> listByProperty(String propertyName);
+    abstract List<String> listByProperty(String fieldPath);
 
-    abstract List<String> listDistinctByProperty(String propertyName);
+    abstract List<String> listDistinctByProperty(String fieldPath);
 
     @Override
     protected void beforeEach() {

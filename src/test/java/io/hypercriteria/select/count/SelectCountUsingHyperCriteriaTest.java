@@ -13,17 +13,17 @@ import io.sample.model.User;
 class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
 
     @Override
-    public Long countByProperty(String propertyName) {
+    public Long countByProperty(String fieldPath) {
         return (Long) HyperCriteria.using(entityManager)
-                .select(count(propertyName))
+                .select(count(fieldPath))
                 .from(User.class)
                 .getSingleResult();
     }
 
     @Override
-    public Long countDistinctByProperty(String propertyName) {
+    public Long countDistinctByProperty(String fieldPath) {
         return (Long) HyperCriteria.using(entityManager)
-                .select(countDistinct(propertyName))
+                .select(countDistinct(fieldPath))
                 .from(User.class)
                 .getSingleResult();
     }

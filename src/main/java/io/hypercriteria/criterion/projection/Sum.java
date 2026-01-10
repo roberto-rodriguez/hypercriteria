@@ -4,24 +4,31 @@
  * and open the template in the editor.
  */
 package io.hypercriteria.criterion.projection;
- 
+
 import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
+import io.hypercriteria.util.NumericType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 
 /**
  *
- * @author rrodriguez
- * @param <T>
+ * @author rrodriguez 
  */
-public class Sum<T> extends TypedSimpleProjection<T> {
+public class Sum<T> extends TypedSimpleProjection {
 
-    public Sum(String propertyName, Class<T> returnType) { 
-        super(propertyName, returnType);
+    public Sum(String fieldPath) {
+        super(fieldPath);
     }
 
     @Override
     public Expression<T> build(CriteriaBuilder builder, Expression expression) {
         return builder.sum(expression);
     }
+
+    @Override
+    public void setReturnType(Class returnType) {
+        NumericType numericType = NumericType.from(returnType);
+        super.setReturnType(numericType.getPromotionTypeWhenSuming());
+    }
+
 }

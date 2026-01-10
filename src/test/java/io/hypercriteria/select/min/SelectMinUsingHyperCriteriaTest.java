@@ -12,17 +12,17 @@ import io.sample.model.User;
 class SelectMinUsingHyperCriteriaTest extends BaseSelectMinTest {
 
     @Override
-    <T extends Number> T minByProperty(String propertyName, Class<T> resultType) {
-        return (T) HyperCriteria.using(entityManager)
-                .select(min(propertyName, resultType))
+    Object minByProperty(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(min(fieldPath))
                 .from(Payment.class)
                 .getSingleResult();
     }
 
     @Override
-    <T extends Number> T minByNestedProperty(String propertyName, Class<T> resultType) {
-        return (T) HyperCriteria.using(entityManager)
-                .select(min(propertyName, resultType))
+    Object minByNestedProperty(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(min(fieldPath))
                 .from(User.class)
                 .getSingleResult();
     }

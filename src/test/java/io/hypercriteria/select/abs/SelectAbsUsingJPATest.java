@@ -1,5 +1,6 @@
 package io.hypercriteria.select.abs;
 
+import io.hypercriteria.util.TypeUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
@@ -17,13 +18,16 @@ import javax.persistence.criteria.Root;
 class SelectAbsUsingJPATest extends BaseSelectAbsTest {
 
     @Override
-    <T extends Number> List<T> absByProperty(String propertyName, Class<T> resultType) {
+    List absByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<Payment> root = cq.from(Payment.class);
 
-        Expression<T> absExpr = cb.abs(root.get(propertyName));
+        Expression absExpr = cb.abs(root.get(fieldPath));
 
         cq.select(absExpr);
 
@@ -31,18 +35,21 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     }
 
     @Override
-    <T extends Number> List<T> absByNestedProperty(String propertyName, Class<T> resultType) {
-        String[] parts = propertyName.split("\\.");
+    List absByNestedProperty(String fieldPath) {
+        String[] parts = fieldPath.split("\\.");
         String entity = parts[0];
         String property = parts[1];
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<User> root = cq.from(User.class);
         Join<User, Payment> payment = root.join(entity, JoinType.LEFT);
 
-        Expression<T> absExpr = cb.abs(payment.get(property));
+        Expression absExpr = cb.abs(payment.get(property));
 
         cq.select(absExpr);
 
@@ -50,18 +57,17 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     }
 
 //    @Override
-//    <T extends Number, R extends Number> R absSumByProperty(String propertyName, Class<T> resultType) {
+//    <T extends Number, R extends Number> R absSumByProperty(String fieldPath, Class<T> resultType) {
 //        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 //        CriteriaQuery<T> cq = cb.createQuery(resultType);
 //
 //        Root<Payment> root = cq.from(Payment.class);
 //
-//        Expression<T> sumExpr = cb.sum(root.get(propertyName));
+//        Expression<T> sumExpr = cb.sum(root.get(fieldPath));
 //        Expression<T> absExpr = cb.abs(sumExpr);
 //
 //        cq.select(absExpr);
 //
 //        return entityManager.createQuery(cq).getSingleResult();
 //    }
-
 }

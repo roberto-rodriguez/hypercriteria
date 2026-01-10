@@ -166,7 +166,7 @@ public class Criteria<E, R> {
                 .orElse(null);
     }
 
-    public List<R> list() {
+    public List<R> getResultList() {
         return (List<R>) query(entityType, resultType).getResultList();
     }
 

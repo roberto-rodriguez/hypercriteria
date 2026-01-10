@@ -9,14 +9,14 @@ import static io.hypercriteria.HyperCriteria.max;
 class SelectMaxUsingDAOTest extends BaseSelectMaxTest {
 
     @Override
-    <T extends Number> T maxByProperty(String propertyName, Class<T> resultType) {
-        return (T) paymentDAO.select(max(propertyName, resultType))
+    Object maxByProperty(String fieldPath) {
+        return paymentDAO.select(max(fieldPath))
                 .getSingleResult();
     }
 
     @Override
-    <T extends Number> T maxByNestedProperty(String propertyName, Class<T> resultType) {
-        return (T) userDAO.select(max(propertyName, resultType))
+    Object maxByNestedProperty(String fieldPath) {
+        return userDAO.select(max(fieldPath))
                 .getSingleResult();
     }
 

@@ -30,9 +30,9 @@ abstract class BaseSelectSumTest extends BaseTest {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(2);
     }
 
-    abstract <T extends Number> T sumByProperty(String propertyName, Class<T> resultType);
+    abstract Object sumByProperty(String fieldPath);
 
-    abstract <T extends Number> T sumByNestedProperty(String propertyName, Class<T> resultType);
+    abstract Object sumByNestedProperty(String fieldPath);
 
     @Override
     protected void beforeEach() {
@@ -127,5 +127,4 @@ abstract class BaseSelectSumTest extends BaseTest {
 //        BigDecimal result = sumByNestedProperty("payments.bigDecimal", BigDecimal.class);
 //        assertEquals(new BigDecimal("3.00"), result);
 //    }
-
 }

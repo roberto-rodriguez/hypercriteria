@@ -1,5 +1,6 @@
 package io.hypercriteria.select.max;
 
+import io.hypercriteria.util.TypeUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,13 +17,16 @@ import javax.persistence.criteria.Root;
 class SelectMaxUsingJPATest extends BaseSelectMaxTest {
 
     @Override
-    <T extends Number> T maxByProperty(String propertyName, Class<T> resultType) {
+    Object maxByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<Payment> root = cq.from(Payment.class);
 
-        Expression<T> maxExpr = cb.max(root.get(propertyName));
+        Expression maxExpr = cb.max(root.get(fieldPath));
 
         cq.select(maxExpr);
 
@@ -30,18 +34,21 @@ class SelectMaxUsingJPATest extends BaseSelectMaxTest {
     }
 
     @Override
-    <T extends Number> T maxByNestedProperty(String propertyName, Class<T> resultType) {
-        String[] parts = propertyName.split("\\.");
+    Object maxByNestedProperty(String fieldPath) {
+        String[] parts = fieldPath.split("\\.");
         String entity = parts[0];
         String property = parts[1];
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<User> root = cq.from(User.class);
         Join<User, Payment> payment = root.join(entity, JoinType.LEFT);
 
-        Expression<T> maxExpr = cb.max(payment.get(property));
+        Expression maxExpr = cb.max(payment.get(property));
 
         cq.select(maxExpr);
 

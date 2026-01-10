@@ -19,12 +19,16 @@ import java.util.Optional;
  * @author rrodriguez
  * @param <T>
  */
-public abstract class TypedSimpleProjection<T> extends SimpleProjection {
+public abstract class TypedSimpleProjection extends SimpleProjection {
 
-    protected Class<T> returnType = null;
+    protected Class<?> returnType;
     protected Optional<SimpleProjection> nestedProjection = Optional.empty();
 
-    public TypedSimpleProjection(String propertyName, Class returnType) {
+    public TypedSimpleProjection(String propertyName) {
+        super(propertyName);
+    }
+
+    public TypedSimpleProjection(String propertyName, Class<?> returnType) {
         super(propertyName);
         this.returnType = returnType;
     }
@@ -32,11 +36,6 @@ public abstract class TypedSimpleProjection<T> extends SimpleProjection {
     public TypedSimpleProjection(SimpleProjection nestedProjection) {
         this.nestedProjection = Optional.of(nestedProjection);
         this.returnType = nestedProjection.getReturnType().get();
-    }
-
-    @Override
-    public Optional<Class> getReturnType() {
-        return Optional.of(returnType);
     }
 
     @Override
@@ -65,6 +64,15 @@ public abstract class TypedSimpleProjection<T> extends SimpleProjection {
                 .alias(alias);
     }
 
-    public abstract Expression<T> build(CriteriaBuilder builder, Expression expression);
+    public abstract Expression build(CriteriaBuilder builder, Expression expression);
+
+    public void setReturnType(Class returnType) {
+        this.returnType = returnType;
+    }
+
+    @Override
+    public Optional<Class> getReturnType() {
+        return Optional.ofNullable(returnType);
+    }
 
 }

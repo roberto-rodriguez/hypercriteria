@@ -9,24 +9,24 @@ import java.util.List;
 class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
 
     @Override
-    public Object selectByProperty(String propertyName) {
+    public Object selectByProperty(String fieldPath) {
         return userDAO
-                .select(propertyName)
+                .select(fieldPath)
                 .getSingleResult();
     }
 
     @Override
-    public List<String> listByProperty(String propertyName) {
+    public List<String> listByProperty(String fieldPath) {
         return userDAO
-                .select(propertyName) 
-                .list();
+                .select(fieldPath) 
+                .getResultList();
     }
 
     @Override
-    public List<String> listDistinctByProperty(String propertyName) {
+    public List<String> listDistinctByProperty(String fieldPath) {
         return userDAO
-                .select(propertyName) 
+                .select(fieldPath) 
                 .distinct()
-                .list();
+                .getResultList();
     }
 }

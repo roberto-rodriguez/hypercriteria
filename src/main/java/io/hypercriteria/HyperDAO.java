@@ -2,7 +2,6 @@ package io.hypercriteria;
 
 import io.hypercriteria.base.Selectable;
 import io.hypercriteria.criterion.projection.base.Projection;
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.persistence.EntityManager;
@@ -12,7 +11,6 @@ import javax.persistence.PersistenceContext;
  *
  * @author rrodriguez
  * @param <E>
- * @param <R>
  */
 public class HyperDAO<E> implements Selectable {
 
@@ -46,7 +44,7 @@ public class HyperDAO<E> implements Selectable {
 
     @Override
     public Criteria select(String property) {
-        return new Criteria(entityManager, entityType, Projections.property(property));
+        return new Criteria(entityManager, entityType, HyperCriteria.property(property));
     }
 
     @Override

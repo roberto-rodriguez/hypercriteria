@@ -30,9 +30,9 @@ abstract class BaseSelectAvgTest extends BaseTest {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(2);
     }
 
-    abstract Double avgByProperty(String propertyName);
+    abstract Double avgByProperty(String fieldPath);
 
-    abstract Double avgByNestedProperty(String propertyName);
+    abstract Double avgByNestedProperty(String fieldPath);
 
     @Override
     protected void beforeEach() {

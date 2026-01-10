@@ -24,14 +24,14 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
 
     @Override
     List<User> listEntities() {
-        return userDAO.select().list();
+        return userDAO.select().getResultList();
     }
 
     @Override
     List<User> listEntitiesWithFetchPath(String fetchPath) {
         return userDAO.select()
                 .fetch(fetchPath)
-                .list();
+                .getResultList();
     }
 
     @Override
@@ -39,6 +39,6 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
         return userDAO.select()
                 .distinct()
                 .fetch(fetchPath)
-                .list();
+                .getResultList();
     }
 }

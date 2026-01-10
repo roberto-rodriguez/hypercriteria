@@ -42,9 +42,9 @@ abstract class BaseSelectCountTest extends BaseTest {
         USER_WITH_PAYMENTS.addPayment(Payment.builder().amount(2D).build());
     }
 
-    abstract Long countByProperty(String propertyName);
+    abstract Long countByProperty(String fieldPath);
 
-    abstract Long countDistinctByProperty(String propertyName);
+    abstract Long countDistinctByProperty(String fieldPath);
 
     abstract Long countEntity();
 

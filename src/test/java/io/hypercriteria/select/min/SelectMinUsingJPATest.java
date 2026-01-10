@@ -1,5 +1,6 @@
 package io.hypercriteria.select.min;
 
+import io.hypercriteria.util.TypeUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,13 +17,16 @@ import javax.persistence.criteria.Root;
 class SelectMinUsingJPATest extends BaseSelectMinTest {
 
     @Override
-    <T extends Number> T minByProperty(String propertyName, Class<T> resultType) {
+   Object minByProperty(String fieldPath ) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+        
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<Payment> root = cq.from(Payment.class);
 
-        Expression<T> minExpr = cb.min(root.get(propertyName));
+        Expression minExpr = cb.min(root.get(fieldPath));
 
         cq.select(minExpr);
 
@@ -30,18 +34,21 @@ class SelectMinUsingJPATest extends BaseSelectMinTest {
     }
 
     @Override
-    <T extends Number> T minByNestedProperty(String propertyName, Class<T> resultType) {
-        String[] parts = propertyName.split("\\.");
+  Object minByNestedProperty(String fieldPath ) {
+        String[] parts = fieldPath.split("\\.");
         String entity = parts[0];
         String property = parts[1];
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+        
+          Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<User> root = cq.from(User.class);
         Join<User, Payment> payment = root.join(entity, JoinType.LEFT);
 
-        Expression<T> minExpr = cb.min(payment.get(property));
+        Expression  minExpr = cb.min(payment.get(property));
 
         cq.select(minExpr);
 

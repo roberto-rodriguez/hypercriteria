@@ -11,14 +11,14 @@ import io.sample.dao.PaymentDAO;
 class SelectCountUsingDAOTest extends BaseSelectCountTest {
 
     @Override
-    public Long countByProperty(String propertyName) {
-        return (Long) userDAO.select(count(propertyName))
+    public Long countByProperty(String fieldPath) {
+        return (Long) userDAO.select(count(fieldPath))
                 .getSingleResult();
     }
 
     @Override
-    public Long countDistinctByProperty(String propertyName) {
-        return (Long) userDAO.select(countDistinct(propertyName))
+    public Long countDistinctByProperty(String fieldPath) {
+        return (Long) userDAO.select(countDistinct(fieldPath))
                 .getSingleResult();
     }
 

@@ -1,5 +1,6 @@
 package io.hypercriteria.select.sum;
- 
+
+import io.hypercriteria.util.TypeUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,32 +17,38 @@ import javax.persistence.criteria.Root;
 class SelectSumUsingJPATest extends BaseSelectSumTest {
 
     @Override
-    <T extends Number> T sumByProperty(String propertyName, Class<T> resultType) { 
+    Object sumByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<Payment> root = cq.from(Payment.class);
 
-        Expression<T> sumExpr = cb.sum(root.get(propertyName));
+        Expression sumExpr = cb.sum(root.get(fieldPath));
 
         cq.select(sumExpr);
 
         return entityManager.createQuery(cq).getSingleResult();
     }
 
-     @Override
-    <T extends Number> T sumByNestedProperty(String propertyName, Class<T> resultType) {
-        String[] parts = propertyName.split("\\.");
+    @Override
+    Object sumByNestedProperty(String fieldPath) {
+        String[] parts = fieldPath.split("\\.");
         String entity = parts[0];
         String property = parts[1];
- 
+
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<T> cq = cb.createQuery(resultType);
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
 
         Root<User> root = cq.from(User.class);
         Join<User, Payment> payment = root.join(entity, JoinType.LEFT);
 
-        Expression<T> sumExpr = cb.sum(payment.get(property));
+        Expression sumExpr = cb.sum(payment.get(property));
 
         cq.select(sumExpr);
 

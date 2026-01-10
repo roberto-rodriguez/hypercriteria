@@ -32,13 +32,12 @@ abstract class BaseSelectAbsTest extends BaseTest {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(-2);
     }
 
-    abstract <T extends Number> List<T> absByProperty(String propertyName, Class<T> resultType);
+    abstract List absByProperty(String fieldPath);
 
-    abstract <T extends Number> List<T> absByNestedProperty(String propertyName, Class<T> resultType);
+    abstract List absByNestedProperty(String fieldPath);
 
     //Sum then apply abs
-//    abstract <T extends Number, R extends Number> R absSumByProperty(String propertyName, Class<T> resultType);
-
+//    abstract <T extends Number, R extends Number> R absSumByProperty(String fieldPath, Class<T> resultType);
     @Override
     protected void beforeEach() {
         userDAO = new UserDAO();
@@ -55,11 +54,10 @@ abstract class BaseSelectAbsTest extends BaseTest {
 //
 //        assertEquals(3, result);
 //    }
-    /*
     @Test
     void testAbsInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Integer> result = absByProperty("intValue", Integer.class);
+        List<Integer> result = absByProperty("intValue");
 
         assertEquals(Arrays.asList(1, 2), result);
     }
@@ -67,35 +65,35 @@ abstract class BaseSelectAbsTest extends BaseTest {
     @Test
     void testAbsLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Long> result = absByProperty("longValue", Long.class);
+        List<Long> result = absByProperty("longValue");
         assertEquals(Arrays.asList(1L, 2L), result);
     }
 
     @Test
     void testAbsFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Float> result = absByProperty("floatValue", Float.class);
+        List<Float> result = absByProperty("floatValue");
         assertEquals(Arrays.asList(1F, 2F), result);
     }
 
     @Test
     void testAbsDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Double> result = absByProperty("doubleValue", Double.class);
+        List<Double> result = absByProperty("doubleValue");
         assertEquals(Arrays.asList(1D, 2D), result);
     }
 
     @Test
     void testAbsBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<BigInteger> result = absByProperty("bigInteger", BigInteger.class);
+        List<BigInteger> result = absByProperty("bigInteger");
         assertEquals(Arrays.asList(new BigInteger("1"), new BigInteger("2")), result);
     }
 
     @Test
     void testAbsBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<BigDecimal> result = absByProperty("bigDecimal", BigDecimal.class);
+        List<BigDecimal> result = absByProperty("bigDecimal");
         assertEquals(Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00")), result);
     }
 
@@ -103,36 +101,36 @@ abstract class BaseSelectAbsTest extends BaseTest {
     @Test
     void testAbsNestedLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Long> result = absByNestedProperty("payments.longValue", Long.class);
+        List<Long> result = absByNestedProperty("payments.longValue");
         assertEquals(Arrays.asList(1L, 2L), result);
     }
 
     @Test
     void testAbsNestedFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Float> result = absByNestedProperty("payments.floatValue", Float.class);
+        List<Float> result = absByNestedProperty("payments.floatValue");
         assertEquals(Arrays.asList(1F, 2F), result);
     }
 
     @Test
     void testAbsNestedDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Double> result = absByNestedProperty("payments.doubleValue", Double.class);
+        List<Double> result = absByNestedProperty("payments.doubleValue");
         assertEquals(Arrays.asList(1D, 2D), result);
     }
 
     @Test
     void testAbsNestedBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<BigInteger> result = absByNestedProperty("payments.bigInteger", BigInteger.class);
+        List<BigInteger> result = absByNestedProperty("payments.bigInteger");
         assertEquals(Arrays.asList(new BigInteger("1"), new BigInteger("2")), result);
     }
 
     @Test
     void testAbsNestedBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<BigDecimal> result = absByNestedProperty("payments.bigDecimal", BigDecimal.class);
+        List<BigDecimal> result = absByNestedProperty("payments.bigDecimal");
         assertEquals(Arrays.asList(new BigDecimal("1.00"), new BigDecimal("2.00")), result);
     }
-     */
+
 }

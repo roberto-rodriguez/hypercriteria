@@ -11,27 +11,27 @@ import java.util.List;
 class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
     
     @Override
-    public Object selectByProperty(String propertyName) {
+    public Object selectByProperty(String fieldPath) {
         return HyperCriteria.using(entityManager)
-                .select(propertyName)
+                .select(fieldPath)
                 .from(User.class)
                 .getSingleResult();
     }
     
     @Override
-    public List<String> listByProperty(String propertyName) {
+    public List<String> listByProperty(String fieldPath) {
         return HyperCriteria.using(entityManager)
-                .select(propertyName)
+                .select(fieldPath)
                 .from(User.class) 
-                .list();
+                .getResultList();
     }
     
     @Override
-    public List<String> listDistinctByProperty(String propertyName){
+    public List<String> listDistinctByProperty(String fieldPath){
         return HyperCriteria.using(entityManager)
-                .select(propertyName)
+                .select(fieldPath)
                 .distinct()
                 .from(User.class) 
-                .list();
+                .getResultList();
     }
 }
