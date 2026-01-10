@@ -17,8 +17,8 @@
 
     <name>HyperCriteria</name>
     <description>
-        HyperCriteria offers a fluent, expressive query builder for JPA Criteria, 
-        reducing boilerplate and complexity while staying fully provider-agnostic and free of framework dependencies.
+        HyperCriteria is a lightweight, provider-agnostic abstraction on top of JPA Criteria API.
+        It has no dependency on Spring or Hibernate and works with any JPA provider.
     </description>
     <url>https://github.com/roberto-rodriguez/hypercriteria</url>
 
