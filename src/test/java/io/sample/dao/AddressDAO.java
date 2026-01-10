@@ -1,5 +1,5 @@
  
-package io.hypercriteria.sample.dao;
+package io.sample.dao;
 
 import io.hypercriteria.HyperDAO; 
 import io.sample.model.Address; 
@@ -8,6 +8,6 @@ import io.sample.model.Address;
  *
  * @author rrodriguez
  */
-public class AddressDAO extends HyperDAO<Address, Address>{
+public class AddressDAO extends HyperDAO<Address>{
     
 }

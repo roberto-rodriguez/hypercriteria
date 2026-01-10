@@ -1,5 +1,5 @@
  
-package io.hypercriteria.sample.dao;
+package io.sample.dao;
 
 import io.hypercriteria.HyperDAO;
 import io.sample.model.State;
@@ -8,6 +8,6 @@ import io.sample.model.State;
  *
  * @author rrodriguez
  */
-public class StateDAO extends HyperDAO<State, State>{
+public class StateDAO extends HyperDAO<State>{
     
 }

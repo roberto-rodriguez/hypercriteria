@@ -9,6 +9,6 @@ import io.sample.model.User;
  *
  * @author rrodriguez
  */
-public class UserDAO extends HyperDAO<User, UserDTO>{
+public class UserDAO extends HyperDAO<User>{
     
 }

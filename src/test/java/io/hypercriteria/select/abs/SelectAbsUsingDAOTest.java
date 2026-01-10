@@ -1,10 +1,6 @@
 package io.hypercriteria.select.abs;
 
-import io.hypercriteria.Criteria;
-import io.hypercriteria.Projections;
-import static io.hypercriteria.Projections.sum;
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
-import io.sample.model.Payment;
+import static io.hypercriteria.HyperCriteria.abs;
 import java.util.List;
 
 /**
@@ -15,12 +11,12 @@ class SelectAbsUsingDAOTest extends BaseSelectAbsTest {
 
     @Override
     <T extends Number> List<T> absByProperty(String propertyName, Class<T> resultType) {
-        return paymentDAO.abs(propertyName, resultType).list();
+        return paymentDAO.select(abs(propertyName, resultType)).list();
     }
 
     @Override
     <T extends Number> List<T> absByNestedProperty(String propertyName, Class<T> resultType) {
-        return userDAO.abs(propertyName, resultType).list();
+        return userDAO.select(abs(propertyName, resultType)).list();
     }
 
 //    @Override

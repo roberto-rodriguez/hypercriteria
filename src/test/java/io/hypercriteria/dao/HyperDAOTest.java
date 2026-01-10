@@ -5,7 +5,6 @@ import io.sample.model.User;
 import io.utility.BaseTest;
 import org.junit.jupiter.api.*;
 
-import javax.persistence.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

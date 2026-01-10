@@ -1,8 +1,10 @@
 package io.hypercriteria.select.count;
- 
+
 import io.hypercriteria.HyperCriteria;
+import static io.hypercriteria.HyperCriteria.count;
+import static io.hypercriteria.HyperCriteria.countDistinct;
 import io.sample.model.Payment;
-import io.sample.model.User; 
+import io.sample.model.User;
 
 /**
  *
@@ -13,7 +15,7 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
     @Override
     public Long countByProperty(String propertyName) {
         return (Long) HyperCriteria.using(entityManager)
-                .count(propertyName)
+                .select(count(propertyName))
                 .from(User.class)
                 .getSingleResult();
     }
@@ -21,7 +23,7 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
     @Override
     public Long countDistinctByProperty(String propertyName) {
         return (Long) HyperCriteria.using(entityManager)
-                .countDistinct(propertyName)
+                .select(countDistinct(propertyName))
                 .from(User.class)
                 .getSingleResult();
     }
@@ -29,23 +31,23 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
     @Override
     public Long countEntity() {
         return (Long) HyperCriteria.using(entityManager)
-                .count()
+                .select(count())
                 .from(User.class)
                 .getSingleResult();
     }
- 
+
     @Override
     Long countUsersFromPayments() {
-           return (Long) HyperCriteria.using(entityManager)
-                .count("user")
+        return (Long) HyperCriteria.using(entityManager)
+                .select(count("user"))
                 .from(Payment.class)
                 .getSingleResult();
     }
 
     @Override
     Long countDistinctUsersFromPayments() {
-           return (Long) HyperCriteria.using(entityManager)
-                .countDistinct("user")
+        return (Long) HyperCriteria.using(entityManager)
+                .select(countDistinct("user"))
                 .from(Payment.class)
                 .getSingleResult();
     }
