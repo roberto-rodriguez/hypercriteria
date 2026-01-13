@@ -13,15 +13,14 @@ import javax.persistence.criteria.From;
 import javax.persistence.criteria.Selection;
 import java.util.Map;
 import java.util.Optional;
+import javax.persistence.EntityManager;
 
 /**
  *
  * @author rrodriguez
- * @param <T>
  */
 public abstract class TypedSimpleProjection extends SimpleProjection {
 
-    protected Class<?> returnType;
     protected Optional<SimpleProjection> nestedProjection = Optional.empty();
 
     public TypedSimpleProjection(String propertyName) {
@@ -35,7 +34,7 @@ public abstract class TypedSimpleProjection extends SimpleProjection {
 
     public TypedSimpleProjection(SimpleProjection nestedProjection) {
         this.nestedProjection = Optional.of(nestedProjection);
-        this.returnType = nestedProjection.getReturnType().get();
+
     }
 
     @Override
@@ -45,14 +44,17 @@ public abstract class TypedSimpleProjection extends SimpleProjection {
 
     @Override
     public Expression toExpression(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
+
+        Expression expression;
+
         if (nestedProjection.isPresent()) {
-            return nestedProjection.get().toExpression(builder, query, joinMap);
-        }
+            expression = nestedProjection.get().toExpression(builder, query, joinMap);
+        } else {
+            expression = joinMap.get(joinName);
 
-        Expression expression = joinMap.get(joinName);
-
-        if (!propertyName.isEmpty()) {
-            expression = ((From) expression).get(propertyName);
+            if (!propertyName.isEmpty()) {
+                expression = ((From) expression).get(propertyName);
+            }
         }
 
         return build(builder, expression).as(returnType);
@@ -66,8 +68,17 @@ public abstract class TypedSimpleProjection extends SimpleProjection {
 
     public abstract Expression build(CriteriaBuilder builder, Expression expression);
 
-    public void setReturnType(Class returnType) {
-        this.returnType = returnType;
+    @Override
+    public Class<?> inferReturnType(EntityManager em, Class<?> rootEntityClass) {
+        if (this.returnType == null) {//Projectins like Avg and Count have a pre-defined returnType
+            if (nestedProjection.isPresent()) {
+                this.returnType = nestedProjection.get().inferReturnType(em, rootEntityClass);
+            } else {
+                super.inferReturnType(em, rootEntityClass);
+            }
+        }
+
+        return this.returnType;
     }
 
     @Override

@@ -37,7 +37,11 @@ abstract class BaseSelectAbsTest extends BaseTest {
     abstract List absByNestedProperty(String fieldPath);
 
     //Sum then apply abs
-//    abstract <T extends Number, R extends Number> R absSumByProperty(String fieldPath, Class<T> resultType);
+    abstract Object absSumByProperty(String fieldPath);
+
+    // apply abs then sum
+    abstract Object sumAbsByProperty(String fieldPath);
+
     @Override
     protected void beforeEach() {
         userDAO = new UserDAO();
@@ -47,13 +51,22 @@ abstract class BaseSelectAbsTest extends BaseTest {
         paymentDAO.setEntityManager(entityManager);  // assign manually
     }
 
-//    @Test
-//    void testAbsSumInteger() {
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//        Long result = absSumByProperty("intValue", Integer.class);
-//
-//        assertEquals(3, result);
-//    }
+    @Test
+    void testAbsSumInteger() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+        Long result = (Long) absSumByProperty("intValue");
+
+        assertEquals(3, result);
+    }
+
+    @Test
+    void testSumAbsInteger() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+        Long result = (Long) sumAbsByProperty("intValue");
+
+        assertEquals(3, result);
+    }
+
     @Test
     void testAbsInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);

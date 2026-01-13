@@ -1,6 +1,7 @@
 package io.hypercriteria.select.abs;
 
 import static io.hypercriteria.HyperCriteria.abs;
+import static io.hypercriteria.HyperCriteria.sum;
 import java.util.List;
 
 /**
@@ -19,10 +20,13 @@ class SelectAbsUsingDAOTest extends BaseSelectAbsTest {
         return userDAO.select(abs(fieldPath)).getResultList();
     }
 
-//    @Override
-//    <T extends Number> T absSumByProperty(String fieldPath, Class<T> resultType) {
-//        return (T) userDAO.abs(
-//                sum(fieldPath, resultType)
-//        ).getSingleResult();
-//    }
+    @Override
+    Object absSumByProperty(String fieldPath) {
+        return paymentDAO.select(abs(sum(fieldPath))).getSingleResult();
+    }
+
+    @Override
+    Object sumAbsByProperty(String fieldPath) {
+        return paymentDAO.select(sum(abs(fieldPath))).getSingleResult();
+    }
 }

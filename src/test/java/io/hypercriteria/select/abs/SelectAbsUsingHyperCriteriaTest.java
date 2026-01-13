@@ -2,6 +2,7 @@ package io.hypercriteria.select.abs;
 
 import io.hypercriteria.HyperCriteria;
 import static io.hypercriteria.HyperCriteria.abs;
+import static io.hypercriteria.HyperCriteria.sum;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
@@ -28,13 +29,19 @@ class SelectAbsUsingHyperCriteriaTest extends BaseSelectAbsTest {
                 .getResultList();
     }
 
-//    @Override
-//    <T extends Number> T absSumByProperty(String fieldPath, Class<T> resultType) {
-//        return (T) HyperCriteria.using(entityManager)
-//                .abs(
-//                        sum(fieldPath, resultType) 
-//                )
-//                .from(Payment.class)
-//                .getSingleResult();
-//    }
+    @Override
+    Object absSumByProperty(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(abs(sum(fieldPath)))
+                .from(Payment.class)
+                .getSingleResult();
+    }
+
+    @Override
+    Object sumAbsByProperty(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(sum(abs(fieldPath)))
+                .from(Payment.class)
+                .getSingleResult();
+    }
 }

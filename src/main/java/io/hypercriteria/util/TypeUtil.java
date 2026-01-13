@@ -12,11 +12,78 @@ import javax.persistence.metamodel.PluralAttribute;
  */
 public class TypeUtil {
 
+    /**
+     * Infers the Java type of an attribute referenced by a field path starting
+     * from a given root entity class.
+     * <p>
+     * The field path may reference:
+     * <ul>
+     * <li>Simple attributes (e.g. {@code "amount"})</li>
+     * <li>Nested attributes through {@code @ManyToOne} or {@code @OneToOne}
+     * associations (e.g. {@code "user.firstName"})</li>
+     * <li>Attributes of collection elements (e.g.
+     * {@code "payments.intValue"})</li>
+     * </ul>
+     *
+     * <h3>Join delimiters</h3>
+     * The following join delimiters are supported and treated equivalently:
+     * <ul>
+     * <li>{@code "."} — standard path delimiter</li>
+     * <li>{@code ">"} — right join indicator</li>
+     * <li>{@code "<>"} — inner join indicator</li>
+     * </ul>
+     *
+     * Join delimiters may appear at the beginning of the path or between path
+     * segments. All delimiters are normalized internally before resolution.
+     *
+     * <pre>{@code
+     * inferAttributeType(em, Payment.class, "user.firstName")     → String.class
+     * inferAttributeType(em, Payment.class, ">user.firstName")    → String.class
+     * inferAttributeType(em, Payment.class, "<>user.payments.id") → Long.class
+     * }</pre>
+     *
+     * <h3>Collection handling</h3>
+     * If a path segment refers to a plural attribute (e.g. {@code @OneToMany}),
+     * the element type of the collection is used for further path traversal.
+     *
+     * <h3>Error handling</h3>
+     * An {@link IllegalArgumentException} is thrown if:
+     * <ul>
+     * <li>An attribute name does not exist on the current managed type</li>
+     * <li>A path attempts to navigate into a non-managed Java type</li>
+     * <li>The field path is syntactically invalid</li>
+     * </ul>
+     *
+     * @param em the {@link EntityManager} used to access the JPA
+     * {@link jakarta.persistence.metamodel.Metamodel}
+     *
+     * @param rootEntityClass the root JPA entity class from which the field
+     * path resolution starts
+     *
+     * @param fieldPath the attribute path to resolve, using
+     * {@code "."}, {@code ">"}, or {@code "<>"} as path delimiters
+     *
+     * @param <A> the inferred attribute type
+     *
+     * @return the Java {@link Class} representing the type of the final
+     * attribute referenced by the field path
+     *
+     * @throws IllegalArgumentException if the field path references an invalid
+     * attribute or navigates into a non-managed type
+     */
     @SuppressWarnings("unchecked")
     public static <A> Class<A> inferAttributeType(
             EntityManager em,
             Class<?> rootEntityClass,
             String fieldPath) {
+
+        if (fieldPath.startsWith("<>")) {
+            fieldPath = fieldPath.substring(2);
+        }
+
+        if (fieldPath.startsWith(">")) {
+            fieldPath = fieldPath.substring(1);
+        }
 
         // Normalize join delimiters: ".", ">", "<>" → "."
         String normalizedPath = fieldPath

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import javax.persistence.criteria.JoinType;
 
 /**
@@ -37,16 +38,11 @@ public class ProjectionBuilder {
         if (userSpecifiedProjection.isPresent()) {
             projection = userSpecifiedProjection.get();
 
-            if (projection instanceof TypedSimpleProjection typedSimpleProjection
-                    && typedSimpleProjection.getReturnType().isEmpty()) {
-                String fieldPath = typedSimpleProjection.getFieldPath();
-                Class<?> rootEntityClass = criteria.getEntityType();
-
-                Class<?> attributeType = TypeUtil.inferAttributeType(criteria.getEntityManager(), rootEntityClass, fieldPath);
-                typedSimpleProjection.setReturnType(attributeType);
-            }
-
             if (projection instanceof SimpleProjection simpleProjection) {
+                EntityManager em = criteria.getEntityManager();
+                Class<?> rootEntityClass = criteria.getEntityType();
+                simpleProjection.inferReturnType(em, rootEntityClass);
+
                 criteria.getJoinToAliasJoinTypeMap().putAll(simpleProjection.getFieldsMappingToAliasJoinTypeMap());
             }
         } else {

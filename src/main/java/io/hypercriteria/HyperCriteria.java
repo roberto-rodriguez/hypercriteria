@@ -12,7 +12,6 @@ import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.criterion.projection.Sum;
 import io.hypercriteria.criterion.projection.base.PropertyProjection;
 import io.hypercriteria.criterion.projection.base.SimpleProjection;
-import io.hypercriteria.util.NumericType;
 import javax.persistence.EntityManager;
 
 /**
@@ -85,6 +84,10 @@ public class HyperCriteria implements Selectable {
 
     public static Sum sum(String fieldPath) {
         return new Sum(fieldPath);
+    }
+
+    public static Sum sum(SimpleProjection simpleProjection) {
+        return new Sum(simpleProjection);
     }
 
     public static Max max(String fieldPath) {

@@ -1,5 +1,6 @@
 package io.hypercriteria.select.abs;
 
+import io.hypercriteria.util.NumericType;
 import io.hypercriteria.util.TypeUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
@@ -56,18 +57,48 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
         return entityManager.createQuery(cq).getResultList();
     }
 
-//    @Override
-//    <T extends Number, R extends Number> R absSumByProperty(String fieldPath, Class<T> resultType) {
-//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<T> cq = cb.createQuery(resultType);
-//
-//        Root<Payment> root = cq.from(Payment.class);
-//
-//        Expression<T> sumExpr = cb.sum(root.get(fieldPath));
-//        Expression<T> absExpr = cb.abs(sumExpr);
-//
-//        cq.select(absExpr);
-//
-//        return entityManager.createQuery(cq).getSingleResult();
-//    }
+    @Override
+    Object absSumByProperty(String fieldPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
+
+        Root<Payment> root = cq.from(Payment.class);
+
+        Expression sumExpr = cb.sum(root.get(fieldPath));
+        Expression absExpr = cb.abs(sumExpr);
+
+        cq.select(absExpr);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    Object sumAbsByProperty(String fieldPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+
+        NumericType numericType = NumericType.from(attributeType);
+
+        CriteriaQuery cq = cb.createQuery(attributeType);
+
+        Root<Payment> root = cq.from(Payment.class);
+
+        Expression absExpr = cb.abs(root.get(fieldPath));
+        Expression<?> sumExpr;
+
+        switch (numericType) {
+            case BYTE, SHORT, INTEGER, LONG -> sumExpr = cb.sumAsLong(absExpr);
+            case FLOAT, DOUBLE -> sumExpr = cb.sumAsDouble(absExpr);
+            case BIG_INTEGER, BIG_DECIMAL -> sumExpr = cb.sum((Expression) absExpr);
+            default -> throw new IllegalStateException("Unexpected type: " + numericType);
+        }
+
+        cq.select(sumExpr);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
 }

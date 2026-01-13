@@ -8,6 +8,7 @@ package io.hypercriteria.criterion.projection.base;
 import io.hypercriteria.Criteria;
 import io.hypercriteria.util.AliasJoinType;
 import io.hypercriteria.util.ProjectionBuilder;
+import io.hypercriteria.util.TypeUtil;
 import java.util.LinkedHashMap;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,6 +16,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Selection;
 import java.util.Map;
+import java.util.Optional;
+import javax.persistence.EntityManager;
 
 /**
  *
@@ -26,6 +29,8 @@ public abstract class SimpleProjection implements Projection {
     protected String joinName = "";
     protected String propertyName;
     protected String alias;
+
+    protected Class<?> returnType;
 
     // a map that will be populated with intermediate path-to-alias mapping
     private final LinkedHashMap<String, AliasJoinType> fieldsMappingToAliasJoinTypeMap = new LinkedHashMap<>();
@@ -91,6 +96,16 @@ public abstract class SimpleProjection implements Projection {
 
     public String getFieldPath() {
         return fieldPath;
+    }
+
+    public Class<?> inferReturnType(EntityManager em, Class<?> rootEntityClass) {
+        this.returnType = TypeUtil.inferAttributeType(em, rootEntityClass, fieldPath);
+        return this.returnType;
+    }
+
+    @Override
+    public Optional<Class> getReturnType() {
+        return Optional.ofNullable(returnType);
     }
 
 }
