@@ -52,4 +52,5 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
                 .getSingleResult();
     }
 
+     
 }

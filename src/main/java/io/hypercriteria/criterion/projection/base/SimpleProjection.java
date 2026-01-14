@@ -7,8 +7,9 @@ package io.hypercriteria.criterion.projection.base;
 
 import io.hypercriteria.Criteria;
 import io.hypercriteria.util.AliasJoinType;
+import io.hypercriteria.util.PathInfo;
 import io.hypercriteria.util.ProjectionBuilder;
-import io.hypercriteria.util.TypeUtil;
+import io.hypercriteria.util.PathUtil;
 import java.util.LinkedHashMap;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,12 +27,10 @@ import javax.persistence.EntityManager;
 public abstract class SimpleProjection implements Projection {
 
     protected String fieldPath;
-    protected String joinName = "";
-    protected String propertyName;
-    protected String alias;
+    protected PathInfo pathInfo;
 
-    protected Class<?> returnType;
-
+    protected Optional<String> alias = Optional.empty();
+ 
     // a map that will be populated with intermediate path-to-alias mapping
     private final LinkedHashMap<String, AliasJoinType> fieldsMappingToAliasJoinTypeMap = new LinkedHashMap<>();
 
@@ -40,27 +39,24 @@ public abstract class SimpleProjection implements Projection {
 
     public SimpleProjection(String fieldPath) {
         this.fieldPath = fieldPath;
-
-        if (fieldPath.contains(".") || fieldPath.contains(">") || fieldPath.contains("<>")) {
-            // joinName will be the last two paths. 
-            // Example for a.b.c.d 
-            // joinName = c.d
-            // fieldPath = d
-            // fieldsMappingToAliasJoinTypeMap = {a:a, a.b:b, b.c:c, c.d:d}
-            String[] lastTwoPaths = ProjectionBuilder.extractAliasAndJoinType(fieldPath, fieldsMappingToAliasJoinTypeMap).split("\\.");
-            this.joinName = lastTwoPaths[0];
-            this.propertyName = lastTwoPaths[1];
-        } else {
-            this.propertyName = fieldPath;
-        }
     }
+
+    //To be called from toExpression
+    protected abstract void validatePath() throws IllegalArgumentException;
 
     //To be called directly by Criteria (if it is not included within a ProjectionsList)
     @Override
     public abstract void apply(Criteria criteria, CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap);
 
-    //To be called from ProjectionList 
-    public abstract Selection toSelection(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap);
+    //To be called from ProjectionList  
+    public Selection toSelection(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
+        Expression expression = toExpression(builder, query, joinMap);
+
+        if (alias.isPresent()) {
+            expression.alias(alias.get());
+        }
+        return expression;
+    }
 
     //Used in Group By
     public abstract Expression toExpression(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap);
@@ -71,11 +67,11 @@ public abstract class SimpleProjection implements Projection {
     }
 
     public String getAlias() {
-        return alias == null ? propertyName : alias;
+        return alias.orElse(pathInfo.getAlias());
     }
 
     public void setAlias(String alias) {
-        this.alias = alias;
+        this.alias = Optional.ofNullable(alias);
     }
 
     public boolean isGroupBy() {
@@ -98,14 +94,36 @@ public abstract class SimpleProjection implements Projection {
         return fieldPath;
     }
 
-    public Class<?> inferReturnType(EntityManager em, Class<?> rootEntityClass) {
-        this.returnType = TypeUtil.inferAttributeType(em, rootEntityClass, fieldPath);
-        return this.returnType;
+    public PathInfo getPathInfo(EntityManager em, Class<?> rootEntityClass) {
+        this.pathInfo = PathUtil.getPathInfo(em, rootEntityClass, fieldPath, fieldsMappingToAliasJoinTypeMap);
+
+        //To be overriden by:
+        // Sum: returns promotionReturnType
+        // Avg: returns Double
+        // Count: returns Long
+        updateReturnType();
+
+        return this.pathInfo;
+    }
+ 
+    protected void updateReturnType() {
     }
 
     @Override
     public Optional<Class> getReturnType() {
-        return Optional.ofNullable(returnType);
+        return Optional.ofNullable(pathInfo.getJavaType());
+    }
+
+    protected From getJoin(Map<String, From> joinMap) {
+        From join = joinMap.get(pathInfo.getLastJoin());
+
+        if (join == null) {
+            //This should never happens, and indicates a Framework (not user) issue.
+            throw new IllegalArgumentException(
+                    String.format("Invalid field path '%s', not join '%s' was found.", fieldPath, pathInfo.getLastJoin())
+            );
+        }
+        return join;
     }
 
 }

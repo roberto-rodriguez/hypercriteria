@@ -12,6 +12,7 @@ import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.util.ProjectionBuilder;
 import io.hypercriteria.util.AliasBuilder;
 import io.hypercriteria.util.AliasJoinType;
+import io.hypercriteria.util.PathUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -145,7 +146,10 @@ public class Criteria<E, R> {
      *
      */
     public Criteria fetch(String fetchPath) {
-        ProjectionBuilder.extractAliasAndJoinType(fetchPath + ".fetching", fetchToAliasJoinTypeMap);
+        if (this.resultType == null) {
+            throw new IllegalArgumentException("Please specify which entity are you querying from. Make sure the fetch clause is specified after 'from'. ");
+        }
+        PathUtil.getPathInfo(entityManager, resultType, fetchPath, fetchToAliasJoinTypeMap);
         return this;
     }
 

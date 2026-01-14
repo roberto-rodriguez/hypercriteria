@@ -39,18 +39,10 @@ public class PropertyProjection extends SimpleProjection {
 
     @Override
     public Expression toExpression(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-        return joinMap.get(joinName).get(propertyName);
-    }
-
-    @Override
-    public Selection toSelection(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-        try {
-            return joinMap.get(joinName).get(propertyName).alias(alias);
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Exception applying PropertyProjection:: %s.%s as alias %s", joinName, propertyName, alias));
-        }
-    }
-
+        validatePath(); 
+        return getJoin(joinMap).get(pathInfo.getAttributeName().get());
+    } 
+    
     @Override
     public Optional<Class> getReturnType() {
         return Optional.of(Object.class);
@@ -69,6 +61,28 @@ public class PropertyProjection extends SimpleProjection {
     public void applyGroupBy(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
         if (groupBy) {
             query.groupBy(toExpression(builder, query, joinMap));
+        }
+    }
+
+    @Override
+    protected void validatePath() throws IllegalArgumentException {
+        if (pathInfo.getLastJoin() == null) {
+            //This should never happens, and indicates a Framework (not user) issue.
+            throw new IllegalArgumentException(
+                    String.format("Invalid field path '%s', unexpected last join as null here.", fieldPath)
+            );
+        }
+        if (pathInfo.getAttributeName().isEmpty()) {
+            //This should never happens, and indicated a Framework (not user) issue.
+            throw new IllegalArgumentException(
+                    String.format("Invalid field path '%s', attribute name should not be empty.", fieldPath)
+            );
+        }
+
+        if (pathInfo.endsInAssociation()) {
+            throw new IllegalArgumentException(
+                    String.format("Invalid field path '%s', property projections must refer to attributes, no associations.", fieldPath)
+            );
         }
     }
 }

@@ -66,6 +66,18 @@ public class HyperCriteria implements Selectable {
         return propertyProjection;
     }
 
+    public static Abs abs(String fieldPath) {
+        return new Abs(fieldPath);
+    }
+
+    public static Abs abs(SimpleProjection simpleProjection) {
+        return new Abs(simpleProjection);
+    }
+
+    public static Avg avg(String fieldPath) {
+        return new Avg(fieldPath);
+    }
+
     public static Count count() {
         return new Count();
     }
@@ -82,14 +94,6 @@ public class HyperCriteria implements Selectable {
         return new CountDistinct(fieldPath);
     }
 
-    public static Sum sum(String fieldPath) {
-        return new Sum(fieldPath);
-    }
-
-    public static Sum sum(SimpleProjection simpleProjection) {
-        return new Sum(simpleProjection);
-    }
-
     public static Max max(String fieldPath) {
         return new Max(fieldPath);
     }
@@ -98,16 +102,12 @@ public class HyperCriteria implements Selectable {
         return new Min(fieldPath);
     }
 
-    public static Avg avg(String fieldPath) {
-        return new Avg(fieldPath);
+    public static Sum sum(String fieldPath) {
+        return new Sum(fieldPath);
     }
 
-    public static Abs abs(String fieldPath) {
-        return new Abs(fieldPath);
-    }
-
-    public static Abs abs(SimpleProjection simpleProjection) {
-        return new Abs(simpleProjection);
+    public static Sum sum(SimpleProjection simpleProjection) {
+        return new Sum(simpleProjection);
     }
 
 }

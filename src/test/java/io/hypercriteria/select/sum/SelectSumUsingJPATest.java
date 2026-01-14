@@ -9,7 +9,7 @@ import static io.hypercriteria.util.NumericType.FLOAT;
 import static io.hypercriteria.util.NumericType.INTEGER;
 import static io.hypercriteria.util.NumericType.LONG;
 import static io.hypercriteria.util.NumericType.SHORT;
-import io.hypercriteria.util.TypeUtil;
+import io.hypercriteria.util.PathUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -29,7 +29,7 @@ class SelectSumUsingJPATest extends BaseSelectSumTest {
     Object sumByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
 
         NumericType numericType = NumericType.from(attributeType);
 
@@ -63,7 +63,7 @@ class SelectSumUsingJPATest extends BaseSelectSumTest {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, User.class, fieldPath);
 
         NumericType numericType = NumericType.from(attributeType);
 

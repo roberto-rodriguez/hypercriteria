@@ -19,7 +19,7 @@ import java.util.Map;
 public class Avg extends TypedSimpleProjection {
 
     public Avg(String fieldPath) {
-        super(fieldPath, Double.class);
+        super(fieldPath);
     }
 
     @Override
@@ -29,5 +29,10 @@ public class Avg extends TypedSimpleProjection {
 
     @Override
     public void applyGroupBy(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
+    }
+
+    @Override
+    protected void updateReturnType() {
+        pathInfo.setJavaType(Double.class);
     }
 }

@@ -16,15 +16,25 @@ import javax.persistence.criteria.Expression;
 public class CountDistinct extends TypedSimpleProjection {
 
     public CountDistinct() {
-        super("", Long.class);//Will produce root
+        super("");//Will produce root
     }
 
     public CountDistinct(String fieldPath) {
-        super(fieldPath, Long.class);
+        super(fieldPath);
     }
 
     @Override
     public Expression<Long> build(CriteriaBuilder builder, Expression expression) {
         return builder.countDistinct(expression);
+    }
+
+    @Override
+    protected void updateReturnType() {
+        pathInfo.setJavaType(Long.class);
+    }
+
+    @Override
+    protected void validatePath() throws IllegalArgumentException {
+        //Need to override parent, since count allows fieldPath where endsInAssociation = true
     }
 }

@@ -1,7 +1,7 @@
 package io.hypercriteria.select.abs;
 
 import io.hypercriteria.util.NumericType;
-import io.hypercriteria.util.TypeUtil;
+import io.hypercriteria.util.PathUtil;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
@@ -22,7 +22,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     List absByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -43,7 +43,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, User.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, User.class, fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -61,7 +61,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     Object absSumByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -79,7 +79,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     Object sumAbsByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = TypeUtil.inferAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
 
         NumericType numericType = NumericType.from(attributeType);
 
@@ -91,10 +91,14 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
         Expression<?> sumExpr;
 
         switch (numericType) {
-            case BYTE, SHORT, INTEGER, LONG -> sumExpr = cb.sumAsLong(absExpr);
-            case FLOAT, DOUBLE -> sumExpr = cb.sumAsDouble(absExpr);
-            case BIG_INTEGER, BIG_DECIMAL -> sumExpr = cb.sum((Expression) absExpr);
-            default -> throw new IllegalStateException("Unexpected type: " + numericType);
+            case BYTE, SHORT, INTEGER, LONG ->
+                sumExpr = cb.sumAsLong(absExpr);
+            case FLOAT, DOUBLE ->
+                sumExpr = cb.sumAsDouble(absExpr);
+            case BIG_INTEGER, BIG_DECIMAL ->
+                sumExpr = cb.sum((Expression) absExpr);
+            default ->
+                throw new IllegalStateException("Unexpected type: " + numericType);
         }
 
         cq.select(sumExpr);

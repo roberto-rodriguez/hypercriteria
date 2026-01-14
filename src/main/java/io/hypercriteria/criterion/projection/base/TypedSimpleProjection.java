@@ -6,11 +6,11 @@
 package io.hypercriteria.criterion.projection.base;
 
 import io.hypercriteria.Criteria;
+import io.hypercriteria.util.PathInfo;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
-import javax.persistence.criteria.Selection;
 import java.util.Map;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -23,13 +23,8 @@ public abstract class TypedSimpleProjection extends SimpleProjection {
 
     protected Optional<SimpleProjection> nestedProjection = Optional.empty();
 
-    public TypedSimpleProjection(String propertyName) {
-        super(propertyName);
-    }
-
-    public TypedSimpleProjection(String propertyName, Class<?> returnType) {
-        super(propertyName);
-        this.returnType = returnType;
+    public TypedSimpleProjection(String fieldPath) {
+        super(fieldPath);
     }
 
     public TypedSimpleProjection(SimpleProjection nestedProjection) {
@@ -44,46 +39,52 @@ public abstract class TypedSimpleProjection extends SimpleProjection {
 
     @Override
     public Expression toExpression(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
+        validatePath();
 
         Expression expression;
 
         if (nestedProjection.isPresent()) {
             expression = nestedProjection.get().toExpression(builder, query, joinMap);
         } else {
-            expression = joinMap.get(joinName);
+            expression = getJoin(joinMap);
 
-            if (!propertyName.isEmpty()) {
-                expression = ((From) expression).get(propertyName);
+            if (pathInfo.getAttributeName().isPresent()) {
+                expression = ((From) expression).get(pathInfo.getAttributeName().get());
             }
         }
 
-        return build(builder, expression).as(returnType);
-    }
-
-    @Override
-    public Selection toSelection(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-        return toExpression(builder, query, joinMap)
-                .alias(alias);
+        return build(builder, expression).as(getReturnType().get());
     }
 
     public abstract Expression build(CriteriaBuilder builder, Expression expression);
 
     @Override
-    public Class<?> inferReturnType(EntityManager em, Class<?> rootEntityClass) {
-        if (this.returnType == null) {//Projectins like Avg and Count have a pre-defined returnType
-            if (nestedProjection.isPresent()) {
-                this.returnType = nestedProjection.get().inferReturnType(em, rootEntityClass);
-            } else {
-                super.inferReturnType(em, rootEntityClass);
-            }
+    public PathInfo getPathInfo(EntityManager em, Class<?> rootEntityClass) {
+        if (nestedProjection.isPresent()) {
+            this.pathInfo = nestedProjection.get().getPathInfo(em, rootEntityClass);
+
+            //To be overriden by:
+            // Sum: returns promotionReturnType
+            // Avg: returns Double
+            // Count: returns Long
+            updateReturnType();
+        } else {
+            super.getPathInfo(em, rootEntityClass);
         }
 
-        return this.returnType;
+        return this.pathInfo;
     }
 
     @Override
-    public Optional<Class> getReturnType() {
-        return Optional.ofNullable(returnType);
+    protected void validatePath() throws IllegalArgumentException {
+        //By default the path for typed expressions should not refer to an asociation,
+        // except specific cases (like count("payments"))
+        //Projections supporting path to asociations will override this.
+        if (pathInfo.endsInAssociation()) {
+            throw new IllegalArgumentException(
+                    String.format("Invalid field path '%s', property projections must refer to attributes, no associations.", fieldPath)
+            );
+        }
     }
 
 }

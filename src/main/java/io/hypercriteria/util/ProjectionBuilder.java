@@ -3,26 +3,21 @@ package io.hypercriteria.util;
 import io.hypercriteria.Annotations;
 import io.hypercriteria.Annotations.ConstructorName;
 import io.hypercriteria.Criteria;
-import io.hypercriteria.HyperCriteria;
 import io.hypercriteria.criterion.ProjectionList;
 import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.criterion.projection.base.SimpleProjection;
-import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.JoinType;
 
 /**
  *
@@ -41,7 +36,7 @@ public class ProjectionBuilder {
             if (projection instanceof SimpleProjection simpleProjection) {
                 EntityManager em = criteria.getEntityManager();
                 Class<?> rootEntityClass = criteria.getEntityType();
-                simpleProjection.inferReturnType(em, rootEntityClass);
+                simpleProjection.getPathInfo(em, rootEntityClass);
 
                 criteria.getJoinToAliasJoinTypeMap().putAll(simpleProjection.getFieldsMappingToAliasJoinTypeMap());
             }
@@ -81,10 +76,10 @@ public class ProjectionBuilder {
             if (projectionMappingOverrides.containsKey(fieldPath)) {
                 fieldPath = (String) projectionMappingOverrides.get(fieldPath);
             }
-
-            fieldPath = extractAliasAndJoinType(fieldPath, criteria.getJoinToAliasJoinTypeMap());
-
-            projectionList.add(HyperCriteria.property(fieldPath).as(valueName));
+//TODO
+//            fieldPath = extractAliasAndJoinType(fieldPath, criteria.getJoinToAliasJoinTypeMap());
+//
+//            projectionList.add(HyperCriteria.property(fieldPath).as(valueName));
         }
 
         return projectionList;
@@ -194,120 +189,119 @@ public class ProjectionBuilder {
      * @param fieldsMappingAlias map populated with alias and join metadata
      * @return the effective projection alias
      */
-    public static String extractAliasAndJoinType(
-            String fieldPath,
-            LinkedHashMap<String, AliasJoinType> fieldsMappingAlias) {
-
-        if (fieldPath == null || fieldPath.isEmpty()) {
-            return fieldPath;
-        }
-
-        List<String> parts = new ArrayList<>();
-        List<JoinType> joinTypes = new ArrayList<>();
-
-        int i = 0;
-        JoinType rootJoinType = JoinType.LEFT;
-
-        // Detect explicit root join
-        if (fieldPath.startsWith("<>")) {
-            rootJoinType = JoinType.INNER;
-            i = 2;
-        } else if (fieldPath.startsWith(">")) {
-            rootJoinType = JoinType.RIGHT;
-            i = 1;
-        }
-
-        StringBuilder current = new StringBuilder();
-
-        while (i < fieldPath.length()) {
-            if (fieldPath.startsWith("<>", i)) {
-                parts.add(current.toString());
-                joinTypes.add(JoinType.INNER);
-                current.setLength(0);
-                i += 2;
-            } else if (fieldPath.charAt(i) == '>') {
-                parts.add(current.toString());
-                joinTypes.add(JoinType.RIGHT);
-                current.setLength(0);
-                i++;
-            } else if (fieldPath.charAt(i) == '.') {
-                parts.add(current.toString());
-                joinTypes.add(JoinType.LEFT);
-                current.setLength(0);
-                i++;
-            } else {
-                current.append(fieldPath.charAt(i));
-                i++;
-            }
-        }
-
-        parts.add(current.toString());
-
-        int len = parts.size();
-
-        if (len == 1) {
-            return fieldPath;
-        }
-
-        // Root mapping
-        putWithPrecedence(
-                fieldsMappingAlias,
-                parts.get(0),
-                parts.get(0),
-                rootJoinType
-        );
-
-        // Register intermediate joins only (exclude leaf)
-        for (int idx = 0; idx < len - 2; idx++) {
-            String key = parts.get(idx) + "." + parts.get(idx + 1);
-            putWithPrecedence(
-                    fieldsMappingAlias,
-                    key,
-                    parts.get(idx + 1),
-                    joinTypes.get(idx)
-            );
-        }
-
-        // Return leaf alias
-        if (len == 2) {
-            return parts.get(0) + "." + parts.get(1);
-        }
-
-        return parts.get(len - 2) + "." + parts.get(len - 1);
-    }
-
-    private static void putWithPrecedence(
-            Map<String, AliasJoinType> map,
-            String key,
-            String alias,
-            JoinType newJoinType) {
-
-        AliasJoinType existing = map.get(key);
-
-        if (existing == null || precedence(newJoinType) > precedence(existing.getJoinType())) {
-            map.put(
-                    key,
-                    AliasJoinType.builder()
-                            .alias(alias)
-                            .joinType(newJoinType)
-                            .build()
-            );
-        }
-    }
-
-    private static int precedence(JoinType joinType) {
-        return switch (joinType) {
-            case INNER ->
-                3;
-            case RIGHT ->
-                2;
-            case LEFT ->
-                1;
-            default ->
-                0;
-        };
-    }
-
+//    public static String extractAliasAndJoinType(
+//            String fieldPath,
+//            LinkedHashMap<String, AliasJoinType> fieldsMappingAlias) {
+//
+//        if (fieldPath == null || fieldPath.isEmpty()) {
+//            return fieldPath;
+//        }
+//
+//        List<String> parts = new ArrayList<>();
+//        List<JoinType> joinTypes = new ArrayList<>();
+//
+//        int i = 0;
+//        JoinType rootJoinType = JoinType.LEFT;
+//
+//        // Detect explicit root join
+//        if (fieldPath.startsWith("<>")) {
+//            rootJoinType = JoinType.INNER;
+//            i = 2;
+//        } else if (fieldPath.startsWith(">")) {
+//            rootJoinType = JoinType.RIGHT;
+//            i = 1;
+//        }
+//
+//        StringBuilder current = new StringBuilder();
+//
+//        while (i < fieldPath.length()) {
+//            if (fieldPath.startsWith("<>", i)) {
+//                parts.add(current.toString());
+//                joinTypes.add(JoinType.INNER);
+//                current.setLength(0);
+//                i += 2;
+//            } else if (fieldPath.charAt(i) == '>') {
+//                parts.add(current.toString());
+//                joinTypes.add(JoinType.RIGHT);
+//                current.setLength(0);
+//                i++;
+//            } else if (fieldPath.charAt(i) == '.') {
+//                parts.add(current.toString());
+//                joinTypes.add(JoinType.LEFT);
+//                current.setLength(0);
+//                i++;
+//            } else {
+//                current.append(fieldPath.charAt(i));
+//                i++;
+//            }
+//        }
+//
+//        parts.add(current.toString());
+//
+//        int len = parts.size();
+//
+//        if (len == 1) {
+//            return fieldPath;
+//        }
+//
+//        // Root mapping
+//        putWithPrecedence(
+//                fieldsMappingAlias,
+//                parts.get(0),
+//                parts.get(0),
+//                rootJoinType
+//        );
+//
+//        // Register intermediate joins only (exclude leaf)
+//        for (int idx = 0; idx < len - 2; idx++) {
+//            String key = parts.get(idx) + "." + parts.get(idx + 1);
+//            putWithPrecedence(
+//                    fieldsMappingAlias,
+//                    key,
+//                    parts.get(idx + 1),
+//                    joinTypes.get(idx)
+//            );
+//        }
+//
+//        // Return leaf alias
+//        if (len == 2) {
+//            return parts.get(0) + "." + parts.get(1);
+//        }
+//
+//        return parts.get(len - 2) + "." + parts.get(len - 1);
+//    }
+//
+//    private static void putWithPrecedence(
+//            Map<String, AliasJoinType> map,
+//            String key,
+//            String alias,
+//            JoinType newJoinType) {
+//
+//        AliasJoinType existing = map.get(key);
+//
+//        if (existing == null || precedence(newJoinType) > precedence(existing.getJoinType())) {
+//            map.put(
+//                    key,
+//                    AliasJoinType.builder()
+//                            .alias(alias)
+//                            .joinType(newJoinType)
+//                            .build()
+//            );
+//        }
+//    }
+//
+//    private static int precedence(JoinType joinType) {
+//        return switch (joinType) {
+//            case INNER ->
+//                3;
+//            case RIGHT ->
+//                2;
+//            case LEFT ->
+//                1;
+//            default ->
+//                0;
+//        };
+//    }
     private static List<String> getFieldList(Constructor<?> targetConstructor) {
         Parameter[] params = targetConstructor.getParameters();
         return Arrays.stream(params)

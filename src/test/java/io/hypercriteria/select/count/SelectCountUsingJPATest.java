@@ -5,6 +5,7 @@ import io.sample.model.User;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -21,9 +22,14 @@ class SelectCountUsingJPATest extends BaseSelectCountTest {
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = resolveJoinAwarePath(root, fieldPath);
 
-        cq.select(cb.count(path));
+        if (fieldPath.equals("payments")) {
+            Join<User, Payment> join = root.join("payments");
+            cq.select(cb.count(join));
+        } else {
+            Path<?> path = resolveJoinAwarePath(root, fieldPath);
+            cq.select(cb.count(path));
+        }
 
         return entityManager.createQuery(cq).getSingleResult();
     }
@@ -52,7 +58,7 @@ class SelectCountUsingJPATest extends BaseSelectCountTest {
 
         return entityManager.createQuery(cq).getSingleResult();
     }
- 
+
     @Override
     Long countUsersFromPayments() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();

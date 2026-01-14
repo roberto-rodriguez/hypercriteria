@@ -1,7 +1,5 @@
 package io.utility;
-
-import io.sample.dao.PaymentDAO;
-import io.sample.dao.UserDAO;
+ 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
