@@ -6,6 +6,7 @@ import io.hypercriteria.criterion.projection.Abs;
 import io.hypercriteria.criterion.projection.Avg;
 import io.hypercriteria.criterion.projection.Count;
 import io.hypercriteria.criterion.projection.CountDistinct;
+import io.hypercriteria.criterion.projection.Dto;
 import io.hypercriteria.criterion.projection.Max;
 import io.hypercriteria.criterion.projection.Min;
 import io.hypercriteria.criterion.projection.base.Projection;
@@ -42,9 +43,7 @@ public class HyperCriteria implements Selectable {
 
     @Override
     public Criteria select(Class resultType) {
-        return Criteria.Builder.create(entityManager)
-                .resultType(resultType)
-                .build();
+        return select(dto(resultType));
     }
 
     @Override
@@ -61,6 +60,10 @@ public class HyperCriteria implements Selectable {
 
     public static Property property(String fieldPath) {
         return new Property(fieldPath);
+    }
+
+    public static Dto dto(Class<?> dtoType) {
+        return new Dto(dtoType);
     }
 
 //    public static PropertyProjection groupProperty(String fieldPath) {

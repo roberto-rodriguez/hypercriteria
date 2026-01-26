@@ -1,5 +1,6 @@
 package io.hypercriteria.context;
 
+import io.hypercriteria.util.ObjectUtils;
 import javax.persistence.criteria.From;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,23 @@ public class JoinNode {
 
     public JoinNode(JoinKey key) {
         this.key = key;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof JoinNode)) {
+            return false;
+        }
+        JoinNode that = (JoinNode) o;
+        return ObjectUtils.equals(key, that.key);
+    }
+
+    @Override
+    public int hashCode() {
+        return ObjectUtils.hash(key);
     }
 
     public From<?, ?> toFrom(QueryContext ctx) {

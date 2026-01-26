@@ -1,5 +1,5 @@
 package io.hypercriteria.select.property;
- 
+
 import io.sample.model.User;
 import java.util.List;
 
@@ -10,41 +10,68 @@ import java.util.List;
 class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
 
     @Override
-    public Object selectByProperty(String fieldPath) {
+    public Object selectProperty(String fieldPath) {
         return userDAO
                 .select(fieldPath)
                 .getSingleResult();
     }
 
     @Override
-    public List<String> listByProperty(String fieldPath) {
-        return userDAO
-                .select(fieldPath) 
-                .getResultList();
-    }
-    
-    @Override
-    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
-        return userDAO
-                .select(fieldPath)
-                .innerJoin("address", "a")
-                .getResultList();
+    public Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath) {
+        return selectProperty(fieldPath);
     }
 
     @Override
-    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+    public Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
         return userDAO
                 .select(fieldPath)
-                .from(User.class, "u")
-                .innerJoin("u.address", "a")
-                .getResultList();
+                .leftJoin("address", "a")
+                .getSingleResult();
     }
- 
+
     @Override
-    public List<String> listDistinctByProperty(String fieldPath) {
+    public Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath) {
+        return selectProperty(fieldPath);
+    }
+
+    @Override
+    public Object selectNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath) {
         return userDAO
-                .select(fieldPath) 
-                .distinct()
+                .select(fieldPath)
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "s")
+                .getSingleResult();
+    }
+
+    @Override
+    public List<String> listProperty(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
                 .getResultList();
     }
+//    
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+//        return userDAO
+//                .select(fieldPath)
+//                .innerJoin("address", "a")
+//                .getResultList();
+//    }
+//
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+//        return userDAO
+//                .select(fieldPath)
+//                .from(User.class, "u")
+//                .innerJoin("u.address", "a")
+//                .getResultList();
+//    }
+// 
+//    @Override
+//    public List<String> listDistinctByProperty(String fieldPath) {
+//        return userDAO
+//                .select(fieldPath) 
+//                .distinct()
+//                .getResultList();
+//    }
 }

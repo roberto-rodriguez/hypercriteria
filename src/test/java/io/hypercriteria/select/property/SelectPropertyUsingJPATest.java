@@ -1,12 +1,12 @@
 package io.hypercriteria.select.property;
 
 import io.sample.model.Address;
+import io.sample.model.State;
 import io.sample.model.User;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
@@ -17,149 +17,110 @@ import javax.persistence.criteria.Root;
 class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
 
     @Override
-    Object selectByProperty(String fieldPath) {
-
+    Object selectProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = resolveJoinAwarePath(root, fieldPath);
+        Path<?> path = root.get(fieldPath);
 
         cq.select(path);
-
-        return entityManager.createQuery(cq).getSingleResult();
+        return getSingleResult(cq);
     }
 
     @Override
-    List<String> listByProperty(String fieldPath) {
-
+    Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<String> cq = cb.createQuery(String.class);
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
         Root<User> root = cq.from(User.class);
-        Path<String> path = resolveJoinAwarePath(root, fieldPath);
+        Join<User, Address> addressJoin = root.join("address");
 
-        cq.select(path);
-
-        return entityManager.createQuery(cq).getResultList();
+        cq.select(addressJoin.get(lastSegment(fieldPath)));
+        return getSingleResult(cq);
     }
 
     @Override
-    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+    Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
+        return selectNestedPropertyOneLevel_inplicitJoin(fieldPath);
+    }
+
+    @Override
+    Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<String> cq = cb.createQuery(String.class);
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
         Root<User> root = cq.from(User.class);
-        Path<Address> path = root.get("address");
+        Join<User, Address> addressJoin = root.join("address");
+        Join<Address, State> stateJoin = addressJoin.join("state");
 
+        cq.select(stateJoin.get(lastSegment(fieldPath)));
+        return getSingleResult(cq);
+    }
+
+    @Override
+    Object selectNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath) {
+        return selectNestedPropertyTwoLevels_inplicitJoin(fieldPath);
+    }
+
+    private String lastSegment(String fieldPath) {
         String[] segments = fieldPath.split("\\.");
-        String lastSegment = segments[segments.length - 1];
-
-        cq.select(path.get(lastSegment));
-
-        return entityManager.createQuery(cq).getResultList();
+        return segments[segments.length - 1];
     }
 
     @Override
-    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
-        return listByPropertyWithInnerJoin(fieldPath);
-    }
-
-    @Override
-    List<String> listDistinctByProperty(String fieldPath) {
-
+    List<String> listProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
         Root<User> root = cq.from(User.class);
-        Path<String> path = resolveJoinAwarePath(root, fieldPath);
+        Path<String> path = root.get(lastSegment(fieldPath));
 
-        cq.select(path)
-                .distinct(true)
-                .orderBy(cb.asc(path));
-
+        cq.select(path);
         return entityManager.createQuery(cq).getResultList();
     }
+//
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<String> cq = cb.createQuery(String.class);
+//
+//        Root<User> root = cq.from(User.class);
+//        Path<Address> path = root.get("address");
+//
+//        String[] segments = fieldPath.split("\\.");
+//        String lastSegment = segments[segments.length - 1];
+//
+//        cq.select(path.get(lastSegment));
+//
+//        return entityManager.createQuery(cq).getResultList();
+//    }
+//
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+//        return listByPropertyWithInnerJoin(fieldPath);
+//    }
+//
+//    @Override
+//    List<String> listDistinctByProperty(String fieldPath) {
+//
+//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<String> cq = cb.createQuery(String.class);
+//
+//        Root<User> root = cq.from(User.class);
+//        Path<String> path = resolveJoinAwarePath(root, fieldPath);
+//
+//        cq.select(path)
+//                .distinct(true)
+//                .orderBy(cb.asc(path));
+//
+//        return entityManager.createQuery(cq).getResultList();
+//    }
 
-    /**
-     * Resolves a join-aware field path.
-     *
-     * Supported delimiters: . -> LEFT join (default) > -> RIGHT join
-     * <> -> INNER join
-     *
-     * Examples: firstName address.street address<>state.name >address.city
-     */
-    @SuppressWarnings("unchecked")
-    private <T> Path<T> resolveJoinAwarePath(Root<User> root, String fieldPath) {
-
-        JoinType currentJoinType = JoinType.LEFT; // default
-        String path = fieldPath;
-
-        // Root join override
-        if (path.startsWith("<>")) {
-            currentJoinType = JoinType.INNER;
-            path = path.substring(2);
-        } else if (path.startsWith(">")) {
-            currentJoinType = JoinType.RIGHT;
-            path = path.substring(1);
-        }
-
-        From<?, ?> from = root;
-
-        while (true) {
-
-            int nextDelimiterIndex = findNextDelimiter(path);
-            if (nextDelimiterIndex == -1) {
-                return (Path<T>) from.get(path);
-            }
-
-            String attribute = path.substring(0, nextDelimiterIndex);
-            String delimiter = extractDelimiter(path, nextDelimiterIndex);
-
-            from = from.join(attribute, currentJoinType);
-
-            path = path.substring(nextDelimiterIndex + delimiter.length());
-            currentJoinType = toJoinType(delimiter);
-        }
-    }
-
-    private int findNextDelimiter(String path) {
-        int dot = path.indexOf('.');
-        int right = path.indexOf('>');
-        int inner = path.indexOf("<>");
-
-        int idx = Integer.MAX_VALUE;
-
-        if (dot != -1) {
-            idx = dot;
-        }
-        if (right != -1) {
-            idx = Math.min(idx, right);
-        }
-        if (inner != -1) {
-            idx = Math.min(idx, inner);
-        }
-
-        return idx == Integer.MAX_VALUE ? -1 : idx;
-    }
-
-    private String extractDelimiter(String path, int index) {
-        if (path.startsWith("<>", index)) {
-            return "<>";
-        }
-        return String.valueOf(path.charAt(index));
-    }
-
-    private JoinType toJoinType(String delimiter) {
-        return switch (delimiter) {
-            case "." ->
-                JoinType.LEFT;
-            case ">" ->
-                JoinType.RIGHT;
-            case "<>" ->
-                JoinType.INNER;
-            default ->
-                throw new IllegalArgumentException("Unsupported join delimiter: " + delimiter);
-        };
+    private Object getSingleResult(CriteriaQuery cq) {
+        return entityManager.createQuery(cq)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
     }
 }

@@ -1,5 +1,6 @@
 package io.hypercriteria;
 
+import static io.hypercriteria.HyperCriteria.dto;
 import static io.hypercriteria.HyperCriteria.property;
 import io.hypercriteria.base.Selectable;
 import io.hypercriteria.criterion.projection.base.Projection;
@@ -52,10 +53,7 @@ public class HyperDAO<E> implements Selectable {
 
     @Override
     public Criteria select(Class resultType) {
-        return Criteria.Builder.create(entityManager)
-                .entityType(entityType)
-                .resultType(resultType)
-                .build();
+        return select(dto(resultType));
     }
 
     @Override

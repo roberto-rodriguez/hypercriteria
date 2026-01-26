@@ -11,7 +11,7 @@ import java.util.List;
 class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
 
     @Override
-    public Object selectByProperty(String fieldPath) {
+    public Object selectProperty(String fieldPath) {
         return HyperCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -19,32 +19,63 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
     }
 
     @Override
-    public List<String> listByProperty(String fieldPath) {
+    public Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath) {
+        return selectProperty(fieldPath);
+    }
+
+    @Override
+    public Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
         return HyperCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
-                .getResultList();
+                .leftJoin("address", "a")
+                .getSingleResult();
     }
 
+    @Override
+    public Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath) {
+        return selectProperty(fieldPath);
+    }
 
     @Override
-    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+    public Object selectNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath) {
         return HyperCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
-                .innerJoin("address", "a")
-                .getResultList();
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "s")
+                .getSingleResult();
     }
-    
-    
+
     @Override
-    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
-        return HyperCriteria.using(entityManager)
+    public List<String> listProperty(String fieldPath) {
+        List<String> list = HyperCriteria.using(entityManager)
                 .select(fieldPath)
-                .from(User.class, "u")
-                .innerJoin("u.address", "a")
-                .getResultList();
+                .from(User.class)
+                .getResultList(String.class);
+
+        return list;
     }
+//
+//
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+//        return HyperCriteria.using(entityManager)
+//                .select(fieldPath)
+//                .from(User.class)
+//                .innerJoin("address", "a")
+//                .getResultList();
+//    }
+//    
+//    
+//    @Override
+//    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+//        return HyperCriteria.using(entityManager)
+//                .select(fieldPath)
+//                .from(User.class, "u")
+//                .innerJoin("u.address", "a")
+//                .getResultList();
+//    }
 //
 //    @Override
 //    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
@@ -54,13 +85,13 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
 //                .innerJoin("u.address", "a")
 //                .getResultList();
 //    }
-
-    @Override
-    public List<String> listDistinctByProperty(String fieldPath) {
-        return HyperCriteria.using(entityManager)
-                .select(fieldPath)
-                .distinct()
-                .from(User.class)
-                .getResultList();
-    }
+//
+//    @Override
+//    public List<String> listDistinctByProperty(String fieldPath) {
+//        return HyperCriteria.using(entityManager)
+//                .select(fieldPath)
+//                .distinct()
+//                .from(User.class)
+//                .getResultList();
+//    }
 }

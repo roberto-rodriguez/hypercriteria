@@ -32,34 +32,34 @@ public class Criteria {
 
     private final EntityManager entityManager;
 
-    //Builder
+    // Builder state
     private Class<?> entityType;
-    private Class<?> resultType;
     private boolean distinct;
-
     private String rootAlias;
+
     public Optional<String> constructorName = Optional.empty();
 
-    //Intermediate
+    // Query structure
     private Optional<Projection> projection = Optional.empty();
-    private Projection groupBy;//TODO: Make a projection for DTOs too
+    private Projection groupBy;
 
     private final LinkedHashMap<String, Class> aliasTypeMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> joinInfoMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> fetchInfoMap = new LinkedHashMap<>();
 
     private final List<Criterion> restrictions = new ArrayList<>();
-
-    private final List<Order> orderList = new ArrayList();
+    private final List<Order> orderList = new ArrayList<>();
 
     private Optional<Integer> firstResult = Optional.empty();
     private Optional<Integer> maxResults = Optional.empty();
 
-    //package visibility
     private Criteria(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
+    /* =======================
+      Builder methods
+       ======================= */
     public Criteria from(Class entityType) {
         return from(entityType, "");
     }
@@ -67,10 +67,6 @@ public class Criteria {
     public Criteria from(Class entityType, String rootAlias) {
         this.entityType = entityType;
         this.rootAlias = rootAlias;
-
-        if (this.resultType == null) {
-            this.resultType = entityType;
-        }
 
         aliasTypeMap.put(rootAlias, entityType);
         return this;
@@ -96,10 +92,7 @@ public class Criteria {
     }
 
     public Criteria fetch(String fetchPath) {
-//        if (this.resultType == null) {
-//            throw new IllegalArgumentException("Fetch clause is expected to be after 'from'. ");
-//        }
-//        PathUtil.getPathInfo(entityManager, resultType, fetchPath, fetchToAliasJoinTypeMap);
+//   TODO
         return this;
     }
 
@@ -138,85 +131,118 @@ public class Criteria {
         return this;
     }
 
-    public <R> Object getSingleResult(Class<R> resultType) {
-        this.resultType = resultType;
-        return (R) getSingleResult();
+    /* =======================
+       Result execution
+       ======================= */
+    public Object getSingleResult() {
+        return getOptionalResult().orElse(null);
     }
 
-    public Object getSingleResult() {
-        return query()
+    public Optional<?> getOptionalResult() {
+        QueryContext ctx = buildContext();
+        Class<?> resultType = resolveResultType(ctx);
+
+        return query(ctx, entityType, resultType)
                 .getResultStream()
-                .findFirst()
-                .orElse(null);
+                .findFirst();
+    }
+
+    public <R> R getSingleResult(Class<R> userType) {
+        return getOptionalResult(userType).orElse(null);
+    }
+
+    public <R> Optional<R> getOptionalResult(Class<R> userType) {
+        QueryContext ctx = buildContext();
+        Class<?> resolvedType = resolveResultType(ctx);
+
+        validateResultType(userType, resolvedType);
+
+        return query(ctx, entityType, userType)
+                .getResultStream()
+                .findFirst();
     }
 
     public List getResultList() {
-        return (List) query().getResultList();
+        QueryContext ctx = buildContext();
+        Class resultType = resolveResultType(ctx);
+
+        return query(ctx, entityType, resultType).getResultList();
     }
 
-    private TypedQuery query() {
-        if (entityType == null) {
-            throw new IllegalArgumentException("No root was specified. Please define a from clause, specifying the root entity.");
-        }
+    public <R> List<R> getResultList(Class<R> userType) {
+        QueryContext ctx = buildContext();
+        Class<?> resolvedType = resolveResultType(ctx);
 
-        // Initialize context
-        QueryContext ctx = new QueryContext(
+        validateResultType(userType, resolvedType);
+
+        return query(ctx, entityType, userType).getResultList();
+    }
+
+    /* =======================
+       Internals
+       ======================= */
+    private QueryContext buildContext() {
+        return new QueryContext(
                 entityManager,
                 entityType,
                 distinct,
                 aliasTypeMap
         );
+    }
 
-        // Get return type
-        if (projection.isPresent()) {
-            this.resultType = projection.get().getReturnType(ctx);
+    private Class<?> resolveResultType(QueryContext ctx) {
+        return projection
+                .map(p -> p.getReturnType(ctx))
+                .orElse(entityType);
+    }
+
+    private <R> void validateResultType(Class<R> userType, Class<?> resolvedType) {
+        if (!userType.isAssignableFrom(resolvedType)) {
+            throw new IllegalArgumentException(
+                    "Expected result type " + userType.getName()
+                    + " but query resolves to " + resolvedType.getName()
+            );
+        }
+    }
+
+    private <T, R> TypedQuery<R> query(
+            QueryContext ctx,
+            Class<T> rootType,
+            Class<R> resultType
+    ) {
+        if (rootType == null) {
+            throw new IllegalArgumentException(
+                    "No root was specified. Please define a from clause."
+            );
         }
 
-        // Create builder and root
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery criteriaQuery = builder.createQuery(resultType);
+        CriteriaQuery<R> criteriaQuery = builder.createQuery(resultType);
+        Root<T> root = criteriaQuery.from(rootType);
 
-        Root root = criteriaQuery.from(entityType);
-
-        if (distinct && entityType == resultType) {
+        if (distinct) {
             criteriaQuery.distinct(true);
         }
 
-        // Complete context once we have the root
         ctx.complete(builder, root, rootAlias, joinInfoMap);
 
-        if (projection.isPresent()) {
-            projection.get().apply(ctx, criteriaQuery);
-        }
+        projection.ifPresent(p -> p.apply(ctx, criteriaQuery));
 
         if (groupBy != null) {
             criteriaQuery.groupBy(groupBy.toExpression(ctx));
         }
 
-//        if (!orderList.isEmpty()) {
-//            criteriaQuery.orderBy(orderList.stream()
-//                    .map(o -> o.build(builder, joinMap))
-//                    .collect(Collectors.toList()));
-//        }
-        TypedQuery query = entityManager.createQuery(criteriaQuery);
+        TypedQuery<R> query = entityManager.createQuery(criteriaQuery);
 
-        if (firstResult.isPresent()) {
-            query.setFirstResult(firstResult.get());
-        }
+        firstResult.ifPresent(query::setFirstResult);
+        maxResults.filter(m -> m > 0).ifPresent(query::setMaxResults);
 
-        if (maxResults.isPresent() && maxResults.get() > 0) {
-            query.setMaxResults(maxResults.get());
-        }
         return query;
     }
 
-    // -- Builder --
+    // -- Internal Builder --
     public void setEntityType(Class entityType) {
         this.entityType = entityType;
-    }
-
-    public void setResultType(Class resultType) {
-        this.resultType = resultType;
     }
 
     public void setProjection(Projection projection) {
@@ -228,7 +254,6 @@ public class Criteria {
 
         private final EntityManager entityManager;
         private Class entityType;
-        private Class resultType;
         private Projection projection;
 
         private Builder(EntityManager entityManager) {
@@ -244,24 +269,14 @@ public class Criteria {
             return this;
         }
 
-        public Builder resultType(Class resultType) {
-            this.resultType = resultType;
-            return this;
-        }
-
         public Builder projection(Projection projection) {
             this.projection = projection;
             return this;
         }
 
         public Criteria build() {
-            if (resultType == null) {
-                resultType = entityType;//By default set entityType as resultType
-            }
-
             Criteria criteria = new Criteria(entityManager);
             criteria.setEntityType(entityType);
-            criteria.setResultType(resultType);
             criteria.setProjection(projection);
             return criteria;
         }
