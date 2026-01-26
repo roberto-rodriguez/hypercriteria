@@ -1,5 +1,6 @@
 package io.hypercriteria;
 
+import static io.hypercriteria.HyperCriteria.property;
 import io.hypercriteria.base.Selectable;
 import io.hypercriteria.criterion.projection.base.Projection;
 import java.lang.reflect.ParameterizedType;
@@ -39,22 +40,30 @@ public class HyperDAO<E> implements Selectable {
     // HyperCriteria API
     @Override
     public Criteria select() {
-        return new Criteria(entityManager, entityType, entityType);
+        return Criteria.Builder.create(entityManager)
+                .entityType(entityType)
+                .build();
     }
 
     @Override
     public Criteria select(String property) {
-        return new Criteria(entityManager, entityType, HyperCriteria.property(property));
+        return select(property(property));
     }
 
     @Override
     public Criteria select(Class resultType) {
-        return new Criteria(entityManager, entityType, resultType);
+        return Criteria.Builder.create(entityManager)
+                .entityType(entityType)
+                .resultType(resultType)
+                .build();
     }
 
     @Override
     public Criteria select(Projection projection) {
-        return new Criteria(entityManager, entityType, projection);
+        return Criteria.Builder.create(entityManager)
+                .entityType(entityType)
+                .projection(projection)
+                .build();
     }
 
     //Visible for testing

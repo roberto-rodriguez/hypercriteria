@@ -10,8 +10,7 @@ import io.hypercriteria.criterion.projection.Max;
 import io.hypercriteria.criterion.projection.Min;
 import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.criterion.projection.Sum;
-import io.hypercriteria.criterion.projection.base.PropertyProjection;
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
+import io.hypercriteria.criterion.projection.Property;
 import javax.persistence.EntityManager;
 
 /**
@@ -33,22 +32,26 @@ public class HyperCriteria implements Selectable {
 //    ------- Selects ------------
     @Override
     public Criteria select() {
-        return new Criteria(entityManager);
+        return Criteria.Builder.create(entityManager).build();
     }
 
     @Override
     public Criteria select(String fieldPath) {
-        return new Criteria(entityManager, property(fieldPath));
+        return select(property(fieldPath));
     }
 
     @Override
     public Criteria select(Class resultType) {
-        return new Criteria(entityManager, resultType);
+        return Criteria.Builder.create(entityManager)
+                .resultType(resultType)
+                .build();
     }
 
     @Override
     public Criteria select(Projection projection) {
-        return new Criteria(entityManager, projection);
+        return Criteria.Builder.create(entityManager)
+                .projection(projection)
+                .build();
     }
 
     // -------- Projections ------------
@@ -56,22 +59,21 @@ public class HyperCriteria implements Selectable {
         return new ProjectionList();
     }
 
-    public static PropertyProjection property(String fieldPath) {
-        return new PropertyProjection(fieldPath);
+    public static Property property(String fieldPath) {
+        return new Property(fieldPath);
     }
 
-    public static PropertyProjection groupProperty(String fieldPath) {
-        PropertyProjection propertyProjection = new PropertyProjection(fieldPath);
-        propertyProjection.setGroupBy(true);
-        return propertyProjection;
-    }
-
+//    public static PropertyProjection groupProperty(String fieldPath) {
+//        PropertyProjection propertyProjection = new PropertyProjection(fieldPath);
+//        propertyProjection.setGroupBy(true);
+//        return propertyProjection;
+//    }
     public static Abs abs(String fieldPath) {
         return new Abs(fieldPath);
     }
 
-    public static Abs abs(SimpleProjection simpleProjection) {
-        return new Abs(simpleProjection);
+    public static Abs abs(Projection nestedProjection) {
+        return new Abs(nestedProjection);
     }
 
     public static Avg avg(String fieldPath) {
@@ -106,8 +108,8 @@ public class HyperCriteria implements Selectable {
         return new Sum(fieldPath);
     }
 
-    public static Sum sum(SimpleProjection simpleProjection) {
-        return new Sum(simpleProjection);
+    public static Sum sum(Projection nestedProjection) {
+        return new Sum(nestedProjection);
     }
 
 }

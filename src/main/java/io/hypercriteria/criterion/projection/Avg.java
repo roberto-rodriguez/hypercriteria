@@ -5,34 +5,22 @@
  */
 package io.hypercriteria.criterion.projection;
 
-import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+import io.hypercriteria.context.QueryContext;
+import io.hypercriteria.criterion.projection.base.Projection;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import java.util.Map;
 
 /**
  *
  * @author rrodriguez
  */
-public class Avg extends TypedSimpleProjection {
+public class Avg extends Projection {
 
     public Avg(String fieldPath) {
-        super(fieldPath);
+        super(fieldPath, t -> Double.class);
     }
 
     @Override
-    public Expression<Double> build(CriteriaBuilder builder, Expression expression) {
-        return builder.avg(expression);
-    }
-
-    @Override
-    public void applyGroupBy(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-    }
-
-    @Override
-    protected void updateReturnType() {
-        pathInfo.setJavaType(Double.class);
+    public Expression<Double> build(QueryContext ctx, Expression expression) {
+        return ctx.getCriteriaBuilder().avg(expression);
     }
 }

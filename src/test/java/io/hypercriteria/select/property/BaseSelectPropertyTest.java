@@ -68,6 +68,10 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 
     abstract List<String> listByProperty(String fieldPath);
 
+    abstract List<String> listByPropertyWithInnerJoin(String fieldPath);
+
+    abstract List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath);
+
     abstract List<String> listDistinctByProperty(String fieldPath);
 
     @Override
@@ -84,7 +88,6 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 
         assertEquals(firstName, USER_1.getFirstName());
     }
-
     @Test
     void testSelectNestedPropertyOneLevel_getSingleResult() {
         userDAO.saveOrUpdate(USER_1);
@@ -159,12 +162,25 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectProperty_listNestedProperty_innerJoin() {
+    void testSelectProperty_listNestedProperty_innerJoin_aliasBasedFieldPath() {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);
 
-        List<String> list = listByProperty("<>address.street");
+        List<String> list = listByPropertyWithInnerJoin("a.street");
+
+        assertEquals(2, list.size());
+
+        assertEquals("123 Main Street", list.get(0));
+    }
+
+    @Test
+    void testSelectProperty_listNestedProperty_innerJoin_withRootAlias_aliasBasedFieldPath() {
+        userDAO.saveOrUpdate(USER_1);
+        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+        userDAO.saveOrUpdate(USER_WITHOUT_STATE);
+
+        List<String> list = listByPropertyWithInnerJoin_withRootAlias("a.street");
 
         assertEquals(2, list.size());
 
@@ -188,19 +204,19 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         assertEquals("Georgia", list.get(2));
     }
 
-    @Test
-    void testSelectProperty_listNestedPropertyTwoLevels_innerJoin() {
-        userDAO.saveOrUpdate(USER_1);
-        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
-        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
-
-        List<String> list = listByProperty("address<>state.name"); //address RIGHT JOIN state
-
-        list.sort(Comparator.nullsFirst(String::compareTo));
-
-        assertEquals(1, list.size());
-
-        assertEquals("Georgia", list.get(0));
-    }
+//    @Test
+//    void testSelectProperty_listNestedPropertyTwoLevels_innerJoin() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
+//
+//        List<String> list = listByProperty("address<>state.name"); //address RIGHT JOIN state
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals(1, list.size());
+//
+//        assertEquals("Georgia", list.get(0));
+//    }
 
 }

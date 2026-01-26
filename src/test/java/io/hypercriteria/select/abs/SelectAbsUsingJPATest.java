@@ -1,9 +1,9 @@
 package io.hypercriteria.select.abs;
 
-import io.hypercriteria.util.NumericType;
-import io.hypercriteria.util.PathUtil;
+import io.hypercriteria.util.NumericType; 
 import io.sample.model.Payment;
 import io.sample.model.User;
+import io.utility.TypeUtil;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,7 +22,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     List absByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -43,7 +43,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, User.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -61,7 +61,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     Object absSumByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -79,7 +79,7 @@ class SelectAbsUsingJPATest extends BaseSelectAbsTest {
     Object sumAbsByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         NumericType numericType = NumericType.from(attributeType);
 

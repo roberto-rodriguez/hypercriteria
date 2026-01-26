@@ -13,18 +13,14 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public class Count extends Projection {
+public class Property extends Projection {
 
-    public Count() {
-        this("");//Will produce root
-    }
-
-    public Count(String fieldPath) {
-        super(fieldPath, t -> Long.class);
+    public Property(String propertyName) {
+        super(propertyName);
     }
 
     @Override
-    public Expression<Long> build(QueryContext ctx, Expression expression) {
-        return ctx.getCriteriaBuilder().count(expression);
+    public Expression build(QueryContext ctx, Expression expression) {
+        return expression;
     }
 }

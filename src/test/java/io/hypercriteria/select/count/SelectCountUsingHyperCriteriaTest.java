@@ -16,7 +16,7 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
     public Long countByProperty(String fieldPath) {
         return (Long) HyperCriteria.using(entityManager)
                 .select(count(fieldPath))
-                .from(User.class)
+                .from(User.class) 
                 .getSingleResult();
     }
 
@@ -52,5 +52,4 @@ class SelectCountUsingHyperCriteriaTest extends BaseSelectCountTest {
                 .getSingleResult();
     }
 
-     
 }

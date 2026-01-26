@@ -1,13 +1,11 @@
- 
-package io.hypercriteria.select.property; 
+package io.hypercriteria.select.property;
 
+import io.sample.model.Address;
 import io.sample.model.User;
 import java.util.List;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -47,6 +45,27 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
     }
 
     @Override
+    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> cq = cb.createQuery(String.class);
+
+        Root<User> root = cq.from(User.class);
+        Path<Address> path = root.get("address");
+
+        String[] segments = fieldPath.split("\\.");
+        String lastSegment = segments[segments.length - 1];
+
+        cq.select(path.get(lastSegment));
+
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+        return listByPropertyWithInnerJoin(fieldPath);
+    }
+
+    @Override
     List<String> listDistinctByProperty(String fieldPath) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -56,8 +75,8 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
         Path<String> path = resolveJoinAwarePath(root, fieldPath);
 
         cq.select(path)
-          .distinct(true)
-          .orderBy(cb.asc(path));
+                .distinct(true)
+                .orderBy(cb.asc(path));
 
         return entityManager.createQuery(cq).getResultList();
     }
@@ -65,16 +84,10 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
     /**
      * Resolves a join-aware field path.
      *
-     * Supported delimiters:
-     *   .   -> LEFT join (default)
-     *   >   -> RIGHT join
-     *   <>  -> INNER join
+     * Supported delimiters: . -> LEFT join (default) > -> RIGHT join
+     * <> -> INNER join
      *
-     * Examples:
-     *   firstName
-     *   address.street
-     *   address<>state.name
-     *   >address.city
+     * Examples: firstName address.street address<>state.name >address.city
      */
     @SuppressWarnings("unchecked")
     private <T> Path<T> resolveJoinAwarePath(Root<User> root, String fieldPath) {
@@ -117,9 +130,15 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
 
         int idx = Integer.MAX_VALUE;
 
-        if (dot != -1) idx = dot;
-        if (right != -1) idx = Math.min(idx, right);
-        if (inner != -1) idx = Math.min(idx, inner);
+        if (dot != -1) {
+            idx = dot;
+        }
+        if (right != -1) {
+            idx = Math.min(idx, right);
+        }
+        if (inner != -1) {
+            idx = Math.min(idx, inner);
+        }
 
         return idx == Integer.MAX_VALUE ? -1 : idx;
     }
@@ -133,10 +152,14 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
 
     private JoinType toJoinType(String delimiter) {
         return switch (delimiter) {
-            case "." -> JoinType.LEFT;
-            case ">" -> JoinType.RIGHT;
-            case "<>" -> JoinType.INNER;
-            default -> throw new IllegalArgumentException("Unsupported join delimiter: " + delimiter);
+            case "." ->
+                JoinType.LEFT;
+            case ">" ->
+                JoinType.RIGHT;
+            case "<>" ->
+                JoinType.INNER;
+            default ->
+                throw new IllegalArgumentException("Unsupported join delimiter: " + delimiter);
         };
     }
 }

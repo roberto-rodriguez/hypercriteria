@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class Equal extends Criterion {
 
-    private Object value;
+    private final Object value;
 
     public Equal(String path, Object value) {
         super(path);

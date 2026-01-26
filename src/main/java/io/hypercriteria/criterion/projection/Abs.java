@@ -5,34 +5,26 @@
  */
 package io.hypercriteria.criterion.projection;
 
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
-import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
+import io.hypercriteria.context.QueryContext;
+import io.hypercriteria.criterion.projection.base.Projection;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.From;
-import java.util.Map;
 
 /**
  *
  * @author rrodriguez
  */
-public class Abs extends TypedSimpleProjection {
+public class Abs extends Projection {
 
     public Abs(String fieldPath) {
         super(fieldPath);
     }
 
-    public Abs(SimpleProjection nestedProjection) {
+    public Abs(Projection nestedProjection) {
         super(nestedProjection);
     }
 
     @Override
-    public Expression build(CriteriaBuilder builder, Expression expression) {
-        return builder.abs(expression);
-    }
-
-    @Override
-    public void applyGroupBy(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
+    public Expression build(QueryContext ctx, Expression expression) {
+        return ctx.getCriteriaBuilder().abs(expression);
     }
 }

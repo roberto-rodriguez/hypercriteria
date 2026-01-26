@@ -1,10 +1,13 @@
 package io.hypercriteria.select.entity;
- 
+
 import io.sample.model.User;
+import io.utility.TypeUtil;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -18,6 +21,26 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         cq.from(User.class);
+
+        return entityManager
+                .createQuery(cq)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    Object selectNestedEntity(Class rootType, String fieldPath) {
+        Class<?> resultType = TypeUtil.getType(fieldPath);
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery cq = cb.createQuery(resultType);
+        Root root = cq.from(rootType);
+
+        Path path = root.get(fieldPath);
+
+        cq.select(path);
 
         return entityManager
                 .createQuery(cq)
@@ -89,4 +112,5 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
                 .createQuery(cq)
                 .getResultList();
     }
+
 }

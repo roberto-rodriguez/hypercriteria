@@ -125,10 +125,10 @@ abstract class BaseSelectCountTest extends BaseTest {
 
         assertEquals(2, result);
     }
-    
-     @Test
+
+    @Test
     void testCountJoin_oneToMany() {
-        userDAO.saveOrUpdate(USER_WITH_PAYMENTS); 
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         long result = countByProperty("payments");
 
         assertEquals(2, result);

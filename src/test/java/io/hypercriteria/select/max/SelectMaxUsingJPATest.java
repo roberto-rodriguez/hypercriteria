@@ -1,9 +1,8 @@
-
 package io.hypercriteria.select.max;
-
-import io.hypercriteria.util.PathUtil;
+ 
 import io.sample.model.Payment;
 import io.sample.model.User;
+import io.utility.TypeUtil;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -21,7 +20,7 @@ class SelectMaxUsingJPATest extends BaseSelectMaxTest {
     Object maxByProperty(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, Payment.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 
@@ -42,7 +41,7 @@ class SelectMaxUsingJPATest extends BaseSelectMaxTest {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-        Class<?> attributeType = PathUtil.getAttributeType(entityManager, User.class, fieldPath);
+        Class<?> attributeType = TypeUtil.getType(fieldPath);
 
         CriteriaQuery cq = cb.createQuery(attributeType);
 

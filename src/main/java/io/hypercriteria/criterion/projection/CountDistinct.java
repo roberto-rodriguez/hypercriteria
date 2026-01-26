@@ -5,36 +5,26 @@
  */
 package io.hypercriteria.criterion.projection;
 
-import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
-import javax.persistence.criteria.CriteriaBuilder;
+import io.hypercriteria.context.QueryContext;
+import io.hypercriteria.criterion.projection.base.Projection;
 import javax.persistence.criteria.Expression;
 
 /**
  *
  * @author rrodriguez
  */
-public class CountDistinct extends TypedSimpleProjection {
+public class CountDistinct extends Projection {
 
     public CountDistinct() {
-        super("");//Will produce root
+        this("");//Will produce root
     }
 
     public CountDistinct(String fieldPath) {
-        super(fieldPath);
+        super(fieldPath, t -> Long.class);
     }
 
     @Override
-    public Expression<Long> build(CriteriaBuilder builder, Expression expression) {
-        return builder.countDistinct(expression);
-    }
-
-    @Override
-    protected void updateReturnType() {
-        pathInfo.setJavaType(Long.class);
-    }
-
-    @Override
-    protected void validatePath() throws IllegalArgumentException {
-        //Need to override parent, since count allows fieldPath where endsInAssociation = true
+    public Expression<Long> build(QueryContext ctx, Expression expression) {
+        return ctx.getCriteriaBuilder().countDistinct(expression);
     }
 }

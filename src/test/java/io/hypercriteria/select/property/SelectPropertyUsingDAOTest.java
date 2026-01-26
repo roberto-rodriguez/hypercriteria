@@ -1,5 +1,6 @@
 package io.hypercriteria.select.property;
  
+import io.sample.model.User;
 import java.util.List;
 
 /**
@@ -21,7 +22,24 @@ class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
                 .select(fieldPath) 
                 .getResultList();
     }
+    
+    @Override
+    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .innerJoin("address", "a")
+                .getResultList();
+    }
 
+    @Override
+    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .from(User.class, "u")
+                .innerJoin("u.address", "a")
+                .getResultList();
+    }
+ 
     @Override
     public List<String> listDistinctByProperty(String fieldPath) {
         return userDAO

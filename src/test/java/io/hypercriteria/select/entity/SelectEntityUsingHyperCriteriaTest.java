@@ -1,7 +1,7 @@
 package io.hypercriteria.select.entity;
 
 import io.hypercriteria.HyperCriteria;
-import io.sample.model.User;
+import io.sample.model.User; 
 import java.util.List;
 
 /**
@@ -15,6 +15,14 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
         return HyperCriteria.using(entityManager)
                 .select()
                 .from(User.class)
+                .getSingleResult();
+    }
+
+    @Override
+    Object selectNestedEntity(Class rootType, String path) {
+        return HyperCriteria.using(entityManager)
+                .select(path)
+                .from(rootType)
                 .getSingleResult();
     }
 

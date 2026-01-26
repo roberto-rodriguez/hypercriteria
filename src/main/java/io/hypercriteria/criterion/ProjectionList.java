@@ -5,12 +5,10 @@
  */
 package io.hypercriteria.criterion;
 
-import io.hypercriteria.Criteria; 
+import io.hypercriteria.Criteria;
 import io.hypercriteria.criterion.projection.base.Projection;
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +20,11 @@ import java.util.stream.Collectors;
  *
  * @author rrodriguez
  */
-public class ProjectionList implements Projection {
+public class ProjectionList //implements Projection 
+{
 
-    private final List<SimpleProjection> projections = new ArrayList<>(); 
-    private final Optional<Class> returnType; 
+    private final List<Projection> projections = new ArrayList<>();
+    private final Optional<Class> returnType;
 
     public ProjectionList() {
         this.returnType = Optional.empty();
@@ -35,45 +34,45 @@ public class ProjectionList implements Projection {
         this.returnType = Optional.of(dtoType);
     }
 
-    public ProjectionList add(SimpleProjection projection) {
+    public ProjectionList add(Projection projection) {
         projections.add(projection);
         return this;
     }
 
-    public ProjectionList add(SimpleProjection projection, String alias) {
+    public ProjectionList add(Projection projection, String alias) {
         projection.as(alias);
         projections.add(projection);
         return this;
     }
 
-    @Override
+//    @Override
     public void apply(Criteria criteria, CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-        query.multiselect(projections
-                .stream()
-                .map(p -> p.toSelection(builder, query, joinMap))
-                .collect(Collectors.toList()))
-                .distinct(criteria.isDistinct());
+//        query.multiselect(projections
+//                .stream()
+//                .map(p -> p.toSelection(builder, query, joinMap))
+//                .collect(Collectors.toList()))
+//                .distinct(criteria.isDistinct());
     }
 
-    @Override
+//    @Override
     public void applyGroupBy(CriteriaBuilder builder, CriteriaQuery query, Map<String, From> joinMap) {
-        Expression[] expressionsWithGroupBy
-                = projections.stream()
-                .filter(SimpleProjection::isGroupBy)
-                .map(p -> p.toExpression(builder, query, joinMap))
-                .toArray(Expression[]::new);
-
-        if (expressionsWithGroupBy.length > 0) {
-            query.groupBy(expressionsWithGroupBy);
-        }
+//        Expression[] expressionsWithGroupBy
+//                = projections.stream()
+//                        .filter(SimpleProjection::isGroupBy)
+//                        .map(p -> p.toExpression(builder, query, joinMap))
+//                        .toArray(Expression[]::new);
+//
+//        if (expressionsWithGroupBy.length > 0) {
+//            query.groupBy(expressionsWithGroupBy);
+//        }
     }
 
-    @Override
+//    @Override
     public Optional<Class> getReturnType() {
         return returnType;
     }
- 
-    public List<SimpleProjection> getProjections() {
+
+    public List<Projection> getProjections() {
         return projections;
-    } 
+    }
 }

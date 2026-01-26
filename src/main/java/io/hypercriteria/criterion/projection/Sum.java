@@ -5,8 +5,8 @@
  */
 package io.hypercriteria.criterion.projection;
 
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
-import io.hypercriteria.criterion.projection.base.TypedSimpleProjection;
+import io.hypercriteria.context.QueryContext;
+import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.util.NumericType;
 import static io.hypercriteria.util.NumericType.BYTE;
 import static io.hypercriteria.util.NumericType.DOUBLE;
@@ -21,33 +21,29 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public class Sum extends TypedSimpleProjection {
+public class Sum extends Projection {
 
     public Sum(String fieldPath) {
-        super(fieldPath);
+        super(fieldPath, t -> NumericType.from(t).getPromotionTypeWhenSuming());
     }
 
-    public Sum(SimpleProjection nestedProjection) {
-        super(nestedProjection);
+    public Sum(Projection nestedProjection) {
+        super(nestedProjection, t -> NumericType.from(t).getPromotionTypeWhenSuming());
     }
 
     @Override
-    public Expression build(CriteriaBuilder builder, Expression expression) {
-        NumericType numericType = NumericType.from(getReturnType().get());
+    public Expression build(QueryContext ctx, Expression expression) {
+        CriteriaBuilder criteriaBuilder = ctx.getCriteriaBuilder();
+        NumericType numericType = NumericType.from(pathExpression.getJavaType(ctx));
 
         return switch (numericType) {
             case BYTE, SHORT, INTEGER, LONG ->
-                builder.sumAsLong(expression);
+                criteriaBuilder.sumAsLong(expression);
             case FLOAT, DOUBLE ->
-                builder.sumAsDouble(expression);
+                criteriaBuilder.sumAsDouble(expression);
             default ->
-                builder.sum(expression);
+                criteriaBuilder.sum(expression);
         };
     }
 
-    @Override
-    protected void updateReturnType() {
-        NumericType numericType = NumericType.from(pathInfo.getJavaType());
-        pathInfo.setJavaType(numericType.getPromotionTypeWhenSuming());
-    }
 }

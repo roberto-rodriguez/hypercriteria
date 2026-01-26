@@ -13,6 +13,13 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     Object selectEntity() {
         return userDAO.select().getSingleResult();
     }
+    
+     @Override
+    Object selectNestedEntity(Class rootType, String path) {
+        return userDAO.select(path)
+                .from(rootType)
+                .getSingleResult();
+    }
 
     @Override
     Object selectEntityWithFetchPath(String fetchPath) {

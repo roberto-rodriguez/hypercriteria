@@ -4,8 +4,6 @@ import io.hypercriteria.Annotations;
 import io.hypercriteria.Annotations.ConstructorName;
 import io.hypercriteria.Criteria;
 import io.hypercriteria.criterion.ProjectionList;
-import io.hypercriteria.criterion.projection.base.Projection;
-import io.hypercriteria.criterion.projection.base.SimpleProjection;
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -17,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.persistence.EntityManager;
 
 /**
  *
@@ -25,33 +22,16 @@ import javax.persistence.EntityManager;
  */
 public class ProjectionBuilder {
 
-    public static Optional<Projection> build(Criteria criteria) {
-        Projection projection = null;
-
-        Optional<Projection> userSpecifiedProjection = criteria.getUserSpecifiedProjection();
-
-        if (userSpecifiedProjection.isPresent()) {
-            projection = userSpecifiedProjection.get();
-
-            if (projection instanceof SimpleProjection simpleProjection) {
-                EntityManager em = criteria.getEntityManager();
-                Class<?> rootEntityClass = criteria.getEntityType();
-                simpleProjection.getPathInfo(em, rootEntityClass);
-
-                criteria.getJoinToAliasJoinTypeMap().putAll(simpleProjection.getFieldsMappingToAliasJoinTypeMap());
-            }
-        } else {
-            if (criteria.getResultType() != null && criteria.getResultType() != criteria.getEntityType()) {
-                projection = projectionList(criteria);
-            }
-        }
-
-        if (projection == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(projection);
-    }
+//    public static Optional<Projection> build(QueryContext ctx, Projection projection) { 
+//
+//            if (projection instanceof SimpleProjection simpleProjection) {
+//                EntityManager em = criteria.getEntityManager();
+//                Class<?> rootEntityClass = criteria.getEntityType();
+//                simpleProjection.getPathInfo(em, rootEntityClass);
+//
+//                criteria.getjoinInfoMap().putAll(simpleProjection.getFieldsMappingToAliasJoinTypeMap());
+//            }
+//        
 
     public static ProjectionList projectionList(Criteria criteria) {
         Class dtoType = criteria.getResultType();
@@ -77,7 +57,7 @@ public class ProjectionBuilder {
                 fieldPath = (String) projectionMappingOverrides.get(fieldPath);
             }
 //TODO
-//            fieldPath = extractAliasAndJoinType(fieldPath, criteria.getJoinToAliasJoinTypeMap());
+//            fieldPath = extractAliasAndJoinType(fieldPath, criteria.getjoinInfoMap());
 //
 //            projectionList.add(HyperCriteria.property(fieldPath).as(valueName));
         }

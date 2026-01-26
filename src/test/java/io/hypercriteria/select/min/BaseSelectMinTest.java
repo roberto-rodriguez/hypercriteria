@@ -44,42 +44,42 @@ abstract class BaseSelectMinTest extends BaseTest {
     }
 
     @Test
-    void testSumInteger() {
+    void testMinInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Integer result = (Integer) minByProperty("intValue");
         assertEquals(1, result);
     }
 
     @Test
-    void testSumLong() {
+    void testMinLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Long result = (Long) minByProperty("longValue");
         assertEquals(1L, result);
     }
 
     @Test
-    void testSumFloat() {
+    void testMinFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Float result = (Float) minByProperty("floatValue");
         assertEquals(1F, result);
     }
 
     @Test
-    void testSumDouble() {
+    void testMinDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Double result = (Double) minByProperty("doubleValue");
         assertEquals(1D, result);
     }
 
     @Test
-    void testSumBigInteger() {
+    void testMinBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         BigInteger result = (BigInteger) minByProperty("bigInteger");
         assertEquals(new BigInteger("1"), result);
     }
 
     @Test
-    void testSumBigDecimal() {
+    void testMinBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         BigDecimal result = (BigDecimal) minByProperty("bigDecimal");
         assertEquals(new BigDecimal("1.00"), result);
@@ -87,42 +87,42 @@ abstract class BaseSelectMinTest extends BaseTest {
 
     // Nested property 
     @Test
-    void testSumNestedInteger() {
+    void testMinNestedInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Integer result = (Integer) minByNestedProperty("payments.intValue");
         assertEquals(1, result);
     }
 
     @Test
-    void testSumNestedLong() {
+    void testMinNestedLong() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Long result = (Long) minByNestedProperty("payments.longValue");
         assertEquals(1L, result);
     }
 
     @Test
-    void testSumNestedFloat() {
+    void testMinNestedFloat() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Float result = (Float) minByNestedProperty("payments.floatValue");
         assertEquals(1F, result);
     }
 
     @Test
-    void testSumNestedDouble() {
+    void testMinNestedDouble() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         Double result = (Double) minByNestedProperty("payments.doubleValue");
         assertEquals(1D, result);
     }
 
     @Test
-    void testSumNestedBigInteger() {
+    void testMinNestedBigInteger() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         BigInteger result = (BigInteger) minByNestedProperty("payments.bigInteger");
         assertEquals(new BigInteger("1"), result);
     }
 
     @Test
-    void testSumNestedBigDecimal() {
+    void testMinNestedBigDecimal() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         BigDecimal result = (BigDecimal) minByNestedProperty("payments.bigDecimal");
         assertEquals(new BigDecimal("1.00"), result);
