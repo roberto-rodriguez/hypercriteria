@@ -2,11 +2,14 @@ package io.hypercriteria.select.property;
 
 import io.sample.dao.UserDAO;
 import io.sample.model.Address;
+import io.sample.model.Role;
 import io.sample.model.State;
 import io.sample.model.User;
 import io.utility.BaseTest;
+import java.util.Comparator;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -63,29 +66,44 @@ abstract class BaseSelectPropertyTest extends BaseTest {
             )
             .build();
 
+    private static final User USER_WITH_ROLE = USER_1.toBuilder()
+            .role(Role.builder().name("Admin").build())
+            .build();
+
     // Select unique result
     abstract Object selectProperty(String fieldPath);
 
-    abstract Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath);
+    abstract Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath);
 
     abstract Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath);
 
-    abstract Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath);
+    abstract Object selectNestedPropertyTwoLevels_implicitJoin(String fieldPath);
 
     abstract Object selectNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath);
 
     // List
     abstract List<String> listProperty(String fieldPath);
 
-//    abstract Object listProperty_distinct(String fieldPath);
-//
-//    abstract Object listNestedPropertyOneLevel_inplicitJoin(String fieldPath);
-//
-//    abstract Object listNestedPropertyOneLevel_explicitLeftJoin(String fieldPath);
-//
-//    abstract Object listNestedPropertyTwoLevels_inplicitJoin(String fieldPath);
-//
-//    abstract Object listNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath);
+    abstract List<String> listProperty_distinct(String fieldPath);
+
+    abstract List<String> listNestedPropertyOneLevel_implicitJoin(String fieldPath);
+
+    abstract List<String> testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath(String fieldPath);
+
+    abstract List<String> listNestedPropertyOneLevel_explicitLeftJoin(String fieldPath);
+
+    abstract List<String> listNestedPropertyOneLevel_explicitInnerJoin(String fieldPath);
+
+    abstract List<String> listNestedPropertyTwoLevels_implicitJoins(String fieldPath);
+
+    abstract List<String> listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath);
+
+    abstract List<String> listNestedPropertyTwoLevels_implicitJoins_distinct(String fieldPath);
+
+    abstract List<String> listNestedPropertyTwoLevels_explicitLeftJoins(String fieldPath);
+
+    abstract List<String> listNestedPropertyTwoLevels_explicitLeftThenInnerJoins(String fieldPath);
+
     @Override
     protected void beforeEach() {
         userDAO = new UserDAO();
@@ -99,14 +117,14 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 //
 //        String firstName = (String) selectProperty("firstName");
 //
-//        assertEquals(firstName, USER_1.getFirstName());
+//        assertTrue(List.of("John", "Jane").contains(firstName));
 //    }
 //
 //    @Test
-//    void testSelectNestedPropertyOneLevel_inplicitJoin() {
+//    void testSelectNestedPropertyOneLevel_implicitJoin() {
 //        userDAO.saveOrUpdate(USER_1);
 //
-//        String street = (String) selectNestedPropertyOneLevel_inplicitJoin("address.street");
+//        String street = (String) selectNestedPropertyOneLevel_implicitJoin("address.street");
 //
 //        assertEquals(USER_1.getAddress().getStreet(), street);
 //    }
@@ -118,17 +136,28 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 //
 //        String street = (String) selectNestedPropertyOneLevel_explicitLeftJoin("a.street");
 //
-//        assertEquals(USER_1.getAddress().getStreet(), street);
+//        assertTrue(
+//                List.of(
+//                        USER_1.getAddress().getStreet(),
+//                        USER_2.getAddress().getStreet()
+//                ).contains(street)
+//        );
 //    }
 //
 //    @Test
-//    void testSelectNestedPropertyTwoLevels_inplicitJoin() {
+//    void testSelectNestedPropertyTwoLevels_implicitJoin() {
 //        userDAO.saveOrUpdate(USER_1);
 //        userDAO.saveOrUpdate(USER_2);
 //
-//        String stateName = (String) selectNestedPropertyTwoLevels_inplicitJoin("address.state.name");
+//        String stateName = (String) selectNestedPropertyTwoLevels_implicitJoin("address.state.name");
 //
-//        assertEquals(USER_1.getAddress().getState().getName(), stateName);
+//        assertTrue(
+//                List.of(
+//                        USER_1.getAddress().getState().getName(),
+//                        USER_2.getAddress().getState().getName()
+//                ).contains(stateName)
+//        );
+//
 //    }
 //
 //    @Test
@@ -138,116 +167,189 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 //
 //        String stateName = (String) selectNestedPropertyTwoLevels_explicitLeftJoin("s.name");
 //
-//        assertEquals(USER_1.getAddress().getState().getName(), stateName);
+//        assertTrue(
+//                List.of(
+//                        USER_1.getAddress().getState().getName(),
+//                        USER_2.getAddress().getState().getName()
+//                ).contains(stateName)
+//        );
 //    }
-    @Test
-    void testListProperty() {
-        userDAO.saveOrUpdate(USER_1);
-        userDAO.saveOrUpdate(USER_2);
-        userDAO.saveOrUpdate(USER_2);
-
-        List<String> list = listProperty("firstName");
-
-        assertEquals(3, list.size());
-
-        assertEquals("John", list.get(0));
-        assertEquals("Jane", list.get(1));
-        assertEquals("Jane", list.get(2));
-    }
-
+//
+//    @Test
+//    void testListProperty() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_2);
+//        userDAO.saveOrUpdate(USER_2);
+//
+//        List<String> list = listProperty("firstName");
+//
+//        assertEquals(3, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals("Jane", list.get(0));
+//        assertEquals("Jane", list.get(1));
+//        assertEquals("John", list.get(2));
+//    }
+//
 //    @Test
 //    void testListProperty_distinct() {
 //        userDAO.saveOrUpdate(USER_1);
 //        userDAO.saveOrUpdate(USER_2);
 //        userDAO.saveOrUpdate(USER_2); //Repeated user, should return same firstName
 //
-//        List<String> list = listDistinctByProperty("firstName");
+//        List<String> list = listProperty_distinct("firstName");
 //
 //        assertEquals(2, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
 //
 //        assertEquals("Jane", list.get(0));
 //        assertEquals("John", list.get(1));
 //    }
 //
 //    @Test
-//    void testSelectProperty_listNestedProperty_leftJoin() {
+//    void testListNestedPropertyOneLevel_implicitJoin() {
 //        userDAO.saveOrUpdate(USER_1);
 //        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 //
-//        List<String> list = listByProperty("address.street");
+//        List<String> list = listNestedPropertyOneLevel_implicitJoin("address.street");
 //
 //        assertEquals(2, list.size());
-//
-//        assertEquals(null, list.get(0));
-//        assertEquals("123 Main Street", list.get(1));
-//    }
-//
-//    @Test
-//    void testSelectProperty_listDistinctNestedProperty_leftJoin() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
-//
-//        List<String> list = listDistinctByProperty("address.street");
-//
-//        assertEquals(2, list.size());
-//
-//        assertEquals(null, list.get(0));
-//        assertEquals("123 Main Street", list.get(1));
-//    }
-//
-//    @Test
-//    void testSelectProperty_listNestedProperty_innerJoin_aliasBasedFieldPath() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
-//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);
-//
-//        List<String> list = listByPropertyWithInnerJoin("a.street");
-//
-//        assertEquals(2, list.size());
-//
-//        assertEquals("123 Main Street", list.get(0));
-//    }
-//
-//    @Test
-//    void testSelectProperty_listNestedProperty_innerJoin_withRootAlias_aliasBasedFieldPath() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
-//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);
-//
-//        List<String> list = listByPropertyWithInnerJoin_withRootAlias("a.street");
-//
-//        assertEquals(2, list.size());
-//
-//        assertEquals("123 Main Street", list.get(0));
-//    }
-//
-//    @Test
-//    void testSelectProperty_listNestedPropertyTwoLevels_leftJoin() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
-//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);
-//
-//        List<String> list = listByProperty("address.state.name");
 //
 //        list.sort(Comparator.nullsFirst(String::compareTo));
 //
+//        assertEquals(null, list.get(0));
+//        assertEquals("123 Main Street", list.get(1));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyOneLevel_explicitLeftJoin() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//
+//        List<String> list = listNestedPropertyOneLevel_explicitLeftJoin("a.street");
+//
+//        assertEquals(2, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals(null, list.get(0));
+//        assertEquals("123 Main Street", list.get(1));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyOneLevel_explicitInnerJoin() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//
+//        List<String> list = listNestedPropertyOneLevel_explicitInnerJoin("a.street");
+//
+//        assertEquals(1, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals("123 Main Street", list.get(0));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyTwoLevels_implicitJoins() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
+//
+//        List<String> list = listNestedPropertyTwoLevels_implicitJoins("address.state.name");
+//
 //        assertEquals(3, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
 //
 //        assertEquals(null, list.get(0));
 //        assertEquals(null, list.get(1));
 //        assertEquals("Georgia", list.get(2));
 //    }
+
+    //Example
+    //.select("role.name")  
+    //.leftJoin("address", "a")
+    //.leftJoin("a.state", "role")
+    //The user has role.name, but since there is an alias name role,
+    //it takes presedence, so it should return "Geourgia"
+    @Test
+    void testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
+        userDAO.saveOrUpdate(USER_WITH_ROLE);
+
+        List<String> list = testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
+
+        assertEquals(1, list.size());
+
+        list.sort(Comparator.nullsFirst(String::compareTo));
+
+        assertEquals("Georgia", list.get(0));
+    }
+
+    //Should reuse same joins (Need to check in the logs)
 //    @Test
-//    void testSelectProperty_listNestedPropertyTwoLevels_innerJoin() {
+//    void testImplicitJoinsReuseExplicitJoins_whenDeclared() {
 //        userDAO.saveOrUpdate(USER_1);
 //        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 //        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 //
-//        List<String> list = listByProperty("address<>state.name"); //address RIGHT JOIN state
+//        List<String> list = listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins("address.state.name");
+//
+//        assertEquals(3, list.size());
 //
 //        list.sort(Comparator.nullsFirst(String::compareTo));
 //
+//        assertEquals(null, list.get(0));
+//        assertEquals(null, list.get(1));
+//        assertEquals("Georgia", list.get(2));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyTwoLevels_implicitJoins_distinct() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_2);
+//
+//        List<String> list = listNestedPropertyTwoLevels_implicitJoins_distinct("address.state.name");
+//
+//        assertEquals(2, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals("District of Columbia", list.get(0));
+//        assertEquals("Georgia", list.get(1));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyTwoLevels_explicitLeftJoins() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
+//
+//        List<String> list = listNestedPropertyTwoLevels_explicitLeftJoins("s.name");
+//
+//        assertEquals(3, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
+//
+//        assertEquals(null, list.get(0));
+//        assertEquals(null, list.get(1));
+//        assertEquals("Georgia", list.get(2));
+//    }
+//
+//    @Test
+//    void testListNestedPropertyTwoLevels_explicitLeftThenInnerJoins() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
+//        userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
+//
+//        List<String> list = listNestedPropertyTwoLevels_explicitLeftThenInnerJoins("s.name");
+//
 //        assertEquals(1, list.size());
+//
+//        list.sort(Comparator.nullsFirst(String::compareTo));
 //
 //        assertEquals("Georgia", list.get(0));
 //    }

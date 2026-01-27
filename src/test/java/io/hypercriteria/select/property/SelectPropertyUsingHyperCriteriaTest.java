@@ -19,7 +19,7 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
     }
 
     @Override
-    public Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath) {
+    public Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath) {
         return selectProperty(fieldPath);
     }
 
@@ -33,7 +33,7 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
     }
 
     @Override
-    public Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath) {
+    public Object selectNestedPropertyTwoLevels_implicitJoin(String fieldPath) {
         return selectProperty(fieldPath);
     }
 
@@ -56,42 +56,83 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
 
         return list;
     }
-//
-//
-//    @Override
-//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
-//        return HyperCriteria.using(entityManager)
-//                .select(fieldPath)
-//                .from(User.class)
-//                .innerJoin("address", "a")
-//                .getResultList();
-//    }
-//    
-//    
-//    @Override
-//    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
-//        return HyperCriteria.using(entityManager)
-//                .select(fieldPath)
-//                .from(User.class, "u")
-//                .innerJoin("u.address", "a")
-//                .getResultList();
-//    }
-//
-//    @Override
-//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
-//        return HyperCriteria.using(entityManager)
-//                .select(fieldPath)
-//                .from(User.class, "u")
-//                .innerJoin("u.address", "a")
-//                .getResultList();
-//    }
-//
-//    @Override
-//    public List<String> listDistinctByProperty(String fieldPath) {
-//        return HyperCriteria.using(entityManager)
-//                .select(fieldPath)
-//                .distinct()
-//                .from(User.class)
-//                .getResultList();
-//    }
+
+    @Override
+    public List<String> listProperty_distinct(String fieldPath) {
+        List<String> list = HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .distinct()
+                .from(User.class)
+                .getResultList(String.class);
+
+        return list;
+    }
+
+    @Override
+    public List<String> listNestedPropertyOneLevel_implicitJoin(String fieldPath) {
+        return listProperty(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class)
+                .leftJoin("address", "a")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyOneLevel_explicitInnerJoin(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class)
+                .innerJoin("address", "a")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins(String fieldPath) {
+        return listProperty(fieldPath);
+    }
+
+    @Override
+    public List<String> testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class)
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "role")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
+        return listNestedPropertyTwoLevels_explicitLeftJoins(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins_distinct(String fieldPath) {
+        return listProperty_distinct(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_explicitLeftJoins(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class)
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "s")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class)
+                .leftJoin("address", "a")
+                .innerJoin("a.state", "s")
+                .getResultList();
+    }
 }

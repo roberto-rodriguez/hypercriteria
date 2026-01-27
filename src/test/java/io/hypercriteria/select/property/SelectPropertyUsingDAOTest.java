@@ -1,6 +1,5 @@
 package io.hypercriteria.select.property;
 
-import io.sample.model.User;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
     }
 
     @Override
-    public Object selectNestedPropertyOneLevel_inplicitJoin(String fieldPath) {
+    public Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath) {
         return selectProperty(fieldPath);
     }
 
@@ -30,8 +29,13 @@ class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
     }
 
     @Override
-    public Object selectNestedPropertyTwoLevels_inplicitJoin(String fieldPath) {
+    public Object selectNestedPropertyTwoLevels_implicitJoin(String fieldPath) {
         return selectProperty(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
+        return listNestedPropertyTwoLevels_explicitLeftJoins(fieldPath);
     }
 
     @Override
@@ -49,29 +53,72 @@ class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
                 .select(fieldPath)
                 .getResultList();
     }
-//    
-//    @Override
-//    public List<String> listByPropertyWithInnerJoin(String fieldPath) {
-//        return userDAO
-//                .select(fieldPath)
-//                .innerJoin("address", "a")
-//                .getResultList();
-//    }
-//
-//    @Override
-//    public List<String> listByPropertyWithInnerJoin_withRootAlias(String fieldPath) {
-//        return userDAO
-//                .select(fieldPath)
-//                .from(User.class, "u")
-//                .innerJoin("u.address", "a")
-//                .getResultList();
-//    }
-// 
-//    @Override
-//    public List<String> listDistinctByProperty(String fieldPath) {
-//        return userDAO
-//                .select(fieldPath) 
-//                .distinct()
-//                .getResultList();
-//    }
+
+    @Override
+    public List<String> listProperty_distinct(String fieldPath) {
+        List<String> list = userDAO
+                .select(fieldPath)
+                .distinct()
+                .getResultList(String.class);
+
+        return list;
+    }
+
+    @Override
+    public List<String> listNestedPropertyOneLevel_implicitJoin(String fieldPath) {
+        return listProperty(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .leftJoin("address", "a")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyOneLevel_explicitInnerJoin(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .innerJoin("address", "a")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins(String fieldPath) {
+        return listProperty(fieldPath);
+    }
+
+    @Override
+    public List<String> testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "role")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_implicitJoins_distinct(String fieldPath) {
+        return listProperty_distinct(fieldPath);
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_explicitLeftJoins(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .leftJoin("address", "a")
+                .leftJoin("a.state", "s")
+                .getResultList();
+    }
+
+    @Override
+    List<String> listNestedPropertyTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .leftJoin("address", "a")
+                .innerJoin("a.state", "s")
+                .getResultList();
+    }
 }
