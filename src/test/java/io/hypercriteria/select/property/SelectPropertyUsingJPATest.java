@@ -23,14 +23,33 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
         Root<User> root = cq.from(User.class);
-        Path<?> path = root.get(fieldPath);
+        Path<?> path = root.get(lastSegment(fieldPath));
 
         cq.select(path);
         return getSingleResult(cq);
     }
 
     @Override
+    Object selectProperty_withRootAlias(String fieldPath) {
+        return selectProperty(fieldPath);
+    }
+
+    @Override
     Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object> cq = cb.createQuery(Object.class);
+
+        String[] segments = fieldPath.split("\\.");
+
+        Root<User> root = cq.from(User.class);
+        Join<User, Address> addressJoin = root.join(segments[0]);
+
+        cq.select(addressJoin.get(segments[1]));
+        return getSingleResult(cq);
+    }
+
+    @Override
+    Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
@@ -39,11 +58,6 @@ class SelectPropertyUsingJPATest extends BaseSelectPropertyTest {
 
         cq.select(addressJoin.get(lastSegment(fieldPath)));
         return getSingleResult(cq);
-    }
-
-    @Override
-    Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath) {
-        return selectNestedPropertyOneLevel_implicitJoin(fieldPath);
     }
 
     @Override

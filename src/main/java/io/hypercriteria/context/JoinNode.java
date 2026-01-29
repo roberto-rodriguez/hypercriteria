@@ -67,7 +67,11 @@ public class JoinNode {
         System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.attribute, key.joinType);
         System.out.println("");
 
-        this.from = parentFrom.join(key.attribute, key.joinType);
+        if (key.attribute == null || key.attribute.isEmpty()) {
+            this.from = parentFrom;//This happens when alias is specified in the 'from()' clause. Example: .from(User.class, "u")
+        } else {
+            this.from = parentFrom.join(key.attribute, key.joinType);
+        }
 
         if (alias != null) {
             System.out.println("DEBUG:: JoinNode.toFrom -> this.from.alias(" + alias + ")");

@@ -80,17 +80,26 @@ public final class PathExpression {
     private PathMetadata resolvePathMetadata(QueryContext ctx) {
         Metamodel mm = ctx.getEntityManager().getMetamodel();
 
-        // Special case: empty path ("")
-        if (segments.length == 1 && segments[0].isEmpty()) {
+        String firstSegment = segments[0];
+
+        // Special case: empty path ("") 
+        if (segments.length == 1
+                && (firstSegment.isEmpty() || firstSegment.equals("*"))) {
+            //Blank path will throw the same Exception as JPA
+            Optional<String> terminal = Optional.of("");
+
+            if (firstSegment.equals("*")) {
+                //This is a placeholder used internally by count() and countDistinct()
+                terminal = Optional.empty();
+            }
+
             return new PathMetadata(
-                    Optional.empty(),
+                    terminal,
                     ctx.getRootType(),
                     false, //isAssociation
                     returnTypeResolver
             );
         }
-
-        String firstSegment = segments[0];
 
         int index;
         ManagedType<?> type;

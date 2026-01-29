@@ -15,14 +15,12 @@ public class TypeUtil {
     public static Class<?> resolveJavaType(String joinPath, Criteria criteria) {
 
         if (joinPath == null || joinPath.isBlank()) {
-            throw new IllegalArgumentException("joinPath must not be null or empty");
+            return criteria.getEntityType();
         }
 
         Metamodel mm = criteria.getEntityManager().getMetamodel();
 
-        // Normalize delimiters
-        String normalizedPath = joinPath.replace(">", ".").replace("<>", ".");
-        String[] segments = normalizedPath.split("\\.");
+        String[] segments = joinPath.split("\\.");
 
         String firstSegment = segments[0];
 

@@ -69,7 +69,9 @@ public class Criteria {
         this.rootAlias = rootAlias;
 
         aliasTypeMap.put(rootAlias, entityType);
-        return this;
+
+        //Register the root in the join maps
+        return join("", rootAlias, JoinType.LEFT, entityType);
     }
 
     public Criteria leftJoin(String joinPath, String alias) {
@@ -86,6 +88,10 @@ public class Criteria {
 
     private Criteria join(String joinPath, String alias, JoinType joinType) {
         Class javaType = TypeUtil.resolveJavaType(joinPath, this);
+        return join(joinPath, alias, joinType, javaType);
+    }
+
+    private Criteria join(String joinPath, String alias, JoinType joinType, Class javaType) {
         aliasTypeMap.put(alias, javaType);
         joinInfoMap.put(joinPath, new AliasInfo(alias, joinType, javaType));
         return this;

@@ -17,6 +17,15 @@ class SelectPropertyUsingHyperCriteriaTest extends BaseSelectPropertyTest {
                 .from(User.class)
                 .getSingleResult();
     }
+    
+    @Override
+    Object selectProperty_withRootAlias(String fieldPath) {
+        return HyperCriteria.using(entityManager)
+                .select(fieldPath)
+                .from(User.class, "u")
+                .getSingleResult();
+    }
+
 
     @Override
     public Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath) {

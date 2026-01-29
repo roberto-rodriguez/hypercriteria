@@ -16,7 +16,7 @@ import javax.persistence.criteria.Expression;
 public class Count extends Projection {
 
     public Count() {
-        this("");//Will produce root
+        this("*");//Placeholder to indicate Path expression to return root.
     }
 
     public Count(String fieldPath) {

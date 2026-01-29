@@ -1,5 +1,6 @@
 package io.hypercriteria.select.property;
 
+import io.sample.model.User;
 import java.util.List;
 
 /**
@@ -12,6 +13,14 @@ class SelectPropertyUsingDAOTest extends BaseSelectPropertyTest {
     public Object selectProperty(String fieldPath) {
         return userDAO
                 .select(fieldPath)
+                .getSingleResult();
+    }
+
+    @Override
+    Object selectProperty_withRootAlias(String fieldPath) {
+        return userDAO
+                .select(fieldPath)
+                .from(User.class, "u")
                 .getSingleResult();
     }
 

@@ -16,7 +16,7 @@ import javax.persistence.criteria.Expression;
 public class CountDistinct extends Projection {
 
     public CountDistinct() {
-        this("");//Will produce root
+        this("*");//Will produce root
     }
 
     public CountDistinct(String fieldPath) {
