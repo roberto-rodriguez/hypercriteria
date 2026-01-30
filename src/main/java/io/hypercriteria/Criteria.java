@@ -10,6 +10,7 @@ import io.hypercriteria.criterion.Criterion;
 import io.hypercriteria.criterion.Order;
 import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.util.AliasInfo;
+import io.hypercriteria.util.FetchUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,6 +46,8 @@ public class Criteria {
 
     private final LinkedHashMap<String, Class> aliasTypeMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> joinInfoMap = new LinkedHashMap<>();
+
+    private final LinkedHashMap<String, Class> fetchAliasTypeMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> fetchInfoMap = new LinkedHashMap<>();
 
     private final List<Criterion> restrictions = new ArrayList<>();
@@ -93,12 +96,25 @@ public class Criteria {
 
     private Criteria join(String joinPath, String alias, JoinType joinType, Class javaType) {
         aliasTypeMap.put(alias, javaType);
-        joinInfoMap.put(joinPath, new AliasInfo(alias, joinType, javaType));
+        joinInfoMap.put(joinPath, new AliasInfo(alias, joinType));
         return this;
     }
 
     public Criteria fetch(String fetchPath) {
-//   TODO
+        return fetch(fetchPath, JoinType.LEFT);
+    }
+
+    public Criteria fetch(String fetchPath, JoinType joinType) {
+        FetchUtil.registerImplicitFetch(this, fetchPath, joinType);
+        return this;
+    }
+
+    public Criteria fetch(String fetchPath, String alias) {
+        return fetch(fetchPath, alias, JoinType.LEFT);
+    }
+
+    public Criteria fetch(String fetchPath, String alias, JoinType joinType) {
+        FetchUtil.registerAliasedFetch(this, fetchPath, alias, joinType);
         return this;
     }
 
@@ -196,21 +212,6 @@ public class Criteria {
         );
     }
 
-    private Class<?> resolveResultType(QueryContext ctx) {
-        return projection
-                .map(p -> p.getReturnType(ctx))
-                .orElse(entityType);
-    }
-
-    private <R> void validateResultType(Class<R> userType, Class<?> resolvedType) {
-        if (!userType.isAssignableFrom(resolvedType)) {
-            throw new IllegalArgumentException(
-                    "Expected result type " + userType.getName()
-                    + " but query resolves to " + resolvedType.getName()
-            );
-        }
-    }
-
     private <T, R> TypedQuery<R> query(
             QueryContext ctx,
             Class<T> rootType,
@@ -226,13 +227,23 @@ public class Criteria {
         CriteriaQuery<R> criteriaQuery = builder.createQuery(resultType);
         Root<T> root = criteriaQuery.from(rootType);
 
-        if (distinct) {
-            criteriaQuery.distinct(true);
-        }
-
         ctx.complete(builder, root, rootAlias, joinInfoMap);
 
+        //----- Fetch -------
+        FetchUtil.applyFetches(this, root);
+
+        if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
+            throw new IllegalStateException(
+                    "Fetch joins are only allowed when selecting the root entity"
+            );
+        }
+        // --------------
+
         projection.ifPresent(p -> p.apply(ctx, criteriaQuery));
+
+        if (distinct || !fetchInfoMap.isEmpty()) {//Always set distinct when applying fetch
+            criteriaQuery.distinct(true);
+        }
 
         if (groupBy != null) {
             criteriaQuery.groupBy(groupBy.toExpression(ctx));
@@ -244,6 +255,22 @@ public class Criteria {
         maxResults.filter(m -> m > 0).ifPresent(query::setMaxResults);
 
         return query;
+    }
+
+    // ------- Utility and validation methods
+    private Class<?> resolveResultType(QueryContext ctx) {
+        return projection
+                .map(p -> p.getReturnType(ctx))
+                .orElse(entityType);
+    }
+
+    private <R> void validateResultType(Class<R> userType, Class<?> resolvedType) {
+        if (!userType.isAssignableFrom(resolvedType)) {
+            throw new IllegalArgumentException(
+                    "Expected result type " + userType.getName()
+                    + " but query resolves to " + resolvedType.getName()
+            );
+        }
     }
 
     // -- Internal Builder --

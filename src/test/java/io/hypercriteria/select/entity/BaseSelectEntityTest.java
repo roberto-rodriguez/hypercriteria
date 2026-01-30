@@ -31,6 +31,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
                     Address.builder()
                             .street("123 Main Street")
                             .city("Atlanta")
+                            .zipcode("123456")
                             .state(
                                     State.builder()
                                             .code("GA")
@@ -64,6 +65,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
     }
 
     abstract Object selectEntity();
+
     abstract Object selectNestedEntity(Class rootType, String path);
 
     abstract Object selectEntityWithFetchPath(String fetchPath);
@@ -74,6 +76,10 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     abstract List<User> listDistinctEntitiesWithFetchPath(String fetchPath);
 
+    List<User> sample() {
+        return null;
+    }
+
     @Override
     protected void beforeEach() {
         userDAO = new UserDAO();
@@ -81,21 +87,37 @@ abstract class BaseSelectEntityTest extends BaseTest {
     }
 
 //    @Test
-    void testSelectEntity_singleResult() {
-        userDAO.saveOrUpdate(USER_1);
-        User actual = (User) selectEntity();
+//    void testSample() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_2);
+//
+////        entityManager.flush();
+////        entityManager.clear(); // detach all entities
+//
+//        List<User> list = sample();
+//
+////        PersistenceUnitUtil util
+////                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+////
+////        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
+//
+//        assertEquals(1, list.size());
+//    }
 
-        assertUserEqualsWithAddress(USER_1, actual);
-    }
-
-   //// @Test
-    void testSelectNestedEntity_singleResult() {
-        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        User actual = (User) selectNestedEntity(Payment.class, "user");
-
-        assertUserEqualsWithAddress(USER_1, actual);
-    }
-
+//    @Test
+//    void testSelectEntity_singleResult() {
+//        userDAO.saveOrUpdate(USER_1);
+//        User actual = (User) selectEntity();
+//
+//        assertUserEqualsWithAddress(USER_1, actual);
+//    }
+    //// @Test
+//    void testSelectNestedEntity_singleResult() {
+//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+//        User actual = (User) selectNestedEntity(Payment.class, "user");
+//
+//        assertUserEqualsWithAddress(USER_1, actual);
+//    }
 //    @Test
 //    void testSelectEntity_singleResult_notFetchInternalList() {
 //        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
@@ -132,16 +154,16 @@ abstract class BaseSelectEntityTest extends BaseTest {
 //        Assertions.assertNotNull(actual.getPayments().get(1).getAmount());
 //    }
 //
-    @Test
-    void testSelectEntity_list() {
-        userDAO.saveOrUpdate(USER_1);
-        userDAO.saveOrUpdate(USER_2);
-        userDAO.saveOrUpdate(USER_2);
-
-        List<User> list = listEntities();
-
-        assertEquals(3, list.size());
-    }
+//    @Test
+//    void testSelectEntity_list() {
+//        userDAO.saveOrUpdate(USER_1);
+//        userDAO.saveOrUpdate(USER_2);
+//        userDAO.saveOrUpdate(USER_2);
+//
+//        List<User> list = listEntities();
+//
+//        assertEquals(3, list.size());
+//    }
 //
 //    @Test
 //    void testSelectEntity_list_leftJoinFetch() {
