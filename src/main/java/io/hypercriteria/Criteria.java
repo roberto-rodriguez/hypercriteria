@@ -100,20 +100,20 @@ public class Criteria {
         return this;
     }
 
-    public Criteria fetchLeft(String fetchPath, String alias) {
-        return fetch(fetchPath, alias, JoinType.LEFT);
-    }
-
-    public Criteria fetchInner(String fetchPath, String alias) {
-        return fetch(fetchPath, alias, JoinType.LEFT);
-    }
-
-    public Criteria fetchLeft(String fetchPath) {
+    public Criteria leftJoinFetch(String fetchPath) {
         return fetch(fetchPath, null, JoinType.LEFT);
     }
 
-    public Criteria fetchInner(String fetchPath) {
+    public Criteria leftJoinFetch(String fetchPath, String alias) {
+        return fetch(fetchPath, alias, JoinType.LEFT);
+    }
+
+    public Criteria innerJoinFetch(String fetchPath) {
         return fetch(fetchPath, null, JoinType.LEFT);
+    }
+
+    public Criteria innerJoinFetch(String fetchPath, String alias) {
+        return fetch(fetchPath, alias, JoinType.LEFT);
     }
 
     private Criteria fetch(String joinPath, String alias, JoinType joinType) {
@@ -236,7 +236,6 @@ public class Criteria {
 
         //----- Fetch -------
 //        FetchUtil.applyFetches(this, root);
-
         if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
             throw new IllegalStateException(
                     "Fetch joins are only allowed when selecting the root entity"

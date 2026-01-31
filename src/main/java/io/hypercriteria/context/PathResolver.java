@@ -2,6 +2,7 @@ package io.hypercriteria.context;
 
 import java.util.Arrays;
 import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.FetchParent;
 import javax.persistence.criteria.JoinType;
 
 /**
@@ -73,7 +74,7 @@ public final class PathResolver {
             String attribute,
             JoinType joinType
     ) {
-        Fetch<?, ?> parentFetch = (Fetch<?, ?>) parent;
+        FetchParent<?, ?> parentFetch = (FetchParent<?, ?>) parent.getFrom();
 
         Fetch<?, ?> fetch = joinType == null
                 ? parentFetch.fetch(attribute)

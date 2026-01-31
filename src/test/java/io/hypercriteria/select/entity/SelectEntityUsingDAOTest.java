@@ -25,7 +25,7 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     Object selectEntityWithFetchPath(String fetchPath) {
         return userDAO
                 .select()
-                .fetchLeft(fetchPath)
+                .leftJoinFetch(fetchPath)
                 .getSingleResult();
     }
 
@@ -37,7 +37,7 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     @Override
     List<User> listEntitiesWithFetchPath(String fetchPath) {
         return userDAO.select()
-                .fetchLeft(fetchPath)
+                .leftJoinFetch(fetchPath)
                 .getResultList();
     }
 
@@ -45,29 +45,17 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     List<User> listDistinctEntitiesWithFetchPath(String fetchPath) {
         return userDAO.select()
                 .distinct()
-                .fetchLeft(fetchPath)
+                .leftJoinFetch("address")
                 .getResultList();
     }
-    
-//       @Override
-//    List<User> sample() {
-//            return userDAO.select()
-//                    .fetchLeft("address", "a")
-//                    .where(eq("a.zipcode"), "123456")
-//                    .get;
-//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<User> cq = cb.createQuery(User.class);
-//        Root<User> root = cq.distinct(true).from(User.class);
-//
-//        Fetch<User, Address> addressFetch = root.fetch("address", JoinType.LEFT);
-//
-//        Join<User, Address> addressJoin
-//                = (Join<User, Address>) addressFetch;
-//
-//        cq.where(
-//                cb.like(addressJoin.get("zipcode"), "123456")
-//        );
-//
-//        return entityManager.createQuery(cq).getResultList();
-//    }
+
+    @Override
+    List<User> sample() {
+        return userDAO.select()
+//                .distinct()
+//                .leftJoin("address", "a")
+//                .innerJoin("address", "b")
+                .innerJoinFetch("address", "ab")
+                .getResultList();
+    }
 }

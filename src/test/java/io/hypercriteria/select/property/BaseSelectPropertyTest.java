@@ -387,7 +387,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     //.leftJoin("address", "a")
     //.leftJoin("a.state", "role")
     //The user has role.name, but since there is an alias name role,
-    //it takes presedence, so it should return "Geourgia"
+    //it takes presedence, so it should return "Georgia"
     @Test
     void testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
         if (DISABLE_ALL) {
