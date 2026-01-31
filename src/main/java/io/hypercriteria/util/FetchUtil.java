@@ -11,33 +11,7 @@ public final class FetchUtil {
 
     private FetchUtil() {
     }
-
-    /* =========================================================
-       Builder-side fetch registration
-       ========================================================= */
-    public static void registerImplicitFetch(
-            Criteria criteria,
-            String fetchPath,
-            JoinType joinType
-    ) {
-
-        String[] segments = fetchPath.split("\\.");
-
-        String currentPath = "";
-
-        for (String segment : segments) {
-
-            currentPath = currentPath.isEmpty()
-                    ? segment
-                    : currentPath + "." + segment;
-
-            criteria.getFetchInfoMap().put(
-                    currentPath,
-                    new AliasInfo(null, joinType)
-            );
-        }
-    }
-
+ 
     public static void registerAliasedFetch(
             Criteria criteria,
             String fetchPath,

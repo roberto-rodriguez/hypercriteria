@@ -1,6 +1,7 @@
 package io.hypercriteria.context;
 
 import java.util.Arrays;
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.JoinType;
 
 /**
@@ -12,7 +13,8 @@ public final class PathResolver {
     public static JoinNode resolveJoinPath(
             QueryContext ctx,
             String joinPath,
-            JoinType joinType
+            JoinType joinType,
+            boolean processingFetch
     ) {
         String[] segments = joinPath.split("\\.");
         String firstSegment = segments[0];
@@ -45,7 +47,11 @@ public final class PathResolver {
 
         // 2️⃣ Walk remaining segments
         for (int i = index; i < segments.length; i++) {
-            current = resolveJoin(ctx, current, segments[i], joinType);
+            if (processingFetch) {
+                current = resolveFetch(ctx, current, segments[i], joinType);
+            } else {
+                current = resolveJoin(ctx, current, segments[i], joinType);
+            }
         }
 
         return current;
@@ -59,6 +65,23 @@ public final class PathResolver {
     ) {
         JoinKey key = new JoinKey(parent, attribute, joinType);
         return ctx.getJoins().computeIfAbsent(key, JoinNode::new);
+    }
+
+    private static JoinNode resolveFetch(
+            QueryContext ctx,
+            JoinNode parent,
+            String attribute,
+            JoinType joinType
+    ) {
+        Fetch<?, ?> parentFetch = (Fetch<?, ?>) parent;
+
+        Fetch<?, ?> fetch = joinType == null
+                ? parentFetch.fetch(attribute)
+                : parentFetch.fetch(attribute, joinType);
+
+        JoinKey key = new JoinKey(parent, attribute, joinType);
+
+        return ctx.getJoins().computeIfAbsent(key, k -> new FetchNode(k, fetch));
     }
 
     /**

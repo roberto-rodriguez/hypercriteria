@@ -32,7 +32,7 @@ public class JoinNode {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof JoinNode)) {
+        if (!(o instanceof JoinNode || o instanceof FetchNode)) {
             return false;
         }
         JoinNode that = (JoinNode) o;
@@ -44,13 +44,19 @@ public class JoinNode {
         return ObjectUtils.hash(key);
     }
 
+    protected From<?, ?> getFrom() {
+        return from;
+    }
+
     public From<?, ?> toFrom(QueryContext ctx) {
         System.out.println("DEBUG:: JoinNode.toFrom");
         System.out.println("DEBUG:: this is joinNode = " + this.toString());
 
-        if (from != null) {
+        From<?, ?> _from = getFrom();
+        if (_from != null) {
+            //FetchNodes will return Fetch cased to Join right the way.
             System.out.println("DEBUG:: JoinNode.toFrom -> from != null");
-            return from;
+            return _from;
         }
 
         JoinNode parent = ctx.getRootNode();
@@ -70,7 +76,12 @@ public class JoinNode {
         if (key.attribute == null || key.attribute.isEmpty()) {
             this.from = parentFrom;//This happens when alias is specified in the 'from()' clause. Example: .from(User.class, "u")
         } else {
-            this.from = parentFrom.join(key.attribute, key.joinType);
+            if (key.joinType == null) {
+                this.from = parentFrom.join(key.attribute);
+            } else {
+                this.from = parentFrom.join(key.attribute, key.joinType);
+            }
+
         }
 
         if (alias != null) {

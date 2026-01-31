@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Root;
 import lombok.Getter;
 
@@ -52,8 +53,13 @@ public class QueryContext {
         this.aliasTypeMap = aliasTypeMap;
     }
 
-    public void complete(CriteriaBuilder criteriaBuilder, Root<?> root, String rootAlias,
-            LinkedHashMap<String, AliasInfo> joinInfoMap) {
+    public void complete(
+            CriteriaBuilder criteriaBuilder,
+            Root<?> root,
+            String rootAlias,
+            LinkedHashMap<String, AliasInfo> fetchInfoMap,
+            LinkedHashMap<String, AliasInfo> joinInfoMap
+    ) {
         this.criteriaBuilder = criteriaBuilder;
         this.root = root;
         this.rootAlias = rootAlias;
@@ -62,10 +68,14 @@ public class QueryContext {
                 .alias(rootAlias)
                 .build();
 
-        explicitJoinRegistration(joinInfoMap);
+        explicitJoinRegistration(fetchInfoMap, true);
+        explicitJoinRegistration(joinInfoMap, false);
     }
 
-    private void explicitJoinRegistration(LinkedHashMap<String, AliasInfo> joinInfoMap) {
+    private void explicitJoinRegistration(
+            LinkedHashMap<String, AliasInfo> joinInfoMap,
+            boolean processingFetch
+    ) {
         for (Map.Entry<String, AliasInfo> e : joinInfoMap.entrySet()) {
             String joinPath = e.getKey();
             AliasInfo aliasInfo = e.getValue();
@@ -73,7 +83,8 @@ public class QueryContext {
             JoinNode joinNode = PathResolver.resolveJoinPath(
                     this,
                     joinPath,
-                    aliasInfo.getJoinType()
+                    aliasInfo.getJoinType(),
+                    processingFetch
             );
 
             // Alias collision check

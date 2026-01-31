@@ -128,11 +128,10 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.distinct(true).from(User.class);
 
-//        Join<User, Address> addressJoin = root.join("address", JoinType.LEFT);
         Fetch<User, Address> addressFetch = root.fetch("address", JoinType.LEFT);
-        
-        Join<User, Address> addressJoin =
-        (Join<User, Address>) addressFetch;
+
+        Join<User, Address> addressJoin
+                = (Join<User, Address>) addressFetch;
 
         cq.where(
                 cb.like(addressJoin.get("zipcode"), "123456")

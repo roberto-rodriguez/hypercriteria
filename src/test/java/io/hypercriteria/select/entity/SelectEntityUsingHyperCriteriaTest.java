@@ -1,7 +1,7 @@
 package io.hypercriteria.select.entity;
 
 import io.hypercriteria.HyperCriteria;
-import io.sample.model.User; 
+import io.sample.model.User;
 import java.util.List;
 
 /**
@@ -31,7 +31,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
         return HyperCriteria.using(entityManager)
                 .select()
                 .from(User.class)
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getSingleResult();
     }
 
@@ -48,7 +48,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
         return HyperCriteria.using(entityManager)
                 .select()
                 .from(User.class)
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getResultList();
     }
 
@@ -58,7 +58,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .select()
                 .distinct()
                 .from(User.class)
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getResultList();
     }
 

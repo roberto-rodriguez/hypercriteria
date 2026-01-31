@@ -13,8 +13,8 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     Object selectEntity() {
         return userDAO.select().getSingleResult();
     }
-    
-     @Override
+
+    @Override
     Object selectNestedEntity(Class rootType, String path) {
         return userDAO.select(path)
                 .from(rootType)
@@ -25,7 +25,7 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     Object selectEntityWithFetchPath(String fetchPath) {
         return userDAO
                 .select()
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getSingleResult();
     }
 
@@ -37,7 +37,7 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     @Override
     List<User> listEntitiesWithFetchPath(String fetchPath) {
         return userDAO.select()
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getResultList();
     }
 
@@ -45,7 +45,29 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     List<User> listDistinctEntitiesWithFetchPath(String fetchPath) {
         return userDAO.select()
                 .distinct()
-                .fetch(fetchPath)
+                .fetchLeft(fetchPath)
                 .getResultList();
     }
+    
+//       @Override
+//    List<User> sample() {
+//            return userDAO.select()
+//                    .fetchLeft("address", "a")
+//                    .where(eq("a.zipcode"), "123456")
+//                    .get;
+//        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+//        CriteriaQuery<User> cq = cb.createQuery(User.class);
+//        Root<User> root = cq.distinct(true).from(User.class);
+//
+//        Fetch<User, Address> addressFetch = root.fetch("address", JoinType.LEFT);
+//
+//        Join<User, Address> addressJoin
+//                = (Join<User, Address>) addressFetch;
+//
+//        cq.where(
+//                cb.like(addressJoin.get("zipcode"), "123456")
+//        );
+//
+//        return entityManager.createQuery(cq).getResultList();
+//    }
 }

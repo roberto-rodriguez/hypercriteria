@@ -86,23 +86,23 @@ abstract class BaseSelectEntityTest extends BaseTest {
         userDAO.setEntityManager(entityManager);  // assign manually 
     }
 
-//    @Test
-//    void testSample() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_2);
+    @Test
+    void testSample() {
+        userDAO.saveOrUpdate(USER_1);
+        userDAO.saveOrUpdate(USER_2);
+
+//        entityManager.flush();
+//        entityManager.clear(); // detach all entities
+
+        List<User> list = sample();
+
+//        PersistenceUnitUtil util
+//                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
 //
-////        entityManager.flush();
-////        entityManager.clear(); // detach all entities
-//
-//        List<User> list = sample();
-//
-////        PersistenceUnitUtil util
-////                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
-////
-////        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
-//
-//        assertEquals(1, list.size());
-//    }
+//        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
+
+        assertEquals(2, list.size());
+    }
 
 //    @Test
 //    void testSelectEntity_singleResult() {

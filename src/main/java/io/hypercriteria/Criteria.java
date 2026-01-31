@@ -100,21 +100,26 @@ public class Criteria {
         return this;
     }
 
-    public Criteria fetch(String fetchPath) {
-        return fetch(fetchPath, JoinType.LEFT);
-    }
-
-    public Criteria fetch(String fetchPath, JoinType joinType) {
-        FetchUtil.registerImplicitFetch(this, fetchPath, joinType);
-        return this;
-    }
-
-    public Criteria fetch(String fetchPath, String alias) {
+    public Criteria fetchLeft(String fetchPath, String alias) {
         return fetch(fetchPath, alias, JoinType.LEFT);
     }
 
-    public Criteria fetch(String fetchPath, String alias, JoinType joinType) {
-        FetchUtil.registerAliasedFetch(this, fetchPath, alias, joinType);
+    public Criteria fetchInner(String fetchPath, String alias) {
+        return fetch(fetchPath, alias, JoinType.LEFT);
+    }
+
+    public Criteria fetchLeft(String fetchPath) {
+        return fetch(fetchPath, null, JoinType.LEFT);
+    }
+
+    public Criteria fetchInner(String fetchPath) {
+        return fetch(fetchPath, null, JoinType.LEFT);
+    }
+
+    private Criteria fetch(String joinPath, String alias, JoinType joinType) {
+        Class javaType = TypeUtil.resolveJavaType(joinPath, this);
+        aliasTypeMap.put(alias, javaType);
+        fetchInfoMap.put(joinPath, new AliasInfo(alias, joinType));
         return this;
     }
 
@@ -227,10 +232,10 @@ public class Criteria {
         CriteriaQuery<R> criteriaQuery = builder.createQuery(resultType);
         Root<T> root = criteriaQuery.from(rootType);
 
-        ctx.complete(builder, root, rootAlias, joinInfoMap);
+        ctx.complete(builder, root, rootAlias, fetchInfoMap, joinInfoMap);
 
         //----- Fetch -------
-        FetchUtil.applyFetches(this, root);
+//        FetchUtil.applyFetches(this, root);
 
         if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
             throw new IllegalStateException(
