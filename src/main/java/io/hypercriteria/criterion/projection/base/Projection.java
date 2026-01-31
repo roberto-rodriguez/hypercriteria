@@ -54,6 +54,20 @@ public abstract class Projection extends BaseExpression {
                 .distinct(ctx.isDistinct());
     }
 
+    public Expression toExpression(QueryContext ctx) {
+        Expression path;
+
+        if (nestedProjection.isEmpty()) {
+            path = resolvePath(ctx);
+        } else {
+            path = ((Projection) nestedProjection.get()).toExpression(ctx);
+        }
+
+        return build(ctx, path);
+    }
+
+    protected abstract Expression build(QueryContext ctx, Expression expression);
+
     //To be called from ProjectionList  
     public Selection toSelection(QueryContext ctx) {
         Expression expression = toExpression(ctx);

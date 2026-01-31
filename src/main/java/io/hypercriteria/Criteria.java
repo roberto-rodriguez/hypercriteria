@@ -6,7 +6,7 @@
 package io.hypercriteria;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.Criterion;
+import io.hypercriteria.criterion.predicate.base.Criterion;
 import io.hypercriteria.criterion.Order;
 import io.hypercriteria.criterion.projection.base.Projection;
 import io.hypercriteria.util.AliasInfo;

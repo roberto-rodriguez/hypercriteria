@@ -8,8 +8,7 @@ package io.hypercriteria.base;
 import io.hypercriteria.context.JoinNode;
 import io.hypercriteria.context.PathExpression;
 import io.hypercriteria.context.PathResolver;
-import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.context.QueryContext; 
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.Expression;
@@ -19,7 +18,7 @@ import javax.persistence.criteria.From;
  *
  * @author rrodriguez
  */
-public abstract class BaseExpression {
+public class BaseExpression {
 
     protected PathExpression pathExpression;
 
@@ -84,20 +83,6 @@ public abstract class BaseExpression {
 
         return joinNode.toFrom(ctx);
     }
-
-    public Expression toExpression(QueryContext ctx) {
-        Expression path;
-
-        if (nestedProjection.isEmpty()) {
-            path = resolvePath(ctx);
-        } else {
-            path = ((Projection) nestedProjection.get()).toExpression(ctx);
-        }
-
-        return build(ctx, path);
-    }
-
-    protected abstract Expression build(QueryContext ctx, Expression expression);
 
     public PathExpression getPathExpression() {
         return pathExpression;

@@ -5,6 +5,7 @@
  */
 package io.hypercriteria.criterion;
 
+import io.hypercriteria.criterion.predicate.base.Criterion;
 import io.hypercriteria.criterion.predicate.Between;
 import io.hypercriteria.criterion.predicate.Equal;
 import io.hypercriteria.criterion.predicate.GreaterOrEqual;

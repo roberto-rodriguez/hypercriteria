@@ -20,6 +20,7 @@ public class LessThan<T extends Comparable<T>> extends ComparationCriterion<T> {
         super(path, value);
     }
 
+    @Override
     public Predicate getPredicate(CriteriaBuilder builder, Path<T> path, T value) {
         return builder.lessThan(path, value);
     }

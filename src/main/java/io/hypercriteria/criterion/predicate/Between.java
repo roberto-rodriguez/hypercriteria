@@ -5,7 +5,7 @@
  */
 package io.hypercriteria.criterion.predicate;
 
-import io.hypercriteria.criterion.Criterion;
+import io.hypercriteria.criterion.predicate.base.Criterion;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
