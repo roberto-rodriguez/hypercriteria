@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.projection;
+package io.hypercriteria.criterion.expression;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import javax.persistence.criteria.Expression;
 
 /**
  *
  * @author rrodriguez
  */
-public class Min extends Projection {
+public class Min extends BaseExpression {
 
     public Min(String fieldPath) {
         super(fieldPath);

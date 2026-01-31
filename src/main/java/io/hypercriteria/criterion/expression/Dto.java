@@ -1,7 +1,7 @@
-package io.hypercriteria.criterion.projection;
+package io.hypercriteria.criterion.expression;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 
@@ -10,7 +10,7 @@ import javax.persistence.criteria.Expression;
  * @author rrodriguez
  * @param <T>
  */
-public class Dto<T> extends Projection {
+public class Dto<T> extends BaseExpression {
 
     private final Class<T> dtoType;
 

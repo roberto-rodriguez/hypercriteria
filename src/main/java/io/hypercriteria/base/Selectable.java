@@ -1,7 +1,7 @@
 package io.hypercriteria.base;
 
 import io.hypercriteria.Criteria;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 
 /**
  *
@@ -15,5 +15,5 @@ public interface Selectable {
 
     public Criteria select(Class resultType);
 
-    public Criteria select(Projection projection);
+    public Criteria select(BaseExpression projection);
 }

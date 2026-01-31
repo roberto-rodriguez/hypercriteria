@@ -6,7 +6,7 @@
 package io.hypercriteria.criterion;
 
 import io.hypercriteria.Criteria;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class ProjectionList //implements Projection 
 {
 
-    private final List<Projection> projections = new ArrayList<>();
+    private final List<BaseExpression> projections = new ArrayList<>();
     private final Optional<Class> returnType;
 
     public ProjectionList() {
@@ -34,12 +34,12 @@ public class ProjectionList //implements Projection
         this.returnType = Optional.of(dtoType);
     }
 
-    public ProjectionList add(Projection projection) {
+    public ProjectionList add(BaseExpression projection) {
         projections.add(projection);
         return this;
     }
 
-    public ProjectionList add(Projection projection, String alias) {
+    public ProjectionList add(BaseExpression projection, String alias) {
         projection.as(alias);
         projections.add(projection);
         return this;
@@ -72,7 +72,7 @@ public class ProjectionList //implements Projection
         return returnType;
     }
 
-    public List<Projection> getProjections() {
+    public List<BaseExpression> getProjections() {
         return projections;
     }
 }

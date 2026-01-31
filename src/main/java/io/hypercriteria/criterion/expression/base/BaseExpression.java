@@ -3,45 +3,51 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.projection.base;
+package io.hypercriteria.criterion.expression.base;
 
-import io.hypercriteria.base.BaseExpression;
+import io.hypercriteria.context.JoinNode;
 import io.hypercriteria.context.PathExpression;
+import io.hypercriteria.context.PathResolver;
 import io.hypercriteria.context.QueryContext;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Selection;
 
 /**
  *
  * @author rrodriguez
  */
-public abstract class Projection extends BaseExpression {
+public abstract class BaseExpression {
+
+    protected PathExpression pathExpression;
+
+    protected Optional<BaseExpression> nestedExpression = Optional.empty();
 
     protected String alias;
 
     //To be called for Expressions with nested expressions
-    public Projection() {
+    public BaseExpression() {
     }
 
-    public Projection(String fieldPath) {
+    public BaseExpression(String fieldPath) {
         this.pathExpression = new PathExpression(fieldPath, Function.identity());
     }
 
-    public Projection(String fieldPath, Function<Class<?>, Class<?>> returnTypeResolver) {
+    public BaseExpression(String fieldPath, Function<Class<?>, Class<?>> returnTypeResolver) {
         this.pathExpression = new PathExpression(fieldPath, returnTypeResolver);
     }
 
-    public Projection(Projection nestedProjection) {
-        this(nestedProjection, Function.identity());
+    public BaseExpression(BaseExpression nestedExpression) {
+        this(nestedExpression, Function.identity());
     }
 
-    public Projection(Projection nestedProjection, Function<Class<?>, Class<?>> returnTypeResolver) {
-        this.nestedProjection = Optional.of(nestedProjection);
+    public BaseExpression(BaseExpression nestedExpression, Function<Class<?>, Class<?>> returnTypeResolver) {
+        this.nestedExpression = Optional.of(nestedExpression);
 
-        String fieldPath = this.nestedProjection.get().getPathExpression().getRawPath();
+        String fieldPath = this.nestedExpression.get().getPathExpression().getRawPath();
 
         this.pathExpression = new PathExpression(fieldPath, returnTypeResolver);
     }
@@ -57,10 +63,10 @@ public abstract class Projection extends BaseExpression {
     public Expression toExpression(QueryContext ctx) {
         Expression path;
 
-        if (nestedProjection.isEmpty()) {
+        if (nestedExpression.isEmpty()) {
             path = resolvePath(ctx);
         } else {
-            path = ((Projection) nestedProjection.get()).toExpression(ctx);
+            path = ((BaseExpression) nestedExpression.get()).toExpression(ctx);
         }
 
         return build(ctx, path);
@@ -78,7 +84,7 @@ public abstract class Projection extends BaseExpression {
         return expression;
     }
 
-    public Projection as(String alias) {
+    public BaseExpression as(String alias) {
         setAlias(alias);
         return this;
     }
@@ -93,8 +99,8 @@ public abstract class Projection extends BaseExpression {
 
     public Class getReturnType(QueryContext ctx) {
         System.out.println("DEBUG:: Projection.getReturnType from " + this.getClass().getSimpleName());
-        if (nestedProjection.isPresent()) {
-            Class nestedExpressionReturnType = nestedProjection.get().getPathExpression().getReturnType(ctx);
+        if (nestedExpression.isPresent()) {
+            Class nestedExpressionReturnType = nestedExpression.get().getPathExpression().getReturnType(ctx);
 
             System.out.println("DEBUG:: Projection.getReturnType from " + this.getClass().getSimpleName() + " nestedExpressionReturnType = " + nestedExpressionReturnType);
             Class resolvedType = pathExpression.getReturnTypeResolver().apply(nestedExpressionReturnType);
@@ -106,6 +112,46 @@ public abstract class Projection extends BaseExpression {
         System.out.println("DEBUG:: Projection.getReturnType from " + this.getClass().getSimpleName() + " returnType = " + returnType);
 
         return returnType;
+    }
+
+    public Expression resolvePath(QueryContext ctx) {
+        Expression expression;
+
+        if (nestedExpression.isPresent()) {
+            expression = nestedExpression.get().resolvePath(ctx);
+        } else {
+            expression = getJoin(ctx);
+
+            Optional<String> terminal = pathExpression.getTerminal(ctx);
+
+            if (terminal.isPresent()) {
+                expression = ((From) expression).get(terminal.get());
+            }
+        }
+
+        return expression;
+    }
+
+    public From getJoin(QueryContext ctx) {
+        System.out.println("DEBUG :: BaseExpression:: getJoin from pathExpression = " + pathExpression);
+        Optional<JoinNode> optionalJoinNode = Optional.ofNullable(PathResolver.resolvePath(ctx, pathExpression));
+
+        boolean hasJoinNode = optionalJoinNode.isPresent();
+        System.out.println("DEBUG :: BaseExpression:: getJoin - hasJoinNode = " + hasJoinNode);
+
+        if (hasJoinNode) {
+            System.out.println("DEBUG :: BaseExpression:: getJoin - optionalJoinNode = " + optionalJoinNode);
+        }
+
+        JoinNode joinNode = optionalJoinNode.orElse(ctx.getRootNode());
+
+        System.out.println("DEBUG :: BaseExpression:: getJoin - joinNode = " + joinNode);
+
+        return joinNode.toFrom(ctx);
+    }
+
+    public PathExpression getPathExpression() {
+        return pathExpression;
     }
 
 }

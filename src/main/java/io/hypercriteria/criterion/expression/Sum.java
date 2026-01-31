@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.projection;
+package io.hypercriteria.criterion.expression;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import io.hypercriteria.util.NumericType;
 import static io.hypercriteria.util.NumericType.BYTE;
 import static io.hypercriteria.util.NumericType.DOUBLE;
@@ -21,14 +21,14 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public class Sum extends Projection {
+public class Sum extends BaseExpression {
 
     public Sum(String fieldPath) {
         super(fieldPath, t -> NumericType.from(t).getPromotionTypeWhenSuming());
     }
 
-    public Sum(Projection nestedProjection) {
-        super(nestedProjection, t -> NumericType.from(t).getPromotionTypeWhenSuming());
+    public Sum(BaseExpression nestedExpression) {
+        super(nestedExpression, t -> NumericType.from(t).getPromotionTypeWhenSuming());
     }
 
     @Override

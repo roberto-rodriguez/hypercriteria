@@ -30,8 +30,7 @@ public final class PathExpression {
     Function<Class<?>, Class<?>> returnTypeResolver;
 
     public PathExpression(String rawPath) {
-        this.rawPath = rawPath;
-        this.segments = rawPath.split("\\.");
+        this(rawPath, Function.identity());
     }
 
     public PathExpression(String rawPath, Function<Class<?>, Class<?>> returnTypeResolver) {

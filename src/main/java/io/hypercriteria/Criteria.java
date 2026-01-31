@@ -8,7 +8,7 @@ package io.hypercriteria;
 import io.hypercriteria.context.QueryContext;
 import io.hypercriteria.criterion.predicate.base.Criterion;
 import io.hypercriteria.criterion.Order;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import io.hypercriteria.util.AliasInfo;
 import io.hypercriteria.util.FetchUtil;
 import javax.persistence.EntityManager;
@@ -41,8 +41,8 @@ public class Criteria {
     public Optional<String> constructorName = Optional.empty();
 
     // Query structure
-    private Optional<Projection> projection = Optional.empty();
-    private Projection groupBy;
+    private Optional<BaseExpression> projection = Optional.empty();
+    private BaseExpression groupBy;
 
     private final LinkedHashMap<String, Class> aliasTypeMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> joinInfoMap = new LinkedHashMap<>();
@@ -148,7 +148,7 @@ public class Criteria {
         return this;
     }
 
-    public Criteria groupBy(Projection groupBy) {
+    public Criteria groupBy(BaseExpression groupBy) {
         this.groupBy = groupBy;
         return this;
     }
@@ -282,7 +282,7 @@ public class Criteria {
         this.entityType = entityType;
     }
 
-    public void setProjection(Projection projection) {
+    public void setProjection(BaseExpression projection) {
         this.projection = Optional.ofNullable(projection);
     }
 
@@ -291,7 +291,7 @@ public class Criteria {
 
         private final EntityManager entityManager;
         private Class entityType;
-        private Projection projection;
+        private BaseExpression projection;
 
         private Builder(EntityManager entityManager) {
             this.entityManager = entityManager;
@@ -306,7 +306,7 @@ public class Criteria {
             return this;
         }
 
-        public Builder projection(Projection projection) {
+        public Builder projection(BaseExpression projection) {
             this.projection = projection;
             return this;
         }

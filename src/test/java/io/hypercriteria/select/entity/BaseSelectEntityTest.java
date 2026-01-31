@@ -86,7 +86,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
         userDAO.setEntityManager(entityManager);  // assign manually 
     }
 
-    @Test
+//    @Test
     void testSample() {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);

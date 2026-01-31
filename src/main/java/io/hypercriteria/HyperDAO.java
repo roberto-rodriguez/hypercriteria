@@ -3,7 +3,7 @@ package io.hypercriteria;
 import static io.hypercriteria.HyperCriteria.dto;
 import static io.hypercriteria.HyperCriteria.property;
 import io.hypercriteria.base.Selectable;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.persistence.EntityManager;
@@ -57,7 +57,7 @@ public class HyperDAO<E> implements Selectable {
     }
 
     @Override
-    public Criteria select(Projection projection) {
+    public Criteria select(BaseExpression projection) {
         return Criteria.Builder.create(entityManager)
                 .entityType(entityType)
                 .projection(projection)

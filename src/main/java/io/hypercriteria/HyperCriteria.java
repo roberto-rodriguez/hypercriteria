@@ -2,16 +2,16 @@ package io.hypercriteria;
 
 import io.hypercriteria.base.Selectable;
 import io.hypercriteria.criterion.ProjectionList;
-import io.hypercriteria.criterion.projection.Abs;
-import io.hypercriteria.criterion.projection.Avg;
-import io.hypercriteria.criterion.projection.Count;
-import io.hypercriteria.criterion.projection.CountDistinct;
-import io.hypercriteria.criterion.projection.Dto;
-import io.hypercriteria.criterion.projection.Max;
-import io.hypercriteria.criterion.projection.Min;
-import io.hypercriteria.criterion.projection.base.Projection;
-import io.hypercriteria.criterion.projection.Sum;
-import io.hypercriteria.criterion.projection.Property;
+import io.hypercriteria.criterion.expression.Abs;
+import io.hypercriteria.criterion.expression.Avg;
+import io.hypercriteria.criterion.expression.Count;
+import io.hypercriteria.criterion.expression.CountDistinct;
+import io.hypercriteria.criterion.expression.Dto;
+import io.hypercriteria.criterion.expression.Max;
+import io.hypercriteria.criterion.expression.Min;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.hypercriteria.criterion.expression.Sum;
+import io.hypercriteria.criterion.expression.Property;
 import javax.persistence.EntityManager;
 
 /**
@@ -47,7 +47,7 @@ public class HyperCriteria implements Selectable {
     }
 
     @Override
-    public Criteria select(Projection projection) {
+    public Criteria select(BaseExpression projection) {
         return Criteria.Builder.create(entityManager)
                 .projection(projection)
                 .build();
@@ -75,8 +75,8 @@ public class HyperCriteria implements Selectable {
         return new Abs(fieldPath);
     }
 
-    public static Abs abs(Projection nestedProjection) {
-        return new Abs(nestedProjection);
+    public static Abs abs(BaseExpression nestedExpression) {
+        return new Abs(nestedExpression);
     }
 
     public static Avg avg(String fieldPath) {
@@ -111,8 +111,8 @@ public class HyperCriteria implements Selectable {
         return new Sum(fieldPath);
     }
 
-    public static Sum sum(Projection nestedProjection) {
-        return new Sum(nestedProjection);
+    public static Sum sum(BaseExpression nestedExpression) {
+        return new Sum(nestedExpression);
     }
 
 }

@@ -3,24 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.projection;
+package io.hypercriteria.criterion.expression;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.projection.base.Projection;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 import javax.persistence.criteria.Expression;
 
 /**
  *
  * @author rrodriguez
  */
-public class Max extends Projection {
+public class Property extends BaseExpression {
 
-    public Max(String fieldPath) {
-        super(fieldPath);
+    public Property(String propertyName) {
+        super(propertyName);
     }
 
     @Override
     public Expression build(QueryContext ctx, Expression expression) {
-        return ctx.getCriteriaBuilder().max(expression);
+        return expression;
     }
 }
