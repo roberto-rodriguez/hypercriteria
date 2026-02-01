@@ -6,11 +6,10 @@
 package io.hypercriteria;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.predicate.base.Criterion;
 import io.hypercriteria.criterion.Order;
 import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.hypercriteria.criterion.predicate.base.BasePredicate;
 import io.hypercriteria.util.AliasInfo;
-import io.hypercriteria.util.FetchUtil;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import javax.persistence.criteria.JoinType;
 import lombok.Getter;
 import io.hypercriteria.util.TypeUtil;
+import static io.hypercriteria.HyperCriteria.Predicates.and;
 
 /**
  *
@@ -50,7 +50,7 @@ public class Criteria {
     private final LinkedHashMap<String, Class> fetchAliasTypeMap = new LinkedHashMap<>();
     private final LinkedHashMap<String, AliasInfo> fetchInfoMap = new LinkedHashMap<>();
 
-    private final List<Criterion> restrictions = new ArrayList<>();
+    private Optional<BasePredicate> predicate = Optional.empty();
     private final List<Order> orderList = new ArrayList<>();
 
     private Optional<Integer> firstResult = Optional.empty();
@@ -133,8 +133,16 @@ public class Criteria {
         return this;
     }
 
-    public Criteria where(Criterion restriction) {
-        restrictions.add(restriction);
+    public Criteria where(BasePredicate predicate) {
+        return and(predicate);
+    }
+
+    public Criteria and(BasePredicate predicate) {
+        if (this.predicate.isEmpty()) {
+            this.predicate = Optional.of(predicate);
+        } else {
+            this.predicate = Optional.of(HyperCriteria.Predicates.and(this.predicate.get(), predicate));
+        }
         return this;
     }
 
@@ -247,6 +255,10 @@ public class Criteria {
 
         if (distinct || !fetchInfoMap.isEmpty()) {//Always set distinct when applying fetch
             criteriaQuery.distinct(true);
+        }
+
+        if (predicate.isPresent()) {
+            criteriaQuery.where(predicate.get().toPredicate(ctx));
         }
 
         if (groupBy != null) {

@@ -1,19 +1,34 @@
 package io.hypercriteria.criterion.predicate.base;
 
-import io.hypercriteria.context.PathExpression;
-import java.util.function.Function;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
 
 /**
  *
  * @author rrodriguez
+ * @param <T>
  */
-public abstract class ComparablePredicate<T extends Comparable<T>> extends BasePredicate {
+public abstract class ComparablePredicate<T extends Comparable<T>> extends ExpressionPredicate {
 
-    private final T value;
+    protected T value;
+    protected BaseExpression expressionValue;
 
     public ComparablePredicate(String fieldPath, T value) {
-//        this.pathExpression = new PathExpression(fieldPath);
+        super(fieldPath);
         this.value = value;
+    }
 
+    public ComparablePredicate(BaseExpression expression, T value) {
+        super(expression);
+        this.value = value;
+    }
+
+    public ComparablePredicate(String fieldPath, BaseExpression expressionValue) {
+        super(fieldPath);
+        this.expressionValue = expressionValue;
+    }
+
+    public ComparablePredicate(BaseExpression expression, BaseExpression expressionValue) {
+        super(expression);
+        this.expressionValue = expressionValue;
     }
 }

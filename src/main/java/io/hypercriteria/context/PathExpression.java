@@ -30,7 +30,7 @@ public final class PathExpression {
     Function<Class<?>, Class<?>> returnTypeResolver;
 
     public PathExpression(String rawPath) {
-        this(rawPath, Function.identity());
+        this(rawPath, Function.identity()); 
     }
 
     public PathExpression(String rawPath, Function<Class<?>, Class<?>> returnTypeResolver) {

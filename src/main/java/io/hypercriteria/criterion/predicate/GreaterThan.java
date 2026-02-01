@@ -5,27 +5,39 @@
  */
 package io.hypercriteria.criterion.predicate;
 
-import io.hypercriteria.criterion.predicate.base.ComparationCriterion;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
+import io.hypercriteria.context.QueryContext;
+import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.hypercriteria.criterion.predicate.base.ComparablePredicate;
 import javax.persistence.criteria.Predicate;
 
 /**
  *
  * @author rrodriguez
+ * @param <T>
  */
-public class GreaterThan<T extends Comparable<T>> extends ComparationCriterion<T> {
+public class GreaterThan<T extends Comparable<T>> extends ComparablePredicate<T> {
 
-    public GreaterThan(String path, T value) {
-        super(path, value);
+    public GreaterThan(String fieldPath, T value) {
+        super(fieldPath, value);
     }
 
-    public Predicate getPredicate(CriteriaBuilder builder, Path<T> path, T value) {
-        return builder.greaterThan(path, value);
+    public GreaterThan(BaseExpression expression, T value) {
+        super(expression, value);
+    }
+
+    public GreaterThan(String fieldPath, BaseExpression expressionValue) {
+        super(fieldPath, expressionValue);
+    }
+
+    public GreaterThan(BaseExpression expression, BaseExpression expressionValue) {
+        super(expression, expressionValue);
     }
 
     @Override
-    public String toString() {
-        return String.format("%s>%s", path, getValue());
+    public Predicate toPredicate(QueryContext ctx) {
+        if (expressionValue != null) {
+            return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), expressionValue.toExpression(ctx));
+        }
+        return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), value);
     }
 }

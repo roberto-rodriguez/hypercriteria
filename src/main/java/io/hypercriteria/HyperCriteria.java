@@ -12,6 +12,11 @@ import io.hypercriteria.criterion.expression.Min;
 import io.hypercriteria.criterion.expression.base.BaseExpression;
 import io.hypercriteria.criterion.expression.Sum;
 import io.hypercriteria.criterion.expression.Property;
+import io.hypercriteria.criterion.predicate.And;
+import io.hypercriteria.criterion.predicate.GreaterThan;
+import io.hypercriteria.criterion.predicate.Or;
+import io.hypercriteria.criterion.predicate.base.BasePredicate;
+import java.util.List;
 import javax.persistence.EntityManager;
 
 /**
@@ -113,6 +118,50 @@ public class HyperCriteria implements Selectable {
 
     public static Sum sum(BaseExpression nestedExpression) {
         return new Sum(nestedExpression);
+    }
+
+    // ---- Predicates
+    public static class Predicates {
+
+        public static And and(BasePredicate p1, BasePredicate p2) {
+            return new And(p1, p2);
+        }
+
+        public static And and(BasePredicate... predicates) {
+            return new And(predicates);
+        }
+
+        public static And and(List<BasePredicate> predicates) {
+            return new And(predicates);
+        }
+
+        public static Or or(BasePredicate p1, BasePredicate p2) {
+            return new Or(p1, p2);
+        }
+
+        public static Or or(BasePredicate... predicates) {
+            return new Or(predicates);
+        }
+
+        public static Or or(List<BasePredicate> predicates) {
+            return new Or(predicates);
+        }
+
+        public static <T extends Comparable<T>> GreaterThan greaterThan(String path, T value) {
+            return new GreaterThan<>(path, value);
+        }
+
+        public static <T extends Comparable<T>> GreaterThan greaterThan(BaseExpression expression, T value) {
+            return new GreaterThan<>(expression, value);
+        }
+
+        public static <T extends Comparable<T>> GreaterThan greaterThan(String path, BaseExpression expressionValue) {
+            return new GreaterThan<>(path, expressionValue);
+        }
+
+        public static <T extends Comparable<T>> GreaterThan greaterThan(BaseExpression expression, BaseExpression expressionValue) {
+            return new GreaterThan<>(expression, expressionValue);
+        }
     }
 
 }
