@@ -10,12 +10,12 @@
     <!-- ========================= -->
     <!-- Coordinates -->
     <!-- ========================= -->
-    <groupId>io.hypercriteria</groupId>
-    <artifactId>hypercriteria</artifactId>
+    <groupId>io.fluentcriteria</groupId>
+    <artifactId>fluentcriteria</artifactId>
     <version>0.1.0</version>
     <packaging>jar</packaging>
 
-    <name>HyperCriteria</name>
+    <name>FluentCriteria</name>
     <description>
         HyperCriteria is a lightweight, provider-agnostic abstraction on top of JPA Criteria API.
         It has no dependency on Spring or Hibernate and works with any JPA provider.
