@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.abs;
 
-import io.hypercriteria.util.NumericType; 
+import io.fluentcriteria.util.NumericType; 
 import io.sample.model.Payment;
 import io.sample.model.User;
 import io.utility.TypeUtil;

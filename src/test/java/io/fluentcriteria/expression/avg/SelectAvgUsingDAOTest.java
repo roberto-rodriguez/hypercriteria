@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.avg;
 
-import static io.hypercriteria.FluentCriteria.avg;
+import static io.fluentcriteria.FluentCriteria.avg;
 
 /**
  *

@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.expression.base;
+package io.fluentcriteria.expression.base;
 
-import io.hypercriteria.context.JoinNode;
-import io.hypercriteria.context.PathExpression;
-import io.hypercriteria.context.PathResolver;
-import io.hypercriteria.context.QueryContext;
+import io.fluentcriteria.context.JoinNode;
+import io.fluentcriteria.context.PathExpression;
+import io.fluentcriteria.context.PathResolver;
+import io.fluentcriteria.context.QueryContext;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.CriteriaQuery;

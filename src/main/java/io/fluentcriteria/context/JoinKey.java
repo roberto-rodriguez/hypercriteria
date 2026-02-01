@@ -1,6 +1,6 @@
-package io.hypercriteria.context;
+package io.fluentcriteria.context;
 
-import io.hypercriteria.util.ObjectUtils;
+import io.fluentcriteria.util.ObjectUtils;
 import javax.persistence.criteria.JoinType;
 import lombok.ToString;
 

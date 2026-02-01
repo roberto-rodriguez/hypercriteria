@@ -1,6 +1,6 @@
-package io.hypercriteria.context;
+package io.fluentcriteria.context;
 
-import io.hypercriteria.util.AliasInfo;
+import io.fluentcriteria.util.AliasInfo;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;

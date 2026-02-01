@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.entity;
 
-import io.hypercriteria.FluentCriteria;
+import io.fluentcriteria.FluentCriteria;
 import io.sample.model.User;
 import java.util.List;
 

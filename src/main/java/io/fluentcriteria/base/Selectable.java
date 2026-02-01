@@ -1,7 +1,7 @@
-package io.hypercriteria.base;
+package io.fluentcriteria.base;
 
-import io.hypercriteria.Criteria;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.fluentcriteria.Criteria;
+import io.fluentcriteria.expression.base.BaseExpression;
 
 /**
  *

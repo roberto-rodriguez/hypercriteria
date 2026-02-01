@@ -1,7 +1,7 @@
 package io.fluentcriteria.expression.min;
 
-import io.hypercriteria.FluentCriteria;
-import static io.hypercriteria.FluentCriteria.min;
+import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.min;
 import io.sample.model.Payment;
 import io.sample.model.User;
 

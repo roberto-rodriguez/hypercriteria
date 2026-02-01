@@ -1,4 +1,4 @@
-package io.hypercriteria.context;
+package io.fluentcriteria.context;
 
 import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.From;

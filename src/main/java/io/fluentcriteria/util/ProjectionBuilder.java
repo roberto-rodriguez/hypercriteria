@@ -1,9 +1,9 @@
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
-import io.hypercriteria.Annotations;
-import io.hypercriteria.Annotations.ConstructorName;
-import io.hypercriteria.Criteria;
-import io.hypercriteria.criterion.ProjectionList;
+import io.fluentcriteria.Annotations;
+import io.fluentcriteria.Annotations.ConstructorName;
+import io.fluentcriteria.Criteria;
+import io.fluentcriteria.criterion.ProjectionList;
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

@@ -1,7 +1,7 @@
 package io.fluentcriteria.predicate.graterThan;
 
-import io.hypercriteria.FluentCriteria;
-import static io.hypercriteria.FluentCriteria.Predicates.greaterThan;
+import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.Predicates.greaterThan;
 import io.sample.model.Payment;
 import java.util.List;
 

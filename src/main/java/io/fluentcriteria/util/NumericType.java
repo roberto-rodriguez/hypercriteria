@@ -1,4 +1,4 @@
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

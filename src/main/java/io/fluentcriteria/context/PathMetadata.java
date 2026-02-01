@@ -1,4 +1,4 @@
-package io.hypercriteria.context;
+package io.fluentcriteria.context;
 
 import java.util.Optional;
 import java.util.function.Function;

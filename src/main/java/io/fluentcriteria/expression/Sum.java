@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.expression;
+package io.fluentcriteria.expression;
 
-import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
-import io.hypercriteria.util.NumericType;
-import static io.hypercriteria.util.NumericType.BYTE;
-import static io.hypercriteria.util.NumericType.DOUBLE;
-import static io.hypercriteria.util.NumericType.FLOAT;
-import static io.hypercriteria.util.NumericType.INTEGER;
-import static io.hypercriteria.util.NumericType.LONG;
-import static io.hypercriteria.util.NumericType.SHORT;
+import io.fluentcriteria.context.QueryContext;
+import io.fluentcriteria.expression.base.BaseExpression;
+import io.fluentcriteria.util.NumericType;
+import static io.fluentcriteria.util.NumericType.BYTE;
+import static io.fluentcriteria.util.NumericType.DOUBLE;
+import static io.fluentcriteria.util.NumericType.FLOAT;
+import static io.fluentcriteria.util.NumericType.INTEGER;
+import static io.fluentcriteria.util.NumericType.LONG;
+import static io.fluentcriteria.util.NumericType.SHORT;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
 

@@ -1,8 +1,8 @@
 package io.fluentcriteria.expression.count;
 
-import io.hypercriteria.FluentCriteria;
-import static io.hypercriteria.FluentCriteria.count;
-import static io.hypercriteria.FluentCriteria.countDistinct;
+import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.count;
+import static io.fluentcriteria.FluentCriteria.countDistinct;
 import io.sample.model.Payment;
 import io.sample.model.User;
 

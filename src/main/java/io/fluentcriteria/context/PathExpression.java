@@ -1,6 +1,6 @@
-package io.hypercriteria.context;
+package io.fluentcriteria.context;
 
-import static io.hypercriteria.util.TypeUtil.getAssociationJavaType;
+import static io.fluentcriteria.util.TypeUtil.getAssociationJavaType;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

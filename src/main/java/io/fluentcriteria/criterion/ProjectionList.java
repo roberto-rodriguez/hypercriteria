@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion;
+package io.fluentcriteria.criterion;
 
-import io.hypercriteria.Criteria;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.fluentcriteria.Criteria;
+import io.fluentcriteria.expression.base.BaseExpression;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.From;

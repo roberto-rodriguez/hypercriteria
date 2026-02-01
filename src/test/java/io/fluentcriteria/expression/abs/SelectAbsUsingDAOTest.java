@@ -1,7 +1,7 @@
 package io.fluentcriteria.expression.abs;
 
-import static io.hypercriteria.FluentCriteria.abs;
-import static io.hypercriteria.FluentCriteria.sum;
+import static io.fluentcriteria.FluentCriteria.abs;
+import static io.fluentcriteria.FluentCriteria.sum;
 import java.util.List;
 
 /**

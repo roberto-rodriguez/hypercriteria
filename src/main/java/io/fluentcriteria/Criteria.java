@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria;
+package io.fluentcriteria;
 
-import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.Order;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
-import io.hypercriteria.criterion.predicate.base.BasePredicate;
-import io.hypercriteria.util.AliasInfo;
+import io.fluentcriteria.context.QueryContext;
+import io.fluentcriteria.criterion.Order;
+import io.fluentcriteria.expression.base.BaseExpression;
+import io.fluentcriteria.criterion.predicate.base.BasePredicate;
+import io.fluentcriteria.util.AliasInfo;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.criteria.JoinType;
 import lombok.Getter;
-import io.hypercriteria.util.TypeUtil;
-import static io.hypercriteria.FluentCriteria.Predicates.and;
+import io.fluentcriteria.util.TypeUtil;
+import static io.fluentcriteria.FluentCriteria.Predicates.and;
 
 /**
  *

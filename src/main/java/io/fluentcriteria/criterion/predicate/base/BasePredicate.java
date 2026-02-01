@@ -1,6 +1,6 @@
-package io.hypercriteria.criterion.predicate.base;
+package io.fluentcriteria.criterion.predicate.base;
  
-import io.hypercriteria.context.QueryContext;
+import io.fluentcriteria.context.QueryContext;
 import javax.persistence.criteria.Predicate;
 
 /**

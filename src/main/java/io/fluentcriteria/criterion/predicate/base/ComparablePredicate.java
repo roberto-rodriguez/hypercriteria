@@ -1,6 +1,6 @@
-package io.hypercriteria.criterion.predicate.base;
+package io.fluentcriteria.criterion.predicate.base;
 
-import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.fluentcriteria.expression.base.BaseExpression;
 
 /**
  *

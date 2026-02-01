@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.max;
 
-import static io.hypercriteria.FluentCriteria.max;
+import static io.fluentcriteria.FluentCriteria.max;
 
 /**
  *

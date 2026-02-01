@@ -3,22 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion;
+package io.fluentcriteria.criterion;
 
-import io.hypercriteria.criterion.predicate.base.Criterion;
-import io.hypercriteria.criterion.predicate.Between;
-import io.hypercriteria.criterion.predicate.Equal;
-import io.hypercriteria.criterion.predicate.GreaterOrEqual;
-import io.hypercriteria.criterion.predicate.GreaterThan;
-import io.hypercriteria.criterion.predicate.In;
-import io.hypercriteria.criterion.predicate.IsNull;
-import io.hypercriteria.criterion.predicate.LessOrEqual;
-import io.hypercriteria.criterion.predicate.LessThan;
-import io.hypercriteria.criterion.predicate.Like;
-import io.hypercriteria.criterion.predicate.Not;
-import io.hypercriteria.criterion.predicate.NotEqual;
-import io.hypercriteria.criterion.predicate.NotLike;
-import io.hypercriteria.criterion.predicate.NotNull;
+import io.fluentcriteria.criterion.predicate.base.Criterion;
+import io.fluentcriteria.criterion.predicate.Between;
+import io.fluentcriteria.criterion.predicate.Equal;
+import io.fluentcriteria.criterion.predicate.GreaterOrEqual;
+import io.fluentcriteria.criterion.predicate.GreaterThan;
+import io.fluentcriteria.criterion.predicate.In;
+import io.fluentcriteria.criterion.predicate.IsNull;
+import io.fluentcriteria.criterion.predicate.LessOrEqual;
+import io.fluentcriteria.criterion.predicate.LessThan;
+import io.fluentcriteria.criterion.predicate.Like;
+import io.fluentcriteria.criterion.predicate.Not;
+import io.fluentcriteria.criterion.predicate.NotEqual;
+import io.fluentcriteria.criterion.predicate.NotLike;
+import io.fluentcriteria.criterion.predicate.NotNull;
 
 import java.util.List;
 

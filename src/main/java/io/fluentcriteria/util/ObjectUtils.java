@@ -1,5 +1,5 @@
  
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
 /**
  *

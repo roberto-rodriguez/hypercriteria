@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.hypercriteria.criterion.predicate;
+package io.fluentcriteria.criterion.predicate;
 
-import io.hypercriteria.criterion.predicate.base.Criterion;
+import io.fluentcriteria.criterion.predicate.base.Criterion;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;

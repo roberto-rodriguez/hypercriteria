@@ -1,7 +1,7 @@
 package io.fluentcriteria.expression.max;
 
-import io.hypercriteria.FluentCriteria;
-import static io.hypercriteria.FluentCriteria.max;
+import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.max;
 import io.sample.model.Payment;
 import io.sample.model.User;
 

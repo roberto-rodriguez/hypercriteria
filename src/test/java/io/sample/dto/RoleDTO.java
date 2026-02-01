@@ -1,6 +1,6 @@
 package io.sample.dto;
 
-import io.hypercriteria.Annotations.ConstructorName;
+import io.fluentcriteria.Annotations.ConstructorName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

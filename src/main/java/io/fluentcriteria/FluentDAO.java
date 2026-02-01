@@ -1,9 +1,9 @@
-package io.hypercriteria;
+package io.fluentcriteria;
 
-import static io.hypercriteria.FluentCriteria.dto;
-import static io.hypercriteria.FluentCriteria.attribute;
-import io.hypercriteria.base.Selectable;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
+import static io.fluentcriteria.FluentCriteria.dto;
+import static io.fluentcriteria.FluentCriteria.attribute;
+import io.fluentcriteria.base.Selectable;
+import io.fluentcriteria.expression.base.BaseExpression;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.persistence.EntityManager;

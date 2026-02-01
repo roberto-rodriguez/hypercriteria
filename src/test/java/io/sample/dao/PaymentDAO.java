@@ -1,7 +1,7 @@
  
 package io.sample.dao;
 
-import io.hypercriteria.FluentDAO;
+import io.fluentcriteria.FluentDAO;
 import io.sample.model.Payment;
 
 /**

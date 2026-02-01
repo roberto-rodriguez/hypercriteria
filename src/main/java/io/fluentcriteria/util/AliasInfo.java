@@ -1,4 +1,4 @@
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
 import javax.persistence.criteria.JoinType;
 import lombok.Getter;

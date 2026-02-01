@@ -1,14 +1,14 @@
 package io.fluentcriteria.expression.sum;
 
-import io.hypercriteria.util.NumericType;
-import static io.hypercriteria.util.NumericType.BIG_DECIMAL;
-import static io.hypercriteria.util.NumericType.BIG_INTEGER;
-import static io.hypercriteria.util.NumericType.BYTE;
-import static io.hypercriteria.util.NumericType.DOUBLE;
-import static io.hypercriteria.util.NumericType.FLOAT;
-import static io.hypercriteria.util.NumericType.INTEGER;
-import static io.hypercriteria.util.NumericType.LONG;
-import static io.hypercriteria.util.NumericType.SHORT;
+import io.fluentcriteria.util.NumericType;
+import static io.fluentcriteria.util.NumericType.BIG_DECIMAL;
+import static io.fluentcriteria.util.NumericType.BIG_INTEGER;
+import static io.fluentcriteria.util.NumericType.BYTE;
+import static io.fluentcriteria.util.NumericType.DOUBLE;
+import static io.fluentcriteria.util.NumericType.FLOAT;
+import static io.fluentcriteria.util.NumericType.INTEGER;
+import static io.fluentcriteria.util.NumericType.LONG;
+import static io.fluentcriteria.util.NumericType.SHORT;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import io.utility.TypeUtil;

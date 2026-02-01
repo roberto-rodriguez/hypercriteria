@@ -1,7 +1,7 @@
-package io.hypercriteria.criterion.expression;
+package io.fluentcriteria.expression;
 
-import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.expression.base.BaseExpression;
+import io.fluentcriteria.context.QueryContext;
+import io.fluentcriteria.expression.base.BaseExpression;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 

@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.min;
 
-import static io.hypercriteria.FluentCriteria.min;
+import static io.fluentcriteria.FluentCriteria.min;
 
 /**
  *

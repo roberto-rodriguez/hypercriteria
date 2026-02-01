@@ -1,4 +1,4 @@
-package io.hypercriteria;
+package io.fluentcriteria;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

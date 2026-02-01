@@ -1,7 +1,7 @@
 package io.fluentcriteria.expression.sum;
 
-import io.hypercriteria.FluentCriteria;
-import static io.hypercriteria.FluentCriteria.sum;
+import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.sum;
 import io.sample.model.Payment;
 import io.sample.model.User;
 

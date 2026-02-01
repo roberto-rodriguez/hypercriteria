@@ -1,7 +1,7 @@
 package io.fluentcriteria.expression.count;
 
-import static io.hypercriteria.FluentCriteria.count;
-import static io.hypercriteria.FluentCriteria.countDistinct;
+import static io.fluentcriteria.FluentCriteria.count;
+import static io.fluentcriteria.FluentCriteria.countDistinct;
 import io.sample.dao.PaymentDAO;
 
 /**

@@ -1,8 +1,7 @@
  
 package io.sample.dao;
 
-import io.hypercriteria.FluentDAO; 
-import io.sample.dto.UserDTO;
+import io.fluentcriteria.FluentDAO; 
 import io.sample.model.User;
 
 /**

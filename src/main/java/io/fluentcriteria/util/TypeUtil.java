@@ -1,10 +1,10 @@
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
 /**
  *
  * @author rrodriguez
  */
-import io.hypercriteria.Criteria;
+import io.fluentcriteria.Criteria;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;

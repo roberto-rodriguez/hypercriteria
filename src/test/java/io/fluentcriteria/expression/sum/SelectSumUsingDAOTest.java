@@ -1,6 +1,6 @@
 package io.fluentcriteria.expression.sum;
 
-import static io.hypercriteria.FluentCriteria.sum;
+import static io.fluentcriteria.FluentCriteria.sum;
 
 /**
  *

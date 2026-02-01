@@ -1,6 +1,6 @@
-package io.hypercriteria.util;
+package io.fluentcriteria.util;
 
-import io.hypercriteria.Criteria;
+import io.fluentcriteria.Criteria;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.JoinType;
