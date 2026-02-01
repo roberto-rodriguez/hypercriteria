@@ -1,8 +1,8 @@
 package io.fluentcriteria.criterion.predicate;
 
 import io.fluentcriteria.context.QueryContext;
-import io.fluentcriteria.criterion.predicate.base.BasePredicate;
-import io.fluentcriteria.criterion.predicate.base.Junction;
+import io.fluentcriteria.predicate.base.BasePredicate;
+import io.fluentcriteria.predicate.base.Junction;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.criteria.Predicate;

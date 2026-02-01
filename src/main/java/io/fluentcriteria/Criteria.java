@@ -8,7 +8,7 @@ package io.fluentcriteria;
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.criterion.Order;
 import io.fluentcriteria.expression.base.BaseExpression;
-import io.fluentcriteria.criterion.predicate.base.BasePredicate;
+import io.fluentcriteria.predicate.base.BasePredicate;
 import io.fluentcriteria.util.AliasInfo;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;

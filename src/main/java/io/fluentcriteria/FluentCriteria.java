@@ -13,9 +13,9 @@ import io.fluentcriteria.expression.base.BaseExpression;
 import io.fluentcriteria.expression.Sum;
 import io.fluentcriteria.expression.Attribute;
 import io.fluentcriteria.criterion.predicate.And;
-import io.fluentcriteria.criterion.predicate.GreaterThan;
+import io.fluentcriteria.predicate.GreaterThan;
 import io.fluentcriteria.criterion.predicate.Or;
-import io.fluentcriteria.criterion.predicate.base.BasePredicate;
+import io.fluentcriteria.predicate.base.BasePredicate;
 import java.util.List;
 import javax.persistence.EntityManager;
 

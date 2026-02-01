@@ -1,4 +1,4 @@
-package io.fluentcriteria.criterion.predicate.base;
+package io.fluentcriteria.predicate.base;
 
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.expression.Attribute;

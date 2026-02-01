@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.fluentcriteria.criterion.predicate.base;
+package io.fluentcriteria.predicate.base;
 
 import io.fluentcriteria.context.QueryContext;
 import java.util.ArrayList;

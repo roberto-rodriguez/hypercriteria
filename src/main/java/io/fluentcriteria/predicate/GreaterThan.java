@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package io.fluentcriteria.criterion.predicate;
+package io.fluentcriteria.predicate;
 
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.expression.base.BaseExpression;
-import io.fluentcriteria.criterion.predicate.base.ComparablePredicate;
+import io.fluentcriteria.predicate.base.ComparablePredicate;
 import javax.persistence.criteria.Predicate;
 
 /**
