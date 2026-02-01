@@ -1,7 +1,7 @@
 package io.hypercriteria;
 
 import static io.hypercriteria.HyperCriteria.dto;
-import static io.hypercriteria.HyperCriteria.property;
+import static io.hypercriteria.HyperCriteria.attribute;
 import io.hypercriteria.base.Selectable;
 import io.hypercriteria.criterion.expression.base.BaseExpression;
 import java.lang.reflect.ParameterizedType;
@@ -47,8 +47,8 @@ public class HyperDAO<E> implements Selectable {
     }
 
     @Override
-    public Criteria select(String property) {
-        return select(property(property));
+    public Criteria select(String attribute) {
+        return select(attribute(attribute));
     }
 
     @Override

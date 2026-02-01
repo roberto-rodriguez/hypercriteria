@@ -11,7 +11,7 @@ public interface Selectable {
 
     public Criteria select();
 
-    public Criteria select(String property);
+    public Criteria select(String attribute);
 
     public Criteria select(Class resultType);
 

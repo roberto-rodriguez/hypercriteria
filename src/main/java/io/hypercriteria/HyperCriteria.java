@@ -11,7 +11,7 @@ import io.hypercriteria.criterion.expression.Max;
 import io.hypercriteria.criterion.expression.Min;
 import io.hypercriteria.criterion.expression.base.BaseExpression;
 import io.hypercriteria.criterion.expression.Sum;
-import io.hypercriteria.criterion.expression.Property;
+import io.hypercriteria.criterion.expression.Attribute;
 import io.hypercriteria.criterion.predicate.And;
 import io.hypercriteria.criterion.predicate.GreaterThan;
 import io.hypercriteria.criterion.predicate.Or;
@@ -43,7 +43,7 @@ public class HyperCriteria implements Selectable {
 
     @Override
     public Criteria select(String fieldPath) {
-        return select(property(fieldPath));
+        return select(attribute(fieldPath));
     }
 
     @Override
@@ -63,8 +63,8 @@ public class HyperCriteria implements Selectable {
         return new ProjectionList();
     }
 
-    public static Property property(String fieldPath) {
-        return new Property(fieldPath);
+    public static Attribute attribute(String fieldPath) {
+        return new Attribute(fieldPath);
     }
 
     public static Dto dto(Class<?> dtoType) {

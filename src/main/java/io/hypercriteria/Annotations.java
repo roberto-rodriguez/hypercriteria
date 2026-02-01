@@ -15,7 +15,7 @@ public class Annotations {
         String value();
     } 
 
-    //Specify which property on the domain class to map to. MIght include dotted path name.
+    //Specify which attribute on the domain class to map to. MIght include dotted path name.
     @Retention(RetentionPolicy.RUNTIME)
     public @interface Mapping {
 

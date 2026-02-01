@@ -1,7 +1,7 @@
 package io.hypercriteria.criterion.predicate.base;
 
 import io.hypercriteria.context.QueryContext;
-import io.hypercriteria.criterion.expression.Property;
+import io.hypercriteria.criterion.expression.Attribute;
 import io.hypercriteria.criterion.expression.base.BaseExpression;
 import javax.persistence.criteria.Expression;
 
@@ -15,7 +15,7 @@ public abstract class ExpressionPredicate extends BasePredicate {
 
     public ExpressionPredicate(String fieldPath) {
         this.expression
-                = new Property(fieldPath);
+                = new Attribute(fieldPath);
     }
 
     public ExpressionPredicate(BaseExpression expression) {

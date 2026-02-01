@@ -13,9 +13,9 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public class Property extends BaseExpression {
+public class Attribute extends BaseExpression {
 
-    public Property(String propertyName) {
+    public Attribute(String propertyName) {
         super(propertyName);
     }
 
