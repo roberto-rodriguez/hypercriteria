@@ -83,6 +83,25 @@ public class User {
         );
     }
 
+    public void addPaymentWithPrimaryAndSecondNumericValues(Integer n, Integer second) {
+        payments.add(Payment.builder()
+                .intValue(n)
+                .longValue(n.longValue())
+                .floatValue(n.floatValue())
+                .doubleValue(n.doubleValue())
+                .bigInteger(new BigInteger(n.toString()))
+                .bigDecimal(new BigDecimal(n.toString()))
+                .user(this)
+                .secondIntValue(second)
+                .secondLongValue(second.longValue())
+                .secondFloatValue(second.floatValue())
+                .secondDoubleValue(second.doubleValue())
+                .secondBigInteger(new BigInteger(second.toString()))
+                .secondBigDecimal(new BigDecimal(second.toString()))
+                .build()
+        );
+    }
+
     public void addPayment(Payment payment) {
         payments.add(payment);
         payment.setUser(this);

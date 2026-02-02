@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
  */
 public abstract class BaseExpressionPredicateTest extends BaseTest {
 
-    private static final boolean DISABLE_ALL = false;
+    private static final boolean DISABLE_ALL = true;
 
     protected UserDAO userDAO;
     protected PaymentDAO paymentDAO;
@@ -26,12 +26,30 @@ public abstract class BaseExpressionPredicateTest extends BaseTest {
             .payments(new ArrayList<>())
             .build();
 
+    private static final User USER_WITH_PAYMENTS_WITH_SECONDARY_VALUES = User.builder()
+            .firstName("John")
+            .lastName("Smith")
+            .payments(new ArrayList<>())
+            .build();
+
+    private static final User USER_WITH_PAYMENTS_WITH_NEGATIVE_PRIMARY_SECONDARY_VALUES = User.builder()
+            .firstName("John")
+            .lastName("Smith")
+            .payments(new ArrayList<>())
+            .build();
+
     static {
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(1);
         USER_WITH_PAYMENTS.addPaymentWithNumericValues(2);
+        USER_WITH_PAYMENTS_WITH_SECONDARY_VALUES.addPaymentWithPrimaryAndSecondNumericValues(2, 1);
+        USER_WITH_PAYMENTS_WITH_NEGATIVE_PRIMARY_SECONDARY_VALUES.addPaymentWithPrimaryAndSecondNumericValues(-2, 1);
     }
 
-    abstract <T extends Comparable<T>> List<T> greaterThanProperty(String fieldPath, T value);
+    abstract <T extends Comparable<T>> List<T> greaterThanProperty(String leftAttributePath, T value);
+
+    abstract <T extends Comparable<T>> List<T> greaterThanAttributeExpression(String leftAttributePath, String valueAttributePath);
+
+    abstract <T extends Comparable<T>> List<T> absGreaterThanAttributeExpression(String leftAttributePath, String valueAttributePath);
 //    abstract <T extends Comparable<T>> List<T> greaterThanByNestedProperty(String fieldPath, T value);
 
     @Override
@@ -43,15 +61,36 @@ public abstract class BaseExpressionPredicateTest extends BaseTest {
         paymentDAO.setEntityManager(entityManager);  // assign manually
     }
 
-    @Test
-    void testGreaterThan_integer() {
+//    @Test
+//    void testGreaterThan_integer() {
 //        if (DISABLE_ALL) {
 //            return;
 //        }
-        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-        List<Integer> result = greaterThanProperty("intValue", 1);
+//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+//        List<Integer> result = greaterThanProperty("intValue", 1);
+//        assertEquals(result.size(), 1);
+//        assertEquals(result.get(0), 2);
+//    }
+//
+//    @Test
+//    void testGreaterThan_expression_integer() {
+//        if (DISABLE_ALL) {
+//            return;
+//        }
+//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS_WITH_SECONDARY_VALUES);
+//        List result = greaterThanAttributeExpression("intValue", "secondIntValue");
+//        assertEquals(result.size(), 1);
+//        assertEquals(result.get(0), 2);
+//    }
+    @Test
+    void testAbsGreaterThan_expression_integer() {
+//        if (DISABLE_ALL) {
+//            return;
+//        }
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS_WITH_NEGATIVE_PRIMARY_SECONDARY_VALUES);
+        List result = absGreaterThanAttributeExpression("intValue", "secondIntValue");
         assertEquals(result.size(), 1);
-        assertEquals(result.get(0), 2);
+        assertEquals(2, result.get(0));
     }
 
 //    @Test

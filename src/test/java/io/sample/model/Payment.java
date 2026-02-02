@@ -52,11 +52,18 @@ public class Payment {
     @JoinColumn(name = "card_id", referencedColumnName = "id")
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Card card;
-    
+
     private Integer intValue;
     private Long longValue;
     private Float floatValue;
     private Double doubleValue;
     private BigInteger bigInteger;
     private BigDecimal bigDecimal;
+
+    private Integer secondIntValue;
+    private Long secondLongValue;
+    private Float secondFloatValue;
+    private Double secondDoubleValue;
+    private BigInteger secondBigInteger;
+    private BigDecimal secondBigDecimal;
 }

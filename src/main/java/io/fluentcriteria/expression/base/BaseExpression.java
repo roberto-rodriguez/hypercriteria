@@ -9,6 +9,7 @@ import io.fluentcriteria.context.JoinNode;
 import io.fluentcriteria.context.PathExpression;
 import io.fluentcriteria.context.PathResolver;
 import io.fluentcriteria.context.QueryContext;
+import io.fluentcriteria.predicate.GreaterThan;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.CriteriaQuery;
@@ -154,4 +155,14 @@ public abstract class BaseExpression {
         return pathExpression;
     }
 
+    //------- Predicate builder
+    public <T extends Comparable<T>> GreaterThan greaterThan(T value) {
+        return new GreaterThan<>(this, value);
+    }
+
+    public <T extends Comparable<T>> GreaterThan greaterThan(BaseExpression expressionValue) {
+        return new GreaterThan<>(this, expressionValue);
+    }
+    
+    // Rest of predicate methods here
 }

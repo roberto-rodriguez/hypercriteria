@@ -1,4 +1,4 @@
-package io.fluentcriteria.expression.property;
+package io.fluentcriteria.expression.attribute;
 
 import io.sample.dao.UserDAO;
 import io.sample.model.Address;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author rrodriguez
  */
-abstract class BaseSelectPropertyTest extends BaseTest {
+abstract class BaseSelectAttributeTest extends BaseTest {
 
     protected UserDAO userDAO;
 
@@ -74,40 +74,40 @@ abstract class BaseSelectPropertyTest extends BaseTest {
             .build();
 
     // Select unique result
-    abstract Object selectProperty(String fieldPath);
+    abstract Object selectAttribute(String fieldPath);
 
-    abstract Object selectProperty_withRootAlias(String fieldPath);
+    abstract Object selectAttribute_withRootAlias(String fieldPath);
 
-    abstract Object selectNestedPropertyOneLevel_implicitJoin(String fieldPath);
+    abstract Object selectNestedAttributeOneLevel_implicitJoin(String fieldPath);
 
-    abstract Object selectNestedPropertyOneLevel_explicitLeftJoin(String fieldPath);
+    abstract Object selectNestedAttributeOneLevel_explicitLeftJoin(String fieldPath);
 
-    abstract Object selectNestedPropertyTwoLevels_implicitJoin(String fieldPath);
+    abstract Object selectNestedAttributeTwoLevels_implicitJoin(String fieldPath);
 
-    abstract Object selectNestedPropertyTwoLevels_explicitLeftJoin(String fieldPath);
+    abstract Object selectNestedAttributeTwoLevels_explicitLeftJoin(String fieldPath);
 
     // List
-    abstract List<String> listProperty(String fieldPath);
+    abstract List<String> listAttribute(String fieldPath);
 
-    abstract List<String> listProperty_distinct(String fieldPath);
+    abstract List<String> listAttribute_distinct(String fieldPath);
 
-    abstract List<String> listNestedPropertyOneLevel_implicitJoin(String fieldPath);
+    abstract List<String> listNestedAttributeOneLevel_implicitJoin(String fieldPath);
 
-    abstract List<String> testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath(String fieldPath);
+    abstract List<String> testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath(String fieldPath);
 
-    abstract List<String> listNestedPropertyOneLevel_explicitLeftJoin(String fieldPath);
+    abstract List<String> listNestedAttributeOneLevel_explicitLeftJoin(String fieldPath);
 
-    abstract List<String> listNestedPropertyOneLevel_explicitInnerJoin(String fieldPath);
+    abstract List<String> listNestedAttributeOneLevel_explicitInnerJoin(String fieldPath);
 
-    abstract List<String> listNestedPropertyTwoLevels_implicitJoins(String fieldPath);
+    abstract List<String> listNestedAttributeTwoLevels_implicitJoins(String fieldPath);
 
-    abstract List<String> listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath);
+    abstract List<String> listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath);
 
-    abstract List<String> listNestedPropertyTwoLevels_implicitJoins_distinct(String fieldPath);
+    abstract List<String> listNestedAttributeTwoLevels_implicitJoins_distinct(String fieldPath);
 
-    abstract List<String> listNestedPropertyTwoLevels_explicitLeftJoins(String fieldPath);
+    abstract List<String> listNestedAttributeTwoLevels_explicitLeftJoins(String fieldPath);
 
-    abstract List<String> listNestedPropertyTwoLevels_explicitLeftThenInnerJoins(String fieldPath);
+    abstract List<String> listNestedAttributeTwoLevels_explicitLeftThenInnerJoins(String fieldPath);
 
     @Override
     protected void beforeEach() {
@@ -116,32 +116,32 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectProperty() {
+    void testSelectAttribute() {
         if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String firstName = (String) selectProperty("firstName");
+        String firstName = (String) selectAttribute("firstName");
 
         assertTrue(List.of("John", "Jane").contains(firstName));
     }
 
     @Test
-    void testSelectProperty_withRootAlias() {
+    void testSelectAttribute_withRootAlias() {
         if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);
 
-        String firstName = (String) selectProperty_withRootAlias("u.firstName");
+        String firstName = (String) selectAttribute_withRootAlias("u.firstName");
 
         assertEquals("John", firstName);
     }
 
     @Test
-    void testSelectProperty_typoInPropertyName() {
+    void testSelectAttribute_typoInAttributeName() {
         if (DISABLE_ALL) {
             return;
         }
@@ -149,7 +149,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectProperty("firstNameX")
+                () -> selectAttribute("firstNameX")
         );
 
         assertEquals(
@@ -159,7 +159,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectProperty_emptyFieldPath() {
+    void testSelectAttribute_emptyFieldPath() {
         if (DISABLE_ALL) {
             return;
         }
@@ -167,7 +167,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectProperty("")
+                () -> selectAttribute("")
         );
 
         assertEquals(
@@ -177,19 +177,19 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedPropertyOneLevel_implicitJoin() {
+    void testSelectNestedAttributeOneLevel_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);
 
-        String street = (String) selectNestedPropertyOneLevel_implicitJoin("address.street");
+        String street = (String) selectNestedAttributeOneLevel_implicitJoin("address.street");
 
         assertEquals(USER_1.getAddress().getStreet(), street);
     }
 
     @Test
-    void testSelectNestedPropertyOneLevel_implicitJoin_typoInAssociationName() {
+    void testSelectNestedAttributeOneLevel_implicitJoin_typoInAssociationName() {
         if (DISABLE_ALL) {
             return;
         }
@@ -197,7 +197,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectNestedPropertyOneLevel_implicitJoin("adress.street")//Typo in adress
+                () -> selectNestedAttributeOneLevel_implicitJoin("adress.street")//Typo in adress
         );
 
         assertEquals(
@@ -207,7 +207,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedPropertyOneLevel_explicitLeftJoin() {
+    void testSelectNestedAttributeOneLevel_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -215,7 +215,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String street = (String) selectNestedPropertyOneLevel_explicitLeftJoin("a.street");
+        String street = (String) selectNestedAttributeOneLevel_explicitLeftJoin("a.street");
 
         assertTrue(
                 List.of(
@@ -226,7 +226,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedPropertyTwoLevels_implicitJoin() {
+    void testSelectNestedAttributeTwoLevels_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -234,7 +234,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String stateName = (String) selectNestedPropertyTwoLevels_implicitJoin("address.state.name");
+        String stateName = (String) selectNestedAttributeTwoLevels_implicitJoin("address.state.name");
 
         assertTrue(
                 List.of(
@@ -246,7 +246,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedPropertyTwoLevels_explicitLeftJoin() {
+    void testSelectNestedAttributeTwoLevels_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -254,7 +254,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String stateName = (String) selectNestedPropertyTwoLevels_explicitLeftJoin("s.name");
+        String stateName = (String) selectNestedAttributeTwoLevels_explicitLeftJoin("s.name");
 
         assertTrue(
                 List.of(
@@ -265,7 +265,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListProperty() {
+    void testListAttribute() {
         if (DISABLE_ALL) {
             return;
         }
@@ -274,7 +274,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2);
 
-        List<String> list = listProperty("firstName");
+        List<String> list = listAttribute("firstName");
 
         assertEquals(3, list.size());
 
@@ -286,7 +286,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListProperty_distinct() {
+    void testListAttribute_distinct() {
         if (DISABLE_ALL) {
             return;
         }
@@ -295,7 +295,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2); //Repeated user, should return same firstName
 
-        List<String> list = listProperty_distinct("firstName");
+        List<String> list = listAttribute_distinct("firstName");
 
         assertEquals(2, list.size());
 
@@ -306,7 +306,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyOneLevel_implicitJoin() {
+    void testListNestedAttributeOneLevel_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -314,7 +314,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedPropertyOneLevel_implicitJoin("address.street");
+        List<String> list = listNestedAttributeOneLevel_implicitJoin("address.street");
 
         assertEquals(2, list.size());
 
@@ -325,7 +325,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyOneLevel_explicitLeftJoin() {
+    void testListNestedAttributeOneLevel_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -333,7 +333,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedPropertyOneLevel_explicitLeftJoin("a.street");
+        List<String> list = listNestedAttributeOneLevel_explicitLeftJoin("a.street");
 
         assertEquals(2, list.size());
 
@@ -344,7 +344,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyOneLevel_explicitInnerJoin() {
+    void testListNestedAttributeOneLevel_explicitInnerJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -352,7 +352,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedPropertyOneLevel_explicitInnerJoin("a.street");
+        List<String> list = listNestedAttributeOneLevel_explicitInnerJoin("a.street");
 
         assertEquals(1, list.size());
 
@@ -362,7 +362,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyTwoLevels_implicitJoins() {
+    void testListNestedAttributeTwoLevels_implicitJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -371,7 +371,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedPropertyTwoLevels_implicitJoins("address.state.name");
+        List<String> list = listNestedAttributeTwoLevels_implicitJoins("address.state.name");
 
         assertEquals(3, list.size());
 
@@ -389,14 +389,14 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     //The user has role.name, but since there is an alias name role,
     //it takes presedence, so it should return "Georgia"
     @Test
-    void testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
+    void testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
         if (DISABLE_ALL) {
             return;
         }
 
         userDAO.saveOrUpdate(USER_WITH_ROLE);
 
-        List<String> list = testListNestedPropertyTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
+        List<String> list = testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
 
         assertEquals(1, list.size());
 
@@ -416,7 +416,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedPropertyTwoLevels_implicitJoins_reuseExplicitJoins("address.state.name");
+        List<String> list = listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins("address.state.name");
 
         assertEquals(3, list.size());
 
@@ -428,7 +428,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyTwoLevels_implicitJoins_distinct() {
+    void testListNestedAttributeTwoLevels_implicitJoins_distinct() {
         if (DISABLE_ALL) {
             return;
         }
@@ -437,7 +437,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        List<String> list = listNestedPropertyTwoLevels_implicitJoins_distinct("address.state.name");
+        List<String> list = listNestedAttributeTwoLevels_implicitJoins_distinct("address.state.name");
 
         assertEquals(2, list.size());
 
@@ -448,7 +448,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyTwoLevels_explicitLeftJoins() {
+    void testListNestedAttributeTwoLevels_explicitLeftJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -457,7 +457,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedPropertyTwoLevels_explicitLeftJoins("s.name");
+        List<String> list = listNestedAttributeTwoLevels_explicitLeftJoins("s.name");
 
         assertEquals(3, list.size());
 
@@ -469,7 +469,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
     }
 
     @Test
-    void testListNestedPropertyTwoLevels_explicitLeftThenInnerJoins() {
+    void testListNestedAttributeTwoLevels_explicitLeftThenInnerJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -478,7 +478,7 @@ abstract class BaseSelectPropertyTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedPropertyTwoLevels_explicitLeftThenInnerJoins("s.name");
+        List<String> list = listNestedAttributeTwoLevels_explicitLeftThenInnerJoins("s.name");
 
         assertEquals(1, list.size());
 

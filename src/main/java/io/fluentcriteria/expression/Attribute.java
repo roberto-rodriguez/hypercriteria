@@ -7,6 +7,7 @@ package io.fluentcriteria.expression;
 
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.expression.base.BaseExpression;
+import io.fluentcriteria.predicate.GreaterThan;
 import javax.persistence.criteria.Expression;
 
 /**
@@ -23,4 +24,6 @@ public class Attribute extends BaseExpression {
     public Expression build(QueryContext ctx, Expression expression) {
         return expression;
     }
+
+    
 }

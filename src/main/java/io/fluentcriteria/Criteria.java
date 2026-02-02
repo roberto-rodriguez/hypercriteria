@@ -5,10 +5,13 @@
  */
 package io.fluentcriteria;
 
+import static io.fluentcriteria.FluentCriteria.attribute;
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.criterion.Order;
 import io.fluentcriteria.expression.base.BaseExpression;
 import io.fluentcriteria.predicate.base.BasePredicate;
+import io.fluentcriteria.predicate.builder.ExpressionPredicateBuilder;
+import io.fluentcriteria.predicate.builder.WhereBuilder;
 import io.fluentcriteria.util.AliasInfo;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -22,7 +25,6 @@ import java.util.Optional;
 import javax.persistence.criteria.JoinType;
 import lombok.Getter;
 import io.fluentcriteria.util.TypeUtil;
-import static io.fluentcriteria.FluentCriteria.Predicates.and;
 
 /**
  *
@@ -135,6 +137,14 @@ public class Criteria {
 
     public Criteria where(BasePredicate predicate) {
         return and(predicate);
+    }
+
+    public ExpressionPredicateBuilder where(BaseExpression expression) {
+        return new WhereBuilder(this, expression);
+    }
+
+    public ExpressionPredicateBuilder where(String fieldPath) {
+        return new WhereBuilder(this, attribute(fieldPath));
     }
 
     public Criteria and(BasePredicate predicate) {
