@@ -15,10 +15,10 @@ import javax.persistence.criteria.Root;
  *
  * @author rrodriguez
  */
-class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
+class SelectFieldUsingJPATest extends BaseSelectFieldTest {
 
     @Override
-    Object selectAttribute(String fieldPath) {
+    Object selectField(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
@@ -30,12 +30,12 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    Object selectAttribute_withRootAlias(String fieldPath) {
-        return selectAttribute(fieldPath);
+    Object selectField_withRootAlias(String fieldPath) {
+        return selectField(fieldPath);
     }
 
     @Override
-    Object selectNestedAttributeOneLevel_implicitJoin(String fieldPath) {
+    Object selectNestedFieldOneLevel_implicitJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
@@ -49,7 +49,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    Object selectNestedAttributeOneLevel_explicitLeftJoin(String fieldPath) {
+    Object selectNestedFieldOneLevel_explicitLeftJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
@@ -61,7 +61,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    Object selectNestedAttributeTwoLevels_implicitJoin(String fieldPath) {
+    Object selectNestedFieldTwoLevels_implicitJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object> cq = cb.createQuery(Object.class);
 
@@ -81,8 +81,8 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    Object selectNestedAttributeTwoLevels_explicitLeftJoin(String fieldPath) {
-        return selectNestedAttributeTwoLevels_implicitJoin(fieldPath);
+    Object selectNestedFieldTwoLevels_explicitLeftJoin(String fieldPath) {
+        return selectNestedFieldTwoLevels_implicitJoin(fieldPath);
     }
 
     private String lastSegment(String fieldPath) {
@@ -91,7 +91,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listAttribute(String fieldPath) {
+    List<String> listField(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -103,7 +103,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listAttribute_distinct(String fieldPath) {
+    List<String> listField_distinct(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -115,7 +115,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeOneLevel_implicitJoin(String fieldPath) {
+    List<String> listNestedFieldOneLevel_implicitJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -128,12 +128,12 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeOneLevel_explicitLeftJoin(String fieldPath) {
-        return listNestedAttributeOneLevel_implicitJoin(fieldPath);
+    List<String> listNestedFieldOneLevel_explicitLeftJoin(String fieldPath) {
+        return listNestedFieldOneLevel_implicitJoin(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeOneLevel_explicitInnerJoin(String fieldPath) {
+    List<String> listNestedFieldOneLevel_explicitInnerJoin(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -146,7 +146,7 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins(String fieldPath) {
+    List<String> listNestedFieldTwoLevels_implicitJoins(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -160,17 +160,17 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
-        return listNestedAttributeTwoLevels_implicitJoins(fieldPath);
+    List<String> testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
+        return listNestedFieldTwoLevels_implicitJoins(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
-        return listNestedAttributeTwoLevels_implicitJoins(fieldPath);
+    List<String> listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
+        return listNestedFieldTwoLevels_implicitJoins(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins_distinct(String fieldPath) {
+    List<String> listNestedFieldTwoLevels_implicitJoins_distinct(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 
@@ -184,12 +184,12 @@ class SelectAttributeUsingJPATest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_explicitLeftJoins(String fieldPath) {
-        return listNestedAttributeTwoLevels_implicitJoins(fieldPath);
+    List<String> listNestedFieldTwoLevels_explicitLeftJoins(String fieldPath) {
+        return listNestedFieldTwoLevels_implicitJoins(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
+    List<String> listNestedFieldTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<String> cq = cb.createQuery(String.class);
 

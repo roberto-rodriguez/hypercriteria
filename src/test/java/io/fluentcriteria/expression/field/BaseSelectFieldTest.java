@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author rrodriguez
  */
-abstract class BaseSelectAttributeTest extends BaseTest {
+abstract class BaseSelectFieldTest extends BaseTest {
 
     protected UserDAO userDAO;
 
@@ -74,40 +74,40 @@ abstract class BaseSelectAttributeTest extends BaseTest {
             .build();
 
     // Select unique result
-    abstract Object selectAttribute(String fieldPath);
+    abstract Object selectField(String fieldPath);
 
-    abstract Object selectAttribute_withRootAlias(String fieldPath);
+    abstract Object selectField_withRootAlias(String fieldPath);
 
-    abstract Object selectNestedAttributeOneLevel_implicitJoin(String fieldPath);
+    abstract Object selectNestedFieldOneLevel_implicitJoin(String fieldPath);
 
-    abstract Object selectNestedAttributeOneLevel_explicitLeftJoin(String fieldPath);
+    abstract Object selectNestedFieldOneLevel_explicitLeftJoin(String fieldPath);
 
-    abstract Object selectNestedAttributeTwoLevels_implicitJoin(String fieldPath);
+    abstract Object selectNestedFieldTwoLevels_implicitJoin(String fieldPath);
 
-    abstract Object selectNestedAttributeTwoLevels_explicitLeftJoin(String fieldPath);
+    abstract Object selectNestedFieldTwoLevels_explicitLeftJoin(String fieldPath);
 
     // List
-    abstract List<String> listAttribute(String fieldPath);
+    abstract List<String> listField(String fieldPath);
 
-    abstract List<String> listAttribute_distinct(String fieldPath);
+    abstract List<String> listField_distinct(String fieldPath);
 
-    abstract List<String> listNestedAttributeOneLevel_implicitJoin(String fieldPath);
+    abstract List<String> listNestedFieldOneLevel_implicitJoin(String fieldPath);
 
-    abstract List<String> testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath(String fieldPath);
+    abstract List<String> testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath(String fieldPath);
 
-    abstract List<String> listNestedAttributeOneLevel_explicitLeftJoin(String fieldPath);
+    abstract List<String> listNestedFieldOneLevel_explicitLeftJoin(String fieldPath);
 
-    abstract List<String> listNestedAttributeOneLevel_explicitInnerJoin(String fieldPath);
+    abstract List<String> listNestedFieldOneLevel_explicitInnerJoin(String fieldPath);
 
-    abstract List<String> listNestedAttributeTwoLevels_implicitJoins(String fieldPath);
+    abstract List<String> listNestedFieldTwoLevels_implicitJoins(String fieldPath);
 
-    abstract List<String> listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath);
+    abstract List<String> listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath);
 
-    abstract List<String> listNestedAttributeTwoLevels_implicitJoins_distinct(String fieldPath);
+    abstract List<String> listNestedFieldTwoLevels_implicitJoins_distinct(String fieldPath);
 
-    abstract List<String> listNestedAttributeTwoLevels_explicitLeftJoins(String fieldPath);
+    abstract List<String> listNestedFieldTwoLevels_explicitLeftJoins(String fieldPath);
 
-    abstract List<String> listNestedAttributeTwoLevels_explicitLeftThenInnerJoins(String fieldPath);
+    abstract List<String> listNestedFieldTwoLevels_explicitLeftThenInnerJoins(String fieldPath);
 
     @Override
     protected void beforeEach() {
@@ -116,32 +116,32 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testSelectAttribute() {
+    void testSelectField() {
         if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String firstName = (String) selectAttribute("firstName");
+        String firstName = (String) selectField("firstName");
 
         assertTrue(List.of("John", "Jane").contains(firstName));
     }
 
     @Test
-    void testSelectAttribute_withRootAlias() {
+    void testSelectField_withRootAlias() {
 //        if (DISABLE_ALL) {
 //            return;
 //        }
         userDAO.saveOrUpdate(USER_1);
 
-        String firstName = (String) selectAttribute_withRootAlias("u.firstName");
+        String firstName = (String) selectField_withRootAlias("u.firstName");
 
         assertEquals("John", firstName);
     }
 
     @Test
-    void testSelectAttribute_typoInAttributeName() {
+    void testSelectField_typoInFieldName() {
         if (DISABLE_ALL) {
             return;
         }
@@ -149,17 +149,17 @@ abstract class BaseSelectAttributeTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectAttribute("firstNameX")
+                () -> selectField("firstNameX")
         );
 
         assertEquals(
-                "Unable to locate Attribute  with the the given name [firstNameX] on this ManagedType [io.sample.model.User]",
+                "Unable to locate Field  with the the given name [firstNameX] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
     }
 
     @Test
-    void testSelectAttribute_emptyFieldPath() {
+    void testSelectField_emptyFieldPath() {
         if (DISABLE_ALL) {
             return;
         }
@@ -167,29 +167,29 @@ abstract class BaseSelectAttributeTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectAttribute("")
+                () -> selectField("")
         );
 
         assertEquals(
-                "Unable to locate Attribute  with the the given name [] on this ManagedType [io.sample.model.User]",
+                "Unable to locate Field  with the the given name [] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
     }
 
     @Test
-    void testSelectNestedAttributeOneLevel_implicitJoin() {
+    void testSelectNestedFieldOneLevel_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);
 
-        String street = (String) selectNestedAttributeOneLevel_implicitJoin("address.street");
+        String street = (String) selectNestedFieldOneLevel_implicitJoin("address.street");
 
         assertEquals(USER_1.getAddress().getStreet(), street);
     }
 
     @Test
-    void testSelectNestedAttributeOneLevel_implicitJoin_typoInAssociationName() {
+    void testSelectNestedFieldOneLevel_implicitJoin_typoInAssociationName() {
         if (DISABLE_ALL) {
             return;
         }
@@ -197,17 +197,17 @@ abstract class BaseSelectAttributeTest extends BaseTest {
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
-                () -> selectNestedAttributeOneLevel_implicitJoin("adress.street")//Typo in adress
+                () -> selectNestedFieldOneLevel_implicitJoin("adress.street")//Typo in adress
         );
 
         assertEquals(
-                "Unable to locate Attribute  with the the given name [adress] on this ManagedType [io.sample.model.User]",
+                "Unable to locate Field  with the the given name [adress] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
     }
 
     @Test
-    void testSelectNestedAttributeOneLevel_explicitLeftJoin() {
+    void testSelectNestedFieldOneLevel_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -215,7 +215,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String street = (String) selectNestedAttributeOneLevel_explicitLeftJoin("a.street");
+        String street = (String) selectNestedFieldOneLevel_explicitLeftJoin("a.street");
 
         assertTrue(
                 List.of(
@@ -226,7 +226,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedAttributeTwoLevels_implicitJoin() {
+    void testSelectNestedFieldTwoLevels_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -234,7 +234,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String stateName = (String) selectNestedAttributeTwoLevels_implicitJoin("address.state.name");
+        String stateName = (String) selectNestedFieldTwoLevels_implicitJoin("address.state.name");
 
         assertTrue(
                 List.of(
@@ -246,7 +246,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testSelectNestedAttributeTwoLevels_explicitLeftJoin() {
+    void testSelectNestedFieldTwoLevels_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -254,7 +254,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        String stateName = (String) selectNestedAttributeTwoLevels_explicitLeftJoin("s.name");
+        String stateName = (String) selectNestedFieldTwoLevels_explicitLeftJoin("s.name");
 
         assertTrue(
                 List.of(
@@ -265,7 +265,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListAttribute() {
+    void testListField() {
         if (DISABLE_ALL) {
             return;
         }
@@ -274,7 +274,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2);
 
-        List<String> list = listAttribute("firstName");
+        List<String> list = listField("firstName");
 
         assertEquals(3, list.size());
 
@@ -286,7 +286,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListAttribute_distinct() {
+    void testListField_distinct() {
         if (DISABLE_ALL) {
             return;
         }
@@ -295,7 +295,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2); //Repeated user, should return same firstName
 
-        List<String> list = listAttribute_distinct("firstName");
+        List<String> list = listField_distinct("firstName");
 
         assertEquals(2, list.size());
 
@@ -306,7 +306,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeOneLevel_implicitJoin() {
+    void testListNestedFieldOneLevel_implicitJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -314,7 +314,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedAttributeOneLevel_implicitJoin("address.street");
+        List<String> list = listNestedFieldOneLevel_implicitJoin("address.street");
 
         assertEquals(2, list.size());
 
@@ -325,7 +325,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeOneLevel_explicitLeftJoin() {
+    void testListNestedFieldOneLevel_explicitLeftJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -333,7 +333,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedAttributeOneLevel_explicitLeftJoin("a.street");
+        List<String> list = listNestedFieldOneLevel_explicitLeftJoin("a.street");
 
         assertEquals(2, list.size());
 
@@ -344,7 +344,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeOneLevel_explicitInnerJoin() {
+    void testListNestedFieldOneLevel_explicitInnerJoin() {
         if (DISABLE_ALL) {
             return;
         }
@@ -352,7 +352,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
-        List<String> list = listNestedAttributeOneLevel_explicitInnerJoin("a.street");
+        List<String> list = listNestedFieldOneLevel_explicitInnerJoin("a.street");
 
         assertEquals(1, list.size());
 
@@ -362,7 +362,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeTwoLevels_implicitJoins() {
+    void testListNestedFieldTwoLevels_implicitJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -371,7 +371,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedAttributeTwoLevels_implicitJoins("address.state.name");
+        List<String> list = listNestedFieldTwoLevels_implicitJoins("address.state.name");
 
         assertEquals(3, list.size());
 
@@ -389,14 +389,14 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     //The user has role.name, but since there is an alias name role,
     //it takes presedence, so it should return "Georgia"
     @Test
-    void testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
+    void testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
         if (DISABLE_ALL) {
             return;
         }
 
         userDAO.saveOrUpdate(USER_WITH_ROLE);
 
-        List<String> list = testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
+        List<String> list = testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
 
         assertEquals(1, list.size());
 
@@ -416,7 +416,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins("address.state.name");
+        List<String> list = listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins("address.state.name");
 
         assertEquals(3, list.size());
 
@@ -428,7 +428,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeTwoLevels_implicitJoins_distinct() {
+    void testListNestedFieldTwoLevels_implicitJoins_distinct() {
         if (DISABLE_ALL) {
             return;
         }
@@ -437,7 +437,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
-        List<String> list = listNestedAttributeTwoLevels_implicitJoins_distinct("address.state.name");
+        List<String> list = listNestedFieldTwoLevels_implicitJoins_distinct("address.state.name");
 
         assertEquals(2, list.size());
 
@@ -448,7 +448,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeTwoLevels_explicitLeftJoins() {
+    void testListNestedFieldTwoLevels_explicitLeftJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -457,7 +457,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedAttributeTwoLevels_explicitLeftJoins("s.name");
+        List<String> list = listNestedFieldTwoLevels_explicitLeftJoins("s.name");
 
         assertEquals(3, list.size());
 
@@ -469,7 +469,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
     }
 
     @Test
-    void testListNestedAttributeTwoLevels_explicitLeftThenInnerJoins() {
+    void testListNestedFieldTwoLevels_explicitLeftThenInnerJoins() {
         if (DISABLE_ALL) {
             return;
         }
@@ -478,7 +478,7 @@ abstract class BaseSelectAttributeTest extends BaseTest {
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
 
-        List<String> list = listNestedAttributeTwoLevels_explicitLeftThenInnerJoins("s.name");
+        List<String> list = listNestedFieldTwoLevels_explicitLeftThenInnerJoins("s.name");
 
         assertEquals(1, list.size());
 

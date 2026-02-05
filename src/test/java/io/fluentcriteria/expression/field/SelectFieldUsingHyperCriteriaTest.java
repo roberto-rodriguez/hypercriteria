@@ -8,10 +8,10 @@ import java.util.List;
  *
  * @author rrodriguez
  */
-class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
+class SelectFieldUsingHyperCriteriaTest extends BaseSelectFieldTest {
 
     @Override
-    public Object selectAttribute(String fieldPath) {
+    public Object selectField(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -19,7 +19,7 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
     
     @Override
-    Object selectAttribute_withRootAlias(String fieldPath) {
+    Object selectField_withRootAlias(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class, "u")
@@ -28,12 +28,12 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
 
 
     @Override
-    public Object selectNestedAttributeOneLevel_implicitJoin(String fieldPath) {
-        return selectAttribute(fieldPath);
+    public Object selectNestedFieldOneLevel_implicitJoin(String fieldPath) {
+        return selectField(fieldPath);
     }
 
     @Override
-    public Object selectNestedAttributeOneLevel_explicitLeftJoin(String fieldPath) {
+    public Object selectNestedFieldOneLevel_explicitLeftJoin(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -42,12 +42,12 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    public Object selectNestedAttributeTwoLevels_implicitJoin(String fieldPath) {
-        return selectAttribute(fieldPath);
+    public Object selectNestedFieldTwoLevels_implicitJoin(String fieldPath) {
+        return selectField(fieldPath);
     }
 
     @Override
-    public Object selectNestedAttributeTwoLevels_explicitLeftJoin(String fieldPath) {
+    public Object selectNestedFieldTwoLevels_explicitLeftJoin(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -57,7 +57,7 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    public List<String> listAttribute(String fieldPath) {
+    public List<String> listField(String fieldPath) {
         List<String> list = FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -67,7 +67,7 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    public List<String> listAttribute_distinct(String fieldPath) {
+    public List<String> listField_distinct(String fieldPath) {
         List<String> list = FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .distinct()
@@ -78,12 +78,12 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    public List<String> listNestedAttributeOneLevel_implicitJoin(String fieldPath) {
-        return listAttribute(fieldPath);
+    public List<String> listNestedFieldOneLevel_implicitJoin(String fieldPath) {
+        return listField(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeOneLevel_explicitLeftJoin(String fieldPath) {
+    List<String> listNestedFieldOneLevel_explicitLeftJoin(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -92,7 +92,7 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeOneLevel_explicitInnerJoin(String fieldPath) {
+    List<String> listNestedFieldOneLevel_explicitInnerJoin(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -101,12 +101,12 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins(String fieldPath) {
-        return listAttribute(fieldPath);
+    List<String> listNestedFieldTwoLevels_implicitJoins(String fieldPath) {
+        return listField(fieldPath);
     }
 
     @Override
-    public List<String> testListNestedAttributeTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
+    public List<String> testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -116,17 +116,17 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
-        return listNestedAttributeTwoLevels_explicitLeftJoins(fieldPath);
+    List<String> listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
+        return listNestedFieldTwoLevels_explicitLeftJoins(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_implicitJoins_distinct(String fieldPath) {
-        return listAttribute_distinct(fieldPath);
+    List<String> listNestedFieldTwoLevels_implicitJoins_distinct(String fieldPath) {
+        return listField_distinct(fieldPath);
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_explicitLeftJoins(String fieldPath) {
+    List<String> listNestedFieldTwoLevels_explicitLeftJoins(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
@@ -136,7 +136,7 @@ class SelectAttributeUsingHyperCriteriaTest extends BaseSelectAttributeTest {
     }
 
     @Override
-    List<String> listNestedAttributeTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
+    List<String> listNestedFieldTwoLevels_explicitLeftThenInnerJoins(String fieldPath) {
         return FluentCriteria.using(entityManager)
                 .select(fieldPath)
                 .from(User.class)
