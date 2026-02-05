@@ -111,7 +111,7 @@ public class Criteria {
     }
 
     public Criteria innerJoinFetch(String fetchPath) {
-        return fetch(fetchPath, null, JoinType.LEFT);
+        return fetch(fetchPath, null, JoinType.INNER);
     }
 
     public Criteria innerJoinFetch(String fetchPath, String alias) {

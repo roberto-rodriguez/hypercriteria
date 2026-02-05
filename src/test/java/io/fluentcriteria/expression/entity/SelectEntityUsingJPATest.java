@@ -1,6 +1,7 @@
 package io.fluentcriteria.expression.entity;
 
 import io.sample.model.Address;
+import io.sample.model.Payment;
 import io.sample.model.User;
 import io.utility.TypeUtil;
 import java.util.List;
@@ -79,18 +80,27 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
     }
 
     @Override
-    List<User> listEntitiesWithFetchPath(String fetchPath) {
-        JoinType joinType = JoinType.LEFT;
-
-        if (fetchPath.contains("<>")) {
-            joinType = JoinType.INNER;
-            fetchPath = fetchPath.replaceAll("<>", "");
-        }
-
+    List<User> listDistinctEntities() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> cq = cb.createQuery(User.class);
-        cq.from(User.class).fetch(fetchPath, joinType);
+        Root<User> root = cq.from(User.class);
+        Join<User, Payment> joinPayment = root.join("payments", JoinType.LEFT);
+
+//        cq.where(cb.isNotNull(joinPayment));
+        cq.distinct(true);
+        return entityManager
+                .createQuery(cq)
+                .getResultList();
+    }
+
+    @Override
+    List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        cq.from(User.class).fetch(fetchPath, JoinType.LEFT);
+        cq.distinct(true);
 
         return entityManager
                 .createQuery(cq)
@@ -98,25 +108,13 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
     }
 
     @Override
-    List<User> listDistinctEntitiesWithFetchPath(String fetchPath) {
-        JoinType joinType = JoinType.LEFT;
-
-        if (fetchPath.contains("<>")) {
-            joinType = JoinType.INNER;
-            fetchPath = fetchPath.replaceAll("<>", "");
-        }
-
+    List<User> listDistinctEntitiesWithInnerFetchPath(String fetchPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.distinct(true).from(User.class);
-        Join<User, Address> addressJoin = root.join(fetchPath, joinType);
+        root.fetch(fetchPath, JoinType.INNER);
 
-        cb.equal(addressJoin.get("zipcode"), 123456);
-//        join.fe
-//        Fetch<User, Address> fetch = root.fetch(fetchPath, joinType);
-
-//        fetch.
         return entityManager
                 .createQuery(cq)
                 .getResultList();

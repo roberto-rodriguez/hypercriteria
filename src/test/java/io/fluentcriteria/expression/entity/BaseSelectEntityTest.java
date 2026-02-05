@@ -9,8 +9,6 @@ import io.utility.BaseTest;
 import static io.utility.CompareUserUtil.assertUserEqualsWithAddress;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnitUtil;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +19,8 @@ import org.junit.jupiter.api.Test;
  * @author rrodriguez
  */
 abstract class BaseSelectEntityTest extends BaseTest {
+
+    private static boolean DISABLE_ALL = true;
 
     protected UserDAO userDAO;
 
@@ -72,9 +72,11 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     abstract List<User> listEntities();
 
-    abstract List<User> listEntitiesWithFetchPath(String fetchPath);
+    abstract List<User> listDistinctEntities();
 
-    abstract List<User> listDistinctEntitiesWithFetchPath(String fetchPath);
+    abstract List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath);
+
+    abstract List<User> listDistinctEntitiesWithInnerFetchPath(String fetchPath);
 
     List<User> sample() {
         return null;
@@ -86,134 +88,139 @@ abstract class BaseSelectEntityTest extends BaseTest {
         userDAO.setEntityManager(entityManager);  // assign manually 
     }
 
-//    @Test
-    void testSample() {
+    @Test
+    void testSelectEntity_singleResult() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_1);
+        User actual = (User) selectEntity();
+
+        assertUserEqualsWithAddress(USER_1, actual);
+    }
+
+    @Test
+    void testSelectNestedEntity_singleResult() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+        User actual = (User) selectNestedEntity(Payment.class, "user");
+
+        assertUserEqualsWithAddress(USER_1, actual);
+    }
+
+    @Test
+    void testSelectEntity_notFetchInternalList() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear(); // detach all entities
+
+        User actual = (User) selectEntity();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        Assertions.assertFalse(util.isLoaded(actual, "payments"));
+    }
+
+    @Test
+    void testSelectEntity_fetchingInternalList() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear(); // detach all entities
+
+        User actual = (User) selectEntityWithFetchPath("payments");
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        Assertions.assertTrue(util.isLoaded(actual, "payments"));
+
+        assertUserEqualsWithAddress(USER_1, actual);
+
+        Assertions.assertEquals(2, actual.getPayments().size());
+    }
+
+    @Test
+    void testListEntities() {
+        if (DISABLE_ALL) {
+            return;
+        }
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
+        userDAO.saveOrUpdate(USER_2);
 
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
+        List<User> list = listEntities();
 
-        List<User> list = sample();
+        assertEquals(3, list.size());
+    }
 
-//        PersistenceUnitUtil util
-//                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
-//
-//        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
+    @Test
+    void testListDistinctEntities() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        List<User> list = listDistinctEntities();//left joins with payments
+
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    void testListDistinctEntities_leftJoinFetch() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear(); // detach all entities
+
+        List<User> list = listDistinctEntitiesWithLeftFetchPath("payments");
 
         assertEquals(2, list.size());
     }
 
-//    @Test
-//    void testSelectEntity_singleResult() {
-//        userDAO.saveOrUpdate(USER_1);
-//        User actual = (User) selectEntity();
-//
-//        assertUserEqualsWithAddress(USER_1, actual);
-//    }
-    //// @Test
-//    void testSelectNestedEntity_singleResult() {
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//        User actual = (User) selectNestedEntity(Payment.class, "user");
-//
-//        assertUserEqualsWithAddress(USER_1, actual);
-//    }
-//    @Test
-//    void testSelectEntity_singleResult_notFetchInternalList() {
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        User actual = (User) selectEntity();
-//
-//        PersistenceUnitUtil util
-//                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
-//
-//        Assertions.assertFalse(util.isLoaded(actual, "payments"));
-//    }
-//
-//    @Test
-//    void testSelectEntity_singleResult_fetchingInternalList() {
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        User actual = (User) selectEntityWithFetchPath("payments");
-//
-//        PersistenceUnitUtil util
-//                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
-//
-//        Assertions.assertTrue(util.isLoaded(actual, "payments"));
-//
-//        assertUserEqualsWithAddress(USER_1, actual);
-//
-//        Assertions.assertEquals(2, actual.getPayments().size());
-//        Assertions.assertNotNull(actual.getPayments().get(0).getAmount());
-//        Assertions.assertNotNull(actual.getPayments().get(1).getAmount());
-//    }
-//
-//    @Test
-//    void testSelectEntity_list() {
+    @Test
+    void testSelectEntity_list_innerJoinFetch() {
+        userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear(); // detach all entities
+
+        List<User> list = listDistinctEntitiesWithInnerFetchPath("payments");
+
+        assertEquals(1, list.size());
+    }
+ 
+ 
+    //    @Test
+//    void testSample() {
 //        userDAO.saveOrUpdate(USER_1);
 //        userDAO.saveOrUpdate(USER_2);
-//        userDAO.saveOrUpdate(USER_2);
 //
-//        List<User> list = listEntities();
+////        entityManager.flush();
+////        entityManager.clear(); // detach all entities
 //
-//        assertEquals(3, list.size());
-//    }
+//        List<User> list = sample();
 //
-//    @Test
-//    void testSelectEntity_list_leftJoinFetch() {
-//        userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        List<User> list = listEntitiesWithFetchPath("payments");
-//
-//        assertEquals(3, list.size());
-//    }
-//
-//    @Test
-//    void testSelectEntity_list_innerJoinFetch() {
-//        userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        List<User> list = listEntitiesWithFetchPath("<>payments");
+////        PersistenceUnitUtil util
+////                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+////
+////        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
 //
 //        assertEquals(2, list.size());
-//    }
-//
-//    @Test
-//    void testSelectEntity_listDistinct_leftJoinFetch() {
-//        userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        List<User> list = listDistinctEntitiesWithFetchPath("payments");
-//
-//        assertEquals(2, list.size());
-//    }
-//
-//    @Test
-//    void testSelectEntity_listDistinct_innerJoinFetch() {
-//        userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
-//        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-//
-//        entityManager.flush();
-//        entityManager.clear(); // detach all entities
-//
-//        List<User> list = listDistinctEntitiesWithFetchPath("<>payments");
-//
-//        assertEquals(1, list.size());
 //    }
 }

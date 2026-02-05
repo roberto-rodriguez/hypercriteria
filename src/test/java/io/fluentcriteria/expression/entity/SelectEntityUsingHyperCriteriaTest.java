@@ -44,21 +44,32 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
     }
 
     @Override
-    List<User> listEntitiesWithFetchPath(String fetchPath) {
+    List<User> listDistinctEntities() {
         return FluentCriteria.using(entityManager)
                 .select()
+                .distinct()
+                .from(User.class)
+                .leftJoin("payments", "p")
+                .getResultList();
+    }
+
+    @Override
+    List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .distinct()
                 .from(User.class)
                 .leftJoinFetch(fetchPath)
                 .getResultList();
     }
 
     @Override
-    List<User> listDistinctEntitiesWithFetchPath(String fetchPath) {
+    List<User> listDistinctEntitiesWithInnerFetchPath(String fetchPath) {
         return FluentCriteria.using(entityManager)
                 .select()
                 .distinct()
                 .from(User.class)
-                .leftJoinFetch(fetchPath)
+                .innerJoinFetch(fetchPath)
                 .getResultList();
     }
 
