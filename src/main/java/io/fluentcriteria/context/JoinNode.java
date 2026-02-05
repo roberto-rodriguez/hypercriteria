@@ -70,16 +70,16 @@ public class JoinNode {
 
         From<?, ?> parentFrom = parent.toFrom(ctx);
 
-        System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.attribute, key.joinType);
+        System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.field, key.joinType);
         System.out.println("");
 
-        if (key.attribute == null || key.attribute.isEmpty()) {
+        if (key.field == null || key.field.isEmpty()) {
             this.from = parentFrom;//This happens when alias is specified in the 'from()' clause. Example: .from(User.class, "u")
         } else {
             if (key.joinType == null) {
-                this.from = parentFrom.join(key.attribute);
+                this.from = parentFrom.join(key.field);
             } else {
-                this.from = parentFrom.join(key.attribute, key.joinType);
+                this.from = parentFrom.join(key.field, key.joinType);
             }
 
         }

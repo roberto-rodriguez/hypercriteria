@@ -61,26 +61,26 @@ public final class PathResolver {
     private static JoinNode resolveJoin(
             QueryContext ctx,
             JoinNode parent,
-            String attribute,
+            String field,
             JoinType joinType
     ) {
-        JoinKey key = new JoinKey(parent, attribute, joinType);
+        JoinKey key = new JoinKey(parent, field, joinType);
         return ctx.getJoins().computeIfAbsent(key, JoinNode::new);
     }
 
     private static JoinNode resolveFetch(
             QueryContext ctx,
             JoinNode parent,
-            String attribute,
+            String field,
             JoinType joinType
     ) {
         FetchParent<?, ?> parentFetch = (FetchParent<?, ?>) parent.getFrom();
 
         Fetch<?, ?> fetch = joinType == null
-                ? parentFetch.fetch(attribute)
-                : parentFetch.fetch(attribute, joinType);
+                ? parentFetch.fetch(field)
+                : parentFetch.fetch(field, joinType);
 
-        JoinKey key = new JoinKey(parent, attribute, joinType);
+        JoinKey key = new JoinKey(parent, field, joinType);
 
         return ctx.getJoins().computeIfAbsent(key, k -> new FetchNode(k, fetch));
     }
@@ -118,7 +118,7 @@ public final class PathResolver {
         //If is not an association, the last segment is the attributeName, so no need to create join for it
         int end = path.getIsAssociation(ctx) ? segments.length : segments.length - 1;
 
-        // Stop BEFORE the terminal attribute
+        // Stop BEFORE the terminal field
         for (int i = index; i < end; i++) {
             current = resolveJoin(ctx, current, segments[i], JoinType.LEFT);
 

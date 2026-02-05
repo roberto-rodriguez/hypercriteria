@@ -1,4 +1,4 @@
-package io.fluentcriteria.expressionPredicate;
+package io.fluentcriteria.predicate;
 
 import io.sample.dao.PaymentDAO;
 import io.sample.dao.UserDAO;

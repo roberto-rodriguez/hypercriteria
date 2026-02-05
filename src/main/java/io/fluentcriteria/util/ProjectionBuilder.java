@@ -59,7 +59,7 @@ public class ProjectionBuilder {
 ////TODO
 ////            fieldPath = extractAliasAndJoinType(fieldPath, criteria.getjoinInfoMap());
 ////
-////            projectionList.add(HyperCriteria.attribute(fieldPath).as(valueName));
+////            projectionList.add(HyperCriteria.field(fieldPath).as(valueName));
 //        }
 //
 //        return projectionList;

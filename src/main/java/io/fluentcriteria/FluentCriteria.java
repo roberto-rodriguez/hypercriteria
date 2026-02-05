@@ -11,7 +11,7 @@ import io.fluentcriteria.expression.Max;
 import io.fluentcriteria.expression.Min;
 import io.fluentcriteria.expression.base.BaseExpression;
 import io.fluentcriteria.expression.Sum;
-import io.fluentcriteria.expression.Attribute;
+import io.fluentcriteria.expression.Field;
 import io.fluentcriteria.criterion.predicate.And;
 import io.fluentcriteria.predicate.GreaterThan;
 import io.fluentcriteria.criterion.predicate.Or;
@@ -43,7 +43,7 @@ public class FluentCriteria implements Selectable {
 
     @Override
     public Criteria select(String fieldPath) {
-        return select(attribute(fieldPath));
+        return select(field(fieldPath));
     }
 
     @Override
@@ -63,8 +63,8 @@ public class FluentCriteria implements Selectable {
         return new ProjectionList();
     }
 
-    public static Attribute attribute(String fieldPath) {
-        return new Attribute(fieldPath);
+    public static Field field(String fieldPath) {
+        return new Field(fieldPath);
     }
 
     public static Dto dto(Class<?> dtoType) {

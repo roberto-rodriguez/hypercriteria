@@ -1,13 +1,13 @@
 package io.fluentcriteria;
 
 import static io.fluentcriteria.FluentCriteria.dto;
-import static io.fluentcriteria.FluentCriteria.attribute;
 import io.fluentcriteria.base.Selectable;
 import io.fluentcriteria.expression.base.BaseExpression;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import static io.fluentcriteria.FluentCriteria.field;
 
 /**
  *
@@ -47,8 +47,8 @@ public class FluentDAO<E> implements Selectable {
     }
 
     @Override
-    public Criteria select(String attribute) {
-        return select(attribute(attribute));
+    public Criteria select(String field) {
+        return select(field(field));
     }
 
     @Override

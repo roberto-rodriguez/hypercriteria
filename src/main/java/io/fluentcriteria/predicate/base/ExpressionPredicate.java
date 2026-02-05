@@ -1,7 +1,7 @@
 package io.fluentcriteria.predicate.base;
 
 import io.fluentcriteria.context.QueryContext;
-import io.fluentcriteria.expression.Attribute;
+import io.fluentcriteria.expression.Field;
 import io.fluentcriteria.expression.base.BaseExpression;
 import javax.persistence.criteria.Expression;
 
@@ -15,7 +15,7 @@ public abstract class ExpressionPredicate extends BasePredicate {
 
     public ExpressionPredicate(String fieldPath) {
         this.expression
-                = new Attribute(fieldPath);
+                = new Field(fieldPath);
     }
 
     public ExpressionPredicate(BaseExpression expression) {

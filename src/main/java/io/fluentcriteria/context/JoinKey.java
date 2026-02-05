@@ -12,12 +12,12 @@ import lombok.ToString;
 public final class JoinKey {
 
     public final JoinNode parent;
-    public final String attribute;
+    public final String field;
     public final JoinType joinType;
 
-    public JoinKey(JoinNode parent, String attribute, JoinType joinType) {
+    public JoinKey(JoinNode parent, String field, JoinType joinType) {
         this.parent = parent;
-        this.attribute = attribute;
+        this.field = field;
         this.joinType = joinType;
     }
 
@@ -31,12 +31,12 @@ public final class JoinKey {
         }
         JoinKey that = (JoinKey) o;
         return ObjectUtils.equals(parent, that.parent)
-                && ObjectUtils.equals(attribute, that.attribute)
+                && ObjectUtils.equals(field, that.field)
                 && joinType == that.joinType;
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtils.hash(parent, attribute, joinType);
+        return ObjectUtils.hash(parent, field, joinType);
     }
 }

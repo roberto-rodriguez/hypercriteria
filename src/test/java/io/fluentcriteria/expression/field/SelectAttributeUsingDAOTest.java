@@ -1,4 +1,4 @@
-package io.fluentcriteria.expression.attribute;
+package io.fluentcriteria.expression.field;
 
 import io.sample.model.User;
 import java.util.List;

@@ -119,10 +119,10 @@ class SelectCountUsingJPATest extends BaseSelectCountTest {
                 return (Path<T>) from.get(path);
             }
 
-            String attribute = path.substring(0, nextDelimiterIndex);
+            String field = path.substring(0, nextDelimiterIndex);
             String delimiter = extractDelimiter(path, nextDelimiterIndex);
 
-            from = from.join(attribute, currentJoinType);
+            from = from.join(field, currentJoinType);
 
             path = path.substring(nextDelimiterIndex + delimiter.length());
             currentJoinType = toJoinType(delimiter);

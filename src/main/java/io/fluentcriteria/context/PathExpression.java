@@ -148,7 +148,7 @@ public final class PathExpression {
                 type = mm.managedType(getAssociationJavaType(attr));
             } else {
                 throw new IllegalArgumentException(
-                        "Cannot navigate through non-association attribute '"
+                        "Cannot navigate through non-association field '"
                         + segment + "' on type '"
                         + type.getJavaType().getName() + "'"
                 );

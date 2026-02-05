@@ -46,7 +46,7 @@ public class TypeUtil {
                 attr = type.getAttribute(segment);
             } catch (IllegalArgumentException ex) {
                 throw new IllegalArgumentException(
-                        "Could not resolve attribute '" + segment
+                        "Could not resolve field '" + segment
                         + "' on type '" + type.getJavaType().getName() + "'",
                         ex
                 );
@@ -70,7 +70,7 @@ public class TypeUtil {
 
     /**
      * Returns the Java type of an association. - Singular association →
-     * attribute Java type - Plural association → element Java type
+     * field Java type - Plural association → element Java type
      *
      * @param attr
      * @return

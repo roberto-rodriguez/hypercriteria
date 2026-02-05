@@ -5,7 +5,6 @@
  */
 package io.fluentcriteria;
 
-import static io.fluentcriteria.FluentCriteria.attribute;
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.criterion.Order;
 import io.fluentcriteria.expression.base.BaseExpression;
@@ -25,6 +24,7 @@ import java.util.Optional;
 import javax.persistence.criteria.JoinType;
 import lombok.Getter;
 import io.fluentcriteria.util.TypeUtil;
+import static io.fluentcriteria.FluentCriteria.field;
 
 /**
  *
@@ -144,7 +144,7 @@ public class Criteria {
     }
 
     public ExpressionPredicateBuilder where(String fieldPath) {
-        return new WhereBuilder(this, attribute(fieldPath));
+        return new WhereBuilder(this, field(fieldPath));
     }
 
     public Criteria and(BasePredicate predicate) {

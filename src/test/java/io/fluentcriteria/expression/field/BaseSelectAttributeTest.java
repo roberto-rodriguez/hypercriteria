@@ -1,4 +1,4 @@
-package io.fluentcriteria.expression.attribute;
+package io.fluentcriteria.expression.field;
 
 import io.sample.dao.UserDAO;
 import io.sample.model.Address;

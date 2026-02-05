@@ -1,4 +1,4 @@
-package io.fluentcriteria.expression.attribute;
+package io.fluentcriteria.expression.field;
 
 import io.sample.model.Address;
 import io.sample.model.State;
