@@ -54,6 +54,26 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
     }
 
     @Override
+    List<User> listDistinctEntitiesWithLeftJoinPath(String joinPath) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .distinct()
+                .from(User.class)
+                .leftJoin(joinPath, "a")
+                .getResultList();
+    }
+
+    @Override
+    List<User> listDistinctEntitiesWithInnerJoinPath(String joinPath) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .distinct()
+                .from(User.class)
+                .innerJoin(joinPath, "a")
+                .getResultList();
+    }
+
+    @Override
     List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
         return FluentCriteria.using(entityManager)
                 .select()

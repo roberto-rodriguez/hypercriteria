@@ -5,6 +5,7 @@ import javax.persistence.criteria.From;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -13,18 +14,23 @@ import lombok.ToString;
  * @author rrodriguez
  */
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Getter
 @Setter
 public class JoinNode {
 
-    public final JoinKey key;
+    public JoinKey key;
     public String alias;          // assigned later
     public From<?, ?> from;       // JPA object (assigned later)
 
-    public JoinNode(JoinKey key) {
+//    public JoinNode(JoinKey key) {
+//        this.key = key;
+//    }
+    public JoinNode(JoinKey key, From<?, ?> from) {
         this.key = key;
+        this.from = from;
     }
 
     @Override

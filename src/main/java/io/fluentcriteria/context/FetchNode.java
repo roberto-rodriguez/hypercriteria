@@ -12,7 +12,8 @@ public class FetchNode extends JoinNode {
     public Fetch<?, ?> fetch;
 
     public FetchNode(JoinKey key, Fetch<?, ?> fetch) {
-        super(key);
+        this.key = key;
+        this.fetch = fetch;
     }
 
     @Override

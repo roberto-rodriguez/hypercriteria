@@ -130,9 +130,9 @@ abstract class BaseSelectAttributeTest extends BaseTest {
 
     @Test
     void testSelectAttribute_withRootAlias() {
-        if (DISABLE_ALL) {
-            return;
-        }
+//        if (DISABLE_ALL) {
+//            return;
+//        }
         userDAO.saveOrUpdate(USER_1);
 
         String firstName = (String) selectAttribute_withRootAlias("u.firstName");

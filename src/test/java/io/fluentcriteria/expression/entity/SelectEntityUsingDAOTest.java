@@ -43,6 +43,22 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     }
 
     @Override
+    List<User> listDistinctEntitiesWithLeftJoinPath(String joinPath) {
+        return userDAO.select()
+                .distinct()
+                .leftJoin(joinPath, "a")
+                .getResultList();
+    }
+
+    @Override
+    List<User> listDistinctEntitiesWithInnerJoinPath(String joinPath) {
+        return userDAO.select()
+                .distinct()
+                .innerJoin(joinPath, "a")
+                .getResultList();
+    }
+
+    @Override
     List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
         return userDAO.select()
                 .distinct()

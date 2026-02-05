@@ -3,6 +3,8 @@ package io.fluentcriteria.context;
 import java.util.Arrays;
 import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.FetchParent;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 
 /**
@@ -17,8 +19,18 @@ public final class PathResolver {
             JoinType joinType,
             boolean processingFetch
     ) {
+        if (joinPath.isBlank()) {
+            System.out.println("joinPath.isBlank(), return  ctx.getRootNode()");
+            //Special case when creating root with alias. Example .from(User.class, "u")
+            return ctx.getRootNode();
+        }
+
         String[] segments = joinPath.split("\\.");
         String firstSegment = segments[0];
+
+        System.out.println("PathResolver.resolveJoinPath :: joinPath = " + joinPath);
+        System.out.println("PathResolver.resolveJoinPath :: firstSegment = " + firstSegment);
+        System.out.println("PathResolver.resolveJoinPath :: segments = " + segments);
 
         JoinNode current;
         int index;
@@ -64,8 +76,15 @@ public final class PathResolver {
             String field,
             JoinType joinType
     ) {
+        System.out.println("PathResolver.resolveJoin :: field = " + field);
+        From<?, ?> parentFrom = (From<?, ?>) parent.getFrom();
+
+        Join<?, ?> join = joinType == null
+                ? parentFrom.join(field)
+                : parentFrom.join(field, joinType);
+
         JoinKey key = new JoinKey(parent, field, joinType);
-        return ctx.getJoins().computeIfAbsent(key, JoinNode::new);
+        return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, join));
     }
 
     private static JoinNode resolveFetch(

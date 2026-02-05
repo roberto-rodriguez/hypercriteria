@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
  */
 abstract class BaseSelectEntityTest extends BaseTest {
 
-    private static boolean DISABLE_ALL = true;
+    private static boolean DISABLE_ALL = false;
 
     protected UserDAO userDAO;
 
@@ -73,6 +73,10 @@ abstract class BaseSelectEntityTest extends BaseTest {
     abstract List<User> listEntities();
 
     abstract List<User> listDistinctEntities();
+
+    abstract List<User> listDistinctEntitiesWithLeftJoinPath(String fetchPath);
+
+    abstract List<User> listDistinctEntitiesWithInnerJoinPath(String fetchPath);
 
     abstract List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath);
 
@@ -177,6 +181,35 @@ abstract class BaseSelectEntityTest extends BaseTest {
     }
 
     @Test
+    void testListDistinctEntities_leftJoin() {
+        if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear(); // detach all entities
+
+        List<User> list = listDistinctEntitiesWithLeftJoinPath("payments");
+
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    void testSelectEntity_list_innerJoin() {
+         if (DISABLE_ALL) {
+            return;
+        }
+        userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+ 
+        List<User> list = listDistinctEntitiesWithInnerJoinPath("payments");
+
+        assertEquals(1, list.size());
+    }
+
+    @Test
     void testListDistinctEntities_leftJoinFetch() {
         if (DISABLE_ALL) {
             return;
@@ -194,6 +227,9 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_list_innerJoinFetch() {
+         if (DISABLE_ALL) {
+            return;
+        }
         userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 

@@ -95,6 +95,32 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
     }
 
     @Override
+    List<User> listDistinctEntitiesWithLeftJoinPath(String joinPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        cq.from(User.class).join(joinPath, JoinType.LEFT);
+        cq.distinct(true);
+
+        return entityManager
+                .createQuery(cq)
+                .getResultList();
+    }
+
+    @Override
+    List<User> listDistinctEntitiesWithInnerJoinPath(String joinPath) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.distinct(true).from(User.class);
+        root.join(joinPath, JoinType.INNER);
+
+        return entityManager
+                .createQuery(cq)
+                .getResultList();
+    }
+
+    @Override
     List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
@@ -137,5 +163,6 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         return entityManager.createQuery(cq).getResultList();
     }
+ 
 
 }
