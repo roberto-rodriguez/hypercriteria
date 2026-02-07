@@ -280,6 +280,8 @@ public class Criteria {
         firstResult.ifPresent(query::setFirstResult);
         maxResults.filter(m -> m > 0).ifPresent(query::setMaxResults);
 
+        ctx.initializeUnusedExplicitJoins();
+
         return query;
     }
 

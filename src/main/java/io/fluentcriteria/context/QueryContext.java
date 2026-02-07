@@ -30,7 +30,7 @@ public class QueryContext {
     private final Map<String, JoinNode> aliases = new HashMap<>();
 
     // Join identity registry
-    private Map<JoinKey, JoinNode> joins = new LinkedHashMap<>();
+    private final Map<JoinKey, JoinNode> joins = new LinkedHashMap<>();
 
     //--------- Set after we know the return type ---------
     private CriteriaBuilder criteriaBuilder;
@@ -96,9 +96,19 @@ public class QueryContext {
 //                        + "' already has alias '" + joinNode.getAlias() + "'"
 //                );
 //            }
-
             joinNode.setAlias(aliasInfo.getAlias());
             aliases.put(aliasInfo.getAlias(), joinNode);
+        }
+    }
+
+    //Joins that were declared explicitly but were never used
+    public void initializeUnusedExplicitJoins() {
+        for (Map.Entry<JoinKey, JoinNode> entry : joins.entrySet()) {
+            JoinNode joinNode = entry.getValue();
+
+            if (joinNode.needsLazyInitialization()) {
+                joinNode.toFrom(this);
+            }
         }
     }
 

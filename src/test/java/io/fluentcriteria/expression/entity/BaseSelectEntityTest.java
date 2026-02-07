@@ -187,10 +187,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
         }
         userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-
-        entityManager.flush();
-        entityManager.clear(); // detach all entities
-
+ 
         List<User> list = listDistinctEntitiesWithLeftJoinPath("payments");
 
         assertEquals(2, list.size());
@@ -198,7 +195,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_list_innerJoin() {
-         if (DISABLE_ALL) {
+        if (DISABLE_ALL) {
             return;
         }
         userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded

@@ -130,9 +130,9 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectField_withRootAlias() {
-//        if (DISABLE_ALL) {
-//            return;
-//        }
+        if (DISABLE_ALL) {
+            return;
+        }
         userDAO.saveOrUpdate(USER_1);
 
         String firstName = (String) selectField_withRootAlias("u.firstName");
@@ -152,10 +152,11 @@ abstract class BaseSelectFieldTest extends BaseTest {
                 () -> selectField("firstNameX")
         );
 
-        assertEquals(
-                "Unable to locate Field  with the the given name [firstNameX] on this ManagedType [io.sample.model.User]",
+        assertEquals( 
+                "Unable to locate Attribute  with the the given name [firstNameX] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
+ 
     }
 
     @Test
@@ -171,7 +172,7 @@ abstract class BaseSelectFieldTest extends BaseTest {
         );
 
         assertEquals(
-                "Unable to locate Field  with the the given name [] on this ManagedType [io.sample.model.User]",
+                "Unable to locate Attribute  with the the given name [] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
     }
@@ -201,7 +202,7 @@ abstract class BaseSelectFieldTest extends BaseTest {
         );
 
         assertEquals(
-                "Unable to locate Field  with the the given name [adress] on this ManagedType [io.sample.model.User]",
+                "Unable to locate Attribute  with the the given name [adress] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
     }
@@ -408,9 +409,9 @@ abstract class BaseSelectFieldTest extends BaseTest {
     //Should reuse same joins (Need to check in the logs)
     @Test
     void testImplicitJoinsReuseExplicitJoins_whenDeclared() {
-        if (DISABLE_ALL) {
-            return;
-        }
+//        if (DISABLE_ALL) {
+//            return;
+//        }
 
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);

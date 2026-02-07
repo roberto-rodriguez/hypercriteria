@@ -63,7 +63,7 @@ public final class PathResolver {
             if (processingFetch) {
                 current = resolveFetch(ctx, current, segments[i], joinType);
             } else {
-                current = resolveJoin(ctx, current, segments[i], joinType);
+                current = resolveJoin(ctx, current, segments[i], joinType, true);
             }
         }
 
@@ -74,19 +74,29 @@ public final class PathResolver {
             QueryContext ctx,
             JoinNode parent,
             String field,
-            JoinType joinType
+            JoinType joinType,
+            boolean declaredExplicitly
     ) {
-        System.out.println("PathResolver.resolveJoin :: field = " + field);
-        From<?, ?> parentFrom = (From<?, ?>) parent.getFrom();
-
-        Join<?, ?> join = joinType == null
-                ? parentFrom.join(field)
-                : parentFrom.join(field, joinType);
-
         JoinKey key = new JoinKey(parent, field, joinType);
-        return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, join));
+        return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, declaredExplicitly));
     }
 
+//    private static JoinNode resolveJoin(
+//            QueryContext ctx,
+//            JoinNode parent,
+//            String field,
+//            JoinType joinType
+//    ) {
+//        System.out.println("PathResolver.resolveJoin :: field = " + field);
+//        From<?, ?> parentFrom = (From<?, ?>) parent.getFrom();
+//
+//        Join<?, ?> join = joinType == null
+//                ? parentFrom.join(field)
+//                : parentFrom.join(field, joinType);
+//
+//        JoinKey key = new JoinKey(parent, field, joinType);
+//        return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, join));
+//    }
     private static JoinNode resolveFetch(
             QueryContext ctx,
             JoinNode parent,
@@ -139,7 +149,7 @@ public final class PathResolver {
 
         // Stop BEFORE the terminal field
         for (int i = index; i < end; i++) {
-            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT);
+            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT, false);
 
             System.out.println(String.format("DEBUG :: PathResolver.resolvePath  - calling %s - resolveJoin(%s)  = %s", i, segments[i], current));
         }

@@ -24,13 +24,19 @@ public class JoinNode {
     public JoinKey key;
     public String alias;          // assigned later
     public From<?, ?> from;       // JPA object (assigned later)
+    public boolean declaredExplicitly;
 
 //    public JoinNode(JoinKey key) {
 //        this.key = key;
 //    }
-    public JoinNode(JoinKey key, From<?, ?> from) {
+    public JoinNode(JoinKey key, boolean declaredExplicitly) {
         this.key = key;
-        this.from = from;
+        this.declaredExplicitly = declaredExplicitly;
+    }
+
+      //Joins that were declared explicitly but were never used
+    public boolean needsLazyInitialization() {
+        return declaredExplicitly && from == null;
     }
 
     @Override

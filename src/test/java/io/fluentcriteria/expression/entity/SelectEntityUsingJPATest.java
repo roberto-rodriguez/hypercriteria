@@ -3,7 +3,7 @@ package io.fluentcriteria.expression.entity;
 import io.sample.model.Address;
 import io.sample.model.Payment;
 import io.sample.model.User;
-import io.utility.TypeUtil;
+import io.utility.TypeUtil; 
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,7 +104,7 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         return entityManager
                 .createQuery(cq)
-                .getResultList();
+                .getResultList(); 
     }
 
     @Override
@@ -163,6 +163,5 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         return entityManager.createQuery(cq).getResultList();
     }
- 
 
 }

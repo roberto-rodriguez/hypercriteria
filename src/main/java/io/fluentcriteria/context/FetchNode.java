@@ -20,4 +20,9 @@ public class FetchNode extends JoinNode {
     protected From<?, ?> getFrom() {
         return (From<?, ?>) fetch;
     }
+
+    @Override
+    public boolean needsLazyInitialization() {
+        return false;
+    }
 }

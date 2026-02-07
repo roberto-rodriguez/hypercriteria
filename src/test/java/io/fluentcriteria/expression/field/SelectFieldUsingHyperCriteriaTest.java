@@ -3,6 +3,7 @@ package io.fluentcriteria.expression.field;
 import io.fluentcriteria.FluentCriteria;
 import io.sample.model.User;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -17,7 +18,7 @@ class SelectFieldUsingHyperCriteriaTest extends BaseSelectFieldTest {
                 .from(User.class)
                 .getSingleResult();
     }
-    
+
     @Override
     Object selectField_withRootAlias(String fieldPath) {
         return FluentCriteria.using(entityManager)
@@ -25,7 +26,6 @@ class SelectFieldUsingHyperCriteriaTest extends BaseSelectFieldTest {
                 .from(User.class, "u")
                 .getSingleResult();
     }
-
 
     @Override
     public Object selectNestedFieldOneLevel_implicitJoin(String fieldPath) {
@@ -118,6 +118,16 @@ class SelectFieldUsingHyperCriteriaTest extends BaseSelectFieldTest {
     @Override
     List<String> listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
         return listNestedFieldTwoLevels_explicitLeftJoins(fieldPath);
+//        List<User> users = FluentCriteria.using(entityManager)
+//                .select(fieldPath)
+//                .from(User.class)
+//                .leftJoinFetch("address", "a")
+//                .leftJoinFetch("a.state", "s")
+//                .getResultList();
+//
+//        return users.stream()
+//                .map(u -> u.getAddress().getState().getName())
+//                .collect(Collectors.toList());
     }
 
     @Override
