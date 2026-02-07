@@ -2,6 +2,7 @@ package io.fluentcriteria.context;
 
 import io.fluentcriteria.util.ObjectUtils;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.JoinType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class JoinNode {
         this.declaredExplicitly = declaredExplicitly;
     }
 
-      //Joins that were declared explicitly but were never used
+    //Joins that were declared explicitly but were never used
     public boolean needsLazyInitialization() {
         return declaredExplicitly && from == null;
     }
@@ -82,15 +83,21 @@ public class JoinNode {
 
         From<?, ?> parentFrom = parent.toFrom(ctx);
 
-        System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.field, key.joinType);
-        System.out.println("");
+        System.out.println("parentFrom.equals(ctx.getRoot() => " + parentFrom.equals(ctx.getRoot()));
+        System.out.println("parentFrom == ctx.getRoot() => " + (parentFrom == ctx.getRoot()));
 
         if (key.field == null || key.field.isEmpty()) {
+            System.out.println("this.from = parentFrom;");
             this.from = parentFrom;//This happens when alias is specified in the 'from()' clause. Example: .from(User.class, "u")
         } else {
             if (key.joinType == null) {
+                System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s)", key.field);
+                System.out.println("");
                 this.from = parentFrom.join(key.field);
             } else {
+                System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.field, key.joinType);
+                System.out.println("");
+//                ctx.getRoot().join("payments", JoinType.INNER);
                 this.from = parentFrom.join(key.field, key.joinType);
             }
 

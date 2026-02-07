@@ -275,13 +275,13 @@ public class Criteria {
             criteriaQuery.groupBy(groupBy.toExpression(ctx));
         }
 
+        ctx.initializeUnusedExplicitJoins();
+ 
         TypedQuery<R> query = entityManager.createQuery(criteriaQuery);
 
         firstResult.ifPresent(query::setFirstResult);
         maxResults.filter(m -> m > 0).ifPresent(query::setMaxResults);
-
-        ctx.initializeUnusedExplicitJoins();
-
+       
         return query;
     }
 

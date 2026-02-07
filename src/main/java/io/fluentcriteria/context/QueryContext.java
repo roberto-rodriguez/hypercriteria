@@ -103,8 +103,12 @@ public class QueryContext {
 
     //Joins that were declared explicitly but were never used
     public void initializeUnusedExplicitJoins() {
+        System.out.println("initializeUnusedExplicitJoins");
         for (Map.Entry<JoinKey, JoinNode> entry : joins.entrySet()) {
             JoinNode joinNode = entry.getValue();
+
+            System.out.println("initializeUnusedExplicitJoins joinNode = " + joinNode);
+            System.out.println("initializeUnusedExplicitJoins joinNode.needsLazyInitialization() = " + joinNode.needsLazyInitialization());
 
             if (joinNode.needsLazyInitialization()) {
                 joinNode.toFrom(this);
