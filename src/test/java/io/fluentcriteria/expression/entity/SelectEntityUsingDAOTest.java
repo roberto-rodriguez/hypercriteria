@@ -1,5 +1,7 @@
 package io.fluentcriteria.expression.entity;
 
+import io.sample.dao.PaymentDAO;
+import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
 
@@ -75,12 +77,103 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     }
 
     @Override
-    List<User> sample() {
-        return userDAO.select()
-                //                .distinct()
-                //                .leftJoin("address", "a")
-                //                .innerJoin("address", "b")
-                .innerJoinFetch("address", "ab")
-                .getResultList();
+    User selectUserWithMultipleFetches() {
+        return userDAO
+                .select()
+                .leftJoinFetch("payments")
+                .leftJoinFetch("address")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    User duplicatedAlias_throwsException() {
+        return userDAO
+                .select()
+                .leftJoin("payments", "a")
+                .leftJoin("address", "a")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    User noFromClause_throwsException() {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    Long fetchWithProjection_throwsException() {
+        return userDAO
+                .select("id")
+                .from(User.class)
+                .leftJoinFetch("payments", "a")
+                .getSingleResult(Long.class);
+    }
+
+    @Override
+    User fetchOneToOneAddress() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .leftJoinFetch("address")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    User fetchNestedManyToOne() {
+        return userDAO
+                .select()
+                .leftJoinFetch("address.state")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    Payment fetchCollectionThenToOne() {
+        PaymentDAO paymentDAO = new PaymentDAO();
+        paymentDAO.setEntityManager(entityManager);  // assign manually 
+
+        return paymentDAO
+                .select()
+                .where("user.address.id").greaterThan(0)//reuse same join
+                .leftJoinFetch("user.address")
+                .getSingleResult(Payment.class);
+    }
+
+    @Override
+    User fetchMultipleRelationsMixed() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .where("address.state.id").greaterThan(0)//reuse same join
+                .leftJoinFetch("payments")
+                .leftJoinFetch("address.state")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    User duplicateFetchPathIsIgnored() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .leftJoinFetch("payments")
+                .leftJoinFetch("payments")
+                .getSingleResult(User.class);
+    }
+
+    @Override
+    User joinAndFetchSamePath() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .leftJoin("payments", "p")
+                .leftJoinFetch("payments")
+                .getSingleResult(User.class);
+    }
+    
+     @Override
+    User innerFetchToOne() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .leftJoinFetch("address")
+                .getSingleResult(User.class);
     }
 }

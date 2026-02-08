@@ -1,5 +1,6 @@
 package io.fluentcriteria.expression.entity;
 
+import io.fluentcriteria.FluentCriteria;
 import io.sample.dao.UserDAO;
 import io.sample.model.Address;
 import io.sample.model.Payment;
@@ -12,15 +13,19 @@ import java.util.List;
 import javax.persistence.PersistenceUnitUtil;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Disabled;
 
 /**
  *
  * @author rrodriguez
  */
 abstract class BaseSelectEntityTest extends BaseTest {
-
-    private static boolean DISABLE_ALL = false;
 
     protected UserDAO userDAO;
 
@@ -82,10 +87,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     abstract List<User> listDistinctEntitiesWithInnerFetchPath(String fetchPath);
 
-    List<User> sample() {
-        return null;
-    }
-
     @Override
     protected void beforeEach() {
         userDAO = new UserDAO();
@@ -94,9 +95,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_singleResult() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
         User actual = (User) selectEntity();
 
@@ -104,10 +102,14 @@ abstract class BaseSelectEntityTest extends BaseTest {
     }
 
     @Test
+    void testSelectEntity_singleResult_returnNull() {
+        User actual = (User) selectEntity();
+
+        Assertions.assertNull(actual);
+    }
+
+    @Test
     void testSelectNestedEntity_singleResult() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
         User actual = (User) selectNestedEntity(Payment.class, "user");
 
@@ -116,9 +118,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_notFetchInternalList() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
         entityManager.flush();
@@ -134,9 +133,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_fetchingInternalList() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
         entityManager.flush();
@@ -156,9 +152,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testListEntities() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2);
@@ -169,10 +162,14 @@ abstract class BaseSelectEntityTest extends BaseTest {
     }
 
     @Test
+    void testListEntities_returnEmpty() {
+        List<User> list = listEntities();
+
+        assertEquals(0, list.size());
+    }
+
+    @Test
     void testListDistinctEntities() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
         List<User> list = listDistinctEntities();//left joins with payments
@@ -182,9 +179,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testListDistinctEntities_leftJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
@@ -195,9 +189,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testSelectEntity_list_innerJoin() {
-//        if (DISABLE_ALL) {
-//            return;
-//        }
         userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
@@ -208,9 +199,6 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     @Test
     void testListDistinctEntities_leftJoinFetch() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);  //No Payments, still will be included
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
@@ -222,11 +210,9 @@ abstract class BaseSelectEntityTest extends BaseTest {
         assertEquals(2, list.size());
     }
 
+    //This ensures explicit joins declared but not referenced are still applied
     @Test
     void testSelectEntity_list_innerJoinFetch() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);  //No Payments, will be excluded
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
@@ -238,21 +224,176 @@ abstract class BaseSelectEntityTest extends BaseTest {
         assertEquals(1, list.size());
     }
 
-    //    @Test
-//    void testSample() {
-//        userDAO.saveOrUpdate(USER_1);
-//        userDAO.saveOrUpdate(USER_2);
-//
-////        entityManager.flush();
-////        entityManager.clear(); // detach all entities
-//
-//        List<User> list = sample();
-//
-////        PersistenceUnitUtil util
-////                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
-////
-////        Assertions.assertTrue(util.isLoaded(list.get(0), "address"));
-//
-//        assertEquals(2, list.size());
-//    }
+    // --- Edge cases ---
+    abstract User selectUserWithMultipleFetches();
+
+    abstract User duplicatedAlias_throwsException();
+
+    abstract User noFromClause_throwsException();
+
+    abstract Long fetchWithProjection_throwsException();
+
+    @Test
+    void testSelectEntity_multipleFetches() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = selectUserWithMultipleFetches();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        assertTrue(util.isLoaded(actual, "payments"));
+        assertTrue(util.isLoaded(actual, "address"));
+    }
+
+    @Test
+    void testDuplicateAlias_throwsException() {
+        assertThrows(IllegalArgumentException.class, ()
+                -> duplicatedAlias_throwsException());
+    }
+
+    @Test
+    void testNoFromClause_throwsException() {
+        assertThrows(IllegalArgumentException.class, ()
+                -> noFromClause_throwsException());
+    }
+
+    @Test
+    void testFetchWithProjection_throwsException() {
+        assertThrows(IllegalArgumentException.class, ()
+                -> fetchWithProjection_throwsException());
+    }
+
+    //--- Cover fetch with all variants ------------------------------------- 
+    //Fetching User.address
+    abstract User fetchOneToOneAddress();
+
+    @Test
+    void testFetchOneToOneAddress() {
+        userDAO.saveOrUpdate(USER_1);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = fetchOneToOneAddress();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        assertTrue(util.isLoaded(actual, "address"));
+
+        // state should NOT be loaded because we didn't fetch it
+        assertFalse(util.isLoaded(actual.getAddress(), "state"));
+    }
+
+    //Fetch User → Address → State
+    abstract User fetchNestedManyToOne();
+
+    @Test
+    void testFetchNestedManyToOne() {
+        userDAO.saveOrUpdate(USER_1);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = fetchNestedManyToOne();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        assertTrue(util.isLoaded(actual, "address"));
+        assertTrue(util.isLoaded(actual.getAddress(), "state"));
+    }
+
+    //Fetch Payment → User → Address  
+    abstract Payment fetchCollectionThenToOne();
+
+    @Test
+    void testFetchCollectionThenToOne() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // Start from Payment as root
+        Payment payment = fetchCollectionThenToOne();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        assertTrue(util.isLoaded(payment, "user"));
+        assertTrue(util.isLoaded(payment.getUser(), "address"));
+    }
+
+    //Fetch  "payments" and "address.state"
+    // User → Payment 
+    // User → Address → State
+    abstract User fetchMultipleRelationsMixed();
+
+    @Test
+    void testFetchMultipleRelationsMixed() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = fetchMultipleRelationsMixed();
+
+        PersistenceUnitUtil util
+                = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+
+        assertTrue(util.isLoaded(actual, "payments"));
+        assertTrue(util.isLoaded(actual, "address"));
+        assertTrue(util.isLoaded(actual.getAddress(), "state"));
+    }
+
+    abstract User duplicateFetchPathIsIgnored();
+
+    @Test
+    void testDuplicateFetchPathIsIgnoredOrMerged() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = duplicateFetchPathIsIgnored();
+
+        assertEquals(2, actual.getPayments().size());
+    }
+
+    abstract User joinAndFetchSamePath();
+
+    @Test
+    void testJoinAndFetchSamePath() {
+        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = joinAndFetchSamePath();
+
+        assertTrue(
+                entityManager.getEntityManagerFactory()
+                        .getPersistenceUnitUtil()
+                        .isLoaded(actual, "payments")
+        );
+    }
+
+    abstract User innerFetchToOne();
+
+    @Test
+    void testInnerFetchToOne() {
+        userDAO.saveOrUpdate(USER_1);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        User actual = innerFetchToOne();
+
+        assertNotNull(actual.getAddress());
+    }
+
 }

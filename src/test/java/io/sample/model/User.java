@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
 /**
@@ -52,7 +53,10 @@ public class User {
     private Date creationDate;
 
     @JoinColumn(name = "address_id", referencedColumnName = "id")
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
     private Address address;
 
     //The cascade used here is for testing convenience, but is usually wrong in real-world models: 

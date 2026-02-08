@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -20,8 +21,6 @@ import org.junit.jupiter.api.Test;
 abstract class BaseSelectFieldTest extends BaseTest {
 
     protected UserDAO userDAO;
-
-    private static final Boolean DISABLE_ALL = false;//Used to test specific test cases
 
     private static final User USER_1 = User.builder()
             .firstName("John")
@@ -117,9 +116,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectField() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
@@ -130,9 +126,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectField_withRootAlias() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
 
         String firstName = (String) selectField_withRootAlias("u.firstName");
@@ -142,9 +135,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectField_typoInFieldName() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
 
         IllegalArgumentException ex = assertThrows(
@@ -152,18 +142,15 @@ abstract class BaseSelectFieldTest extends BaseTest {
                 () -> selectField("firstNameX")
         );
 
-        assertEquals( 
+        assertEquals(
                 "Unable to locate Attribute  with the the given name [firstNameX] on this ManagedType [io.sample.model.User]",
                 ex.getMessage()
         );
- 
+
     }
 
     @Test
     void testSelectField_emptyFieldPath() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
 
         IllegalArgumentException ex = assertThrows(
@@ -179,9 +166,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectNestedFieldOneLevel_implicitJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
 
         String street = (String) selectNestedFieldOneLevel_implicitJoin("address.street");
@@ -191,9 +175,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectNestedFieldOneLevel_implicitJoin_typoInAssociationName() {
-        if (DISABLE_ALL) {
-            return;
-        }
         userDAO.saveOrUpdate(USER_1);
 
         IllegalArgumentException ex = assertThrows(
@@ -209,10 +190,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectNestedFieldOneLevel_explicitLeftJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
@@ -228,10 +205,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectNestedFieldTwoLevels_implicitJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
@@ -248,10 +221,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testSelectNestedFieldTwoLevels_explicitLeftJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
 
@@ -267,10 +236,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListField() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2);
@@ -288,10 +253,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListField_distinct() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
         userDAO.saveOrUpdate(USER_2); //Repeated user, should return same firstName
@@ -308,10 +269,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldOneLevel_implicitJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
@@ -327,10 +284,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldOneLevel_explicitLeftJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
@@ -346,10 +299,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldOneLevel_explicitInnerJoin() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
 
@@ -364,10 +313,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldTwoLevels_implicitJoins() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
@@ -391,10 +336,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
     //it takes presedence, so it should return "Georgia"
     @Test
     void testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath_aliastTakesPrecedence() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_WITH_ROLE);
 
         List<String> list = testListNestedFieldTwoLevels_aliasCollissionWithImplicitPath("role.name");//role here refers to the alias for state 
@@ -409,10 +350,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
     //Should reuse same joins (Need to check in the logs)
     @Test
     void testImplicitJoinsReuseExplicitJoins_whenDeclared() {
-//        if (DISABLE_ALL) {
-//            return;
-//        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
@@ -430,10 +367,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldTwoLevels_implicitJoins_distinct() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_2);
@@ -450,10 +383,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldTwoLevels_explicitLeftJoins() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included
@@ -471,10 +400,6 @@ abstract class BaseSelectFieldTest extends BaseTest {
 
     @Test
     void testListNestedFieldTwoLevels_explicitLeftThenInnerJoins() {
-        if (DISABLE_ALL) {
-            return;
-        }
-
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_WITHOUT_ADDRESS);
         userDAO.saveOrUpdate(USER_WITHOUT_STATE);//Will not be included

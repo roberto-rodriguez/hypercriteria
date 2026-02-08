@@ -117,17 +117,7 @@ class SelectFieldUsingHyperCriteriaTest extends BaseSelectFieldTest {
 
     @Override
     List<String> listNestedFieldTwoLevels_implicitJoins_reuseExplicitJoins(String fieldPath) {
-        return listNestedFieldTwoLevels_explicitLeftJoins(fieldPath);
-//        List<User> users = FluentCriteria.using(entityManager)
-//                .select(fieldPath)
-//                .from(User.class)
-//                .leftJoinFetch("address", "a")
-//                .leftJoinFetch("a.state", "s")
-//                .getResultList();
-//
-//        return users.stream()
-//                .map(u -> u.getAddress().getState().getName())
-//                .collect(Collectors.toList());
+        return listNestedFieldTwoLevels_explicitLeftJoins(fieldPath); 
     }
 
     @Override

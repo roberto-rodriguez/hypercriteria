@@ -87,15 +87,6 @@ public class QueryContext {
                     processingFetch
             );
 
-            // Alias collision check
-//            if (joinNode.getAlias() != null
-//                    && !joinNode.getAlias().equals(aliasInfo.getAlias())) {
-//
-//                throw new IllegalArgumentException(
-//                        "Join path '" + joinPath
-//                        + "' already has alias '" + joinNode.getAlias() + "'"
-//                );
-//            }
             joinNode.setAlias(aliasInfo.getAlias());
             aliases.put(aliasInfo.getAlias(), joinNode);
         }

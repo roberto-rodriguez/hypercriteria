@@ -72,9 +72,6 @@ public class Criteria {
     public Criteria from(Class entityType, String rootAlias) {
         this.entityType = entityType;
         this.rootAlias = rootAlias;
-
-        aliasTypeMap.put(rootAlias, entityType);
-
         //Register the root in the join maps
         return join("", rootAlias, JoinType.LEFT, entityType);
     }
@@ -97,7 +94,7 @@ public class Criteria {
     }
 
     private Criteria join(String joinPath, String alias, JoinType joinType, Class javaType) {
-        aliasTypeMap.put(alias, javaType);
+        setAliasType(alias, javaType);
         joinInfoMap.put(joinPath, new AliasInfo(alias, joinType));
         return this;
     }
@@ -120,7 +117,7 @@ public class Criteria {
 
     private Criteria fetch(String joinPath, String alias, JoinType joinType) {
         Class javaType = TypeUtil.resolveJavaType(joinPath, this);
-        aliasTypeMap.put(alias, javaType);
+        setAliasType(alias, javaType);
         fetchInfoMap.put(joinPath, new AliasInfo(alias, joinType));
         return this;
     }
@@ -255,7 +252,7 @@ public class Criteria {
         //----- Fetch -------
 //        FetchUtil.applyFetches(this, root);
         if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                     "Fetch joins are only allowed when selecting the root entity"
             );
         }
@@ -276,12 +273,12 @@ public class Criteria {
         }
 
         ctx.initializeUnusedExplicitJoins();
- 
+
         TypedQuery<R> query = entityManager.createQuery(criteriaQuery);
 
         firstResult.ifPresent(query::setFirstResult);
         maxResults.filter(m -> m > 0).ifPresent(query::setMaxResults);
-       
+
         return query;
     }
 
@@ -293,12 +290,24 @@ public class Criteria {
     }
 
     private <R> void validateResultType(Class<R> userType, Class<?> resolvedType) {
+        if (resolvedType == null) {
+            return; //Exception will be thrown latter on
+        }
         if (!userType.isAssignableFrom(resolvedType)) {
             throw new IllegalArgumentException(
                     "Expected result type " + userType.getName()
                     + " but query resolves to " + resolvedType.getName()
             );
         }
+    }
+
+    private void setAliasType(String alias, Class<?> type) {
+        // Alias collision check
+        if (alias != null && aliasTypeMap.containsKey(alias)) {
+            throw new IllegalArgumentException("Alias '" + alias + "' is duplicated.");
+        }
+
+        aliasTypeMap.put(alias, type);
     }
 
     // -- Internal Builder --

@@ -3,7 +3,7 @@ package io.fluentcriteria.expression.entity;
 import io.sample.model.Address;
 import io.sample.model.Payment;
 import io.sample.model.User;
-import io.utility.TypeUtil; 
+import io.utility.TypeUtil;
 import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -104,7 +104,7 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         return entityManager
                 .createQuery(cq)
-                .getResultList(); 
+                .getResultList();
     }
 
     @Override
@@ -147,21 +147,112 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
     }
 
     @Override
-    List<User> sample() {
+    User selectUserWithMultipleFetches() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.distinct(true).from(User.class);
+
+        root.fetch("payments", JoinType.LEFT);
+        root.fetch("address", JoinType.LEFT);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    User duplicatedAlias_throwsException() {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    User noFromClause_throwsException() {
+        throw new IllegalArgumentException();
+    }
+
+    @Override
+    Long fetchWithProjection_throwsException() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+        Root<User> root = cq.distinct(true).from(User.class);
+
+        Path<Long> path = root.get("id");
+
+        cq.select(path);
+
+        root.fetch("address", JoinType.LEFT);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    User fetchOneToOneAddress() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        root.fetch("address", JoinType.LEFT);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    User fetchNestedManyToOne() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.distinct(true).from(User.class);
 
         Fetch<User, Address> addressFetch = root.fetch("address", JoinType.LEFT);
+        addressFetch.fetch("state", JoinType.LEFT);
 
-        Join<User, Address> addressJoin
-                = (Join<User, Address>) addressFetch;
-
-        cq.where(
-                cb.like(addressJoin.get("zipcode"), "123456")
-        );
-
-        return entityManager.createQuery(cq).getResultList();
+        return entityManager.createQuery(cq).getSingleResult();
     }
 
+    @Override
+    Payment fetchCollectionThenToOne() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Payment> cq = cb.createQuery(Payment.class);
+        Root<Payment> root = cq.distinct(true).from(Payment.class);
+
+        Fetch<Payment, User> userFetch = root.fetch("user", JoinType.LEFT);
+        Fetch<User, Address> addressFetch = userFetch.fetch("address", JoinType.LEFT);
+
+        return entityManager.createQuery(cq).setMaxResults(1).getSingleResult();
+    }
+
+    @Override
+    User fetchMultipleRelationsMixed() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.distinct(true).from(User.class);
+
+        root.fetch("payments", JoinType.LEFT);
+        Fetch<User, Address> addressFetch = root.fetch("address", JoinType.LEFT);
+        addressFetch.fetch("state", JoinType.LEFT);
+
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    User duplicateFetchPathIsIgnored() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        root.fetch("payments", JoinType.LEFT);
+        return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    User joinAndFetchSamePath() {
+        return duplicateFetchPathIsIgnored();
+    }
+
+    @Override
+    User innerFetchToOne() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        root.fetch("address", JoinType.LEFT);
+        return entityManager.createQuery(cq).getSingleResult();
+    }
 }

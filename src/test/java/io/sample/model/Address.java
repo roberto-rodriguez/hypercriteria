@@ -2,6 +2,7 @@ package io.sample.model;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,7 +41,10 @@ public class Address {
 //Cascading persist from child → shared parent can create duplicates 
 //Cascades should normally flow from aggregate root → children
     @JoinColumn(name = "state_id", referencedColumnName = "id")
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    )
     private State state;
 
 //    @JoinColumn(name = "country_id", referencedColumnName = "id")
