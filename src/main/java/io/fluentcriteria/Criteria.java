@@ -25,6 +25,10 @@ import javax.persistence.criteria.JoinType;
 import lombok.Getter;
 import io.fluentcriteria.util.TypeUtil;
 import static io.fluentcriteria.FluentCriteria.field;
+import io.fluentcriteria.criterion.predicate.And;
+import io.fluentcriteria.criterion.predicate.Or;
+import io.fluentcriteria.predicate.builder.AndBuilder;
+import io.fluentcriteria.predicate.builder.OrBuilder;
 
 /**
  *
@@ -148,9 +152,47 @@ public class Criteria {
         if (this.predicate.isEmpty()) {
             this.predicate = Optional.of(predicate);
         } else {
+            if (this.predicate.get() instanceof And andPredicate) {
+                andPredicate.add(predicate);
+            }
+            if (this.predicate.get() instanceof Or) {
+                throw new IllegalArgumentException("Ambiguos combination of OR and AND predicates. Consider using nested and/or instead.");
+            }
             this.predicate = Optional.of(FluentCriteria.Predicates.and(this.predicate.get(), predicate));
         }
         return this;
+    }
+
+    public ExpressionPredicateBuilder and(BaseExpression expression) {
+        return new AndBuilder(this, expression);
+    }
+
+    public ExpressionPredicateBuilder and(String fieldPath) {
+        return new AndBuilder(this, field(fieldPath));
+    }
+
+    public Criteria or(BasePredicate predicate) {
+        if (this.predicate.isEmpty()) {
+            this.predicate = Optional.of(predicate);
+        } else {
+            if (this.predicate.get() instanceof And) {
+                throw new IllegalArgumentException("Ambiguos combination of OR and AND predicates. Consider using nested and/or instead.");
+
+            }
+            if (this.predicate.get() instanceof Or orPredicate) {
+                orPredicate.add(predicate);
+            }
+            this.predicate = Optional.of(FluentCriteria.Predicates.or(this.predicate.get(), predicate));
+        }
+        return this;
+    }
+
+    public ExpressionPredicateBuilder or(BaseExpression expression) {
+        return new OrBuilder(this, expression);
+    }
+
+    public ExpressionPredicateBuilder or(String fieldPath) {
+        return new OrBuilder(this, field(fieldPath));
     }
 
     public Criteria setFirstResult(Integer firstResult) {
@@ -249,8 +291,7 @@ public class Criteria {
 
         ctx.complete(builder, root, rootAlias, fetchInfoMap, joinInfoMap);
 
-        //----- Fetch -------
-//        FetchUtil.applyFetches(this, root);
+        //----- Fetch ------- 
         if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
             throw new IllegalArgumentException(
                     "Fetch joins are only allowed when selecting the root entity"

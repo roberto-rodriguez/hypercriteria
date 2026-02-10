@@ -30,10 +30,15 @@ public abstract class Junction extends BasePredicate {
     protected Junction(BasePredicate p1, BasePredicate p2) {
         this.predicates = Arrays.asList(p1, p2);
     }
-    
-    protected Predicate[] getPredicates(QueryContext ctx){
-        return  predicates.stream()
+
+    protected Predicate[] getPredicates(QueryContext ctx) {
+        return predicates.stream()
                 .map(p -> p.toPredicate(ctx))
                 .toArray(Predicate[]::new);
+    }
+
+    public Junction add(BasePredicate predicate) {
+        this.predicates.add(predicate);
+        return this;
     }
 }

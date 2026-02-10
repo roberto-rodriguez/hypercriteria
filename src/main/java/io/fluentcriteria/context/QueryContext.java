@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Fetch;
+import javax.persistence.criteria.CriteriaBuilder; 
 import javax.persistence.criteria.Root;
 import lombok.Getter;
 
