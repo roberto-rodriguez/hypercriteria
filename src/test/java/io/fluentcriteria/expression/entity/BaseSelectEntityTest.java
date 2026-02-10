@@ -1,6 +1,5 @@
 package io.fluentcriteria.expression.entity;
 
-import io.fluentcriteria.FluentCriteria;
 import io.sample.dao.UserDAO;
 import io.sample.model.Address;
 import io.sample.model.Payment;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.Disabled;
 
@@ -350,18 +348,12 @@ abstract class BaseSelectEntityTest extends BaseTest {
         assertTrue(util.isLoaded(actual.getAddress(), "state"));
     }
 
-    abstract User duplicateFetchPathIsIgnored();
+    abstract User duplicateFetchPathThrowsException();
 
     @Test
-    void testDuplicateFetchPathIsIgnoredOrMerged() {
-        userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
-
-        entityManager.flush();
-        entityManager.clear();
-
-        User actual = duplicateFetchPathIsIgnored();
-
-        assertEquals(2, actual.getPayments().size());
+    void testDuplicateFetchPathThrowsException() {
+        assertThrows(IllegalArgumentException.class, ()
+                -> duplicateFetchPathThrowsException());
     }
 
     abstract User joinAndFetchSamePath();

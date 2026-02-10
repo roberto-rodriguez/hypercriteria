@@ -97,7 +97,6 @@ public class JoinNode {
             } else {
                 System.out.printf("DEBUG:: JoinNode.toFrom -> this.from = parentFrom.join(%s, %s)", key.field, key.joinType);
                 System.out.println("");
-//                ctx.getRoot().join("payments", JoinType.INNER);
                 this.from = parentFrom.join(key.field, key.joinType);
             }
 

@@ -15,12 +15,10 @@ import lombok.ToString;
 public class AliasInfo {
 
     private final String alias;
-    private final JoinType joinType;
-//    private final Class<?> javaType;
+    private final JoinType joinType; 
 
-    public AliasInfo(String alias, JoinType joinType) {//, Class<?> javaType
+    public AliasInfo(String alias, JoinType joinType) { 
         this.alias = alias;
-        this.joinType = joinType;
-//        this.javaType = javaType;
+        this.joinType = joinType; 
     }
 }

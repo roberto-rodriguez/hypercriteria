@@ -25,6 +25,7 @@ import javax.persistence.criteria.JoinType;
 import lombok.Getter;
 import io.fluentcriteria.util.TypeUtil;
 import static io.fluentcriteria.FluentCriteria.field;
+import io.fluentcriteria.context.JoinSpec;
 import io.fluentcriteria.criterion.predicate.And;
 import io.fluentcriteria.criterion.predicate.Or;
 import io.fluentcriteria.predicate.builder.AndBuilder;
@@ -51,10 +52,7 @@ public class Criteria {
     private BaseExpression groupBy;
 
     private final LinkedHashMap<String, Class> aliasTypeMap = new LinkedHashMap<>();
-    private final LinkedHashMap<String, AliasInfo> joinInfoMap = new LinkedHashMap<>();
-
-    private final LinkedHashMap<String, Class> fetchAliasTypeMap = new LinkedHashMap<>();
-    private final LinkedHashMap<String, AliasInfo> fetchInfoMap = new LinkedHashMap<>();
+    private final List<JoinSpec> explicitJoinSpecs = new ArrayList<>();
 
     private Optional<BasePredicate> predicate = Optional.empty();
     private final List<Order> orderList = new ArrayList<>();
@@ -76,8 +74,13 @@ public class Criteria {
     public Criteria from(Class entityType, String rootAlias) {
         this.entityType = entityType;
         this.rootAlias = rootAlias;
-        //Register the root in the join maps
-        return join("", rootAlias, JoinType.LEFT, entityType);
+
+        // Register root alias type map for "u.*" paths
+        setAliasType(rootAlias, entityType);
+
+        // Register root as an explicit "join spec" with blank path
+        explicitJoinSpecs.add(new JoinSpec("", rootAlias, JoinType.LEFT, false, entityType));
+        return this;
     }
 
     public Criteria leftJoin(String joinPath, String alias) {
@@ -99,7 +102,7 @@ public class Criteria {
 
     private Criteria join(String joinPath, String alias, JoinType joinType, Class javaType) {
         setAliasType(alias, javaType);
-        joinInfoMap.put(joinPath, new AliasInfo(alias, joinType));
+        explicitJoinSpecs.add(new JoinSpec(joinPath, alias, joinType, false, javaType));
         return this;
     }
 
@@ -122,7 +125,7 @@ public class Criteria {
     private Criteria fetch(String joinPath, String alias, JoinType joinType) {
         Class javaType = TypeUtil.resolveJavaType(joinPath, this);
         setAliasType(alias, javaType);
-        fetchInfoMap.put(joinPath, new AliasInfo(alias, joinType));
+        explicitJoinSpecs.add(new JoinSpec(joinPath, alias, joinType, true, javaType));
         return this;
     }
 
@@ -270,7 +273,8 @@ public class Criteria {
                 entityManager,
                 entityType,
                 distinct,
-                aliasTypeMap
+                aliasTypeMap,
+                explicitJoinSpecs
         );
     }
 
@@ -289,19 +293,18 @@ public class Criteria {
         CriteriaQuery<R> criteriaQuery = builder.createQuery(resultType);
         Root<T> root = criteriaQuery.from(rootType);
 
-        ctx.complete(builder, root, rootAlias, fetchInfoMap, joinInfoMap);
+        ctx.complete(builder, root, rootAlias);
 
         //----- Fetch ------- 
-        if (projection.isPresent() && !fetchInfoMap.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Fetch joins are only allowed when selecting the root entity"
-            );
+        boolean hasFetch = explicitJoinSpecs.stream().anyMatch(JoinSpec::isFetch);
+        if (projection.isPresent() && hasFetch) {
+            throw new IllegalArgumentException("Fetch joins are only allowed when selecting the root entity");
         }
-        // --------------
 
+        // --------------
         projection.ifPresent(p -> p.apply(ctx, criteriaQuery));
 
-        if (distinct || !fetchInfoMap.isEmpty()) {//Always set distinct when applying fetch
+        if (distinct || hasFetch) {
             criteriaQuery.distinct(true);
         }
 
@@ -344,7 +347,7 @@ public class Criteria {
 
     private void setAliasType(String alias, Class<?> type) {
         // Alias collision check
-        if (alias == null) {
+        if (alias == null || alias.isEmpty()) {
             return;
         }
 

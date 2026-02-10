@@ -149,7 +149,7 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
     }
 
     @Override
-    User duplicateFetchPathIsIgnored() {
+    User duplicateFetchPathThrowsException() {
         return userDAO
                 .select()
                 .from(User.class)

@@ -3,8 +3,6 @@ package io.fluentcriteria.context;
 import java.util.Arrays;
 import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.FetchParent;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 
 /**
@@ -17,7 +15,9 @@ public final class PathResolver {
             QueryContext ctx,
             String joinPath,
             JoinType joinType,
-            boolean processingFetch
+            boolean processingFetch,
+            boolean declaredExplicitly,
+            String explicitAlias
     ) {
         if (joinPath.isBlank()) {
             System.out.println("joinPath.isBlank(), return  ctx.getRootNode()");
@@ -60,10 +60,13 @@ public final class PathResolver {
 
         // 2️⃣ Walk remaining segments
         for (int i = index; i < segments.length; i++) {
+            String segment = segments[i];
+
             if (processingFetch) {
-                current = resolveFetch(ctx, current, segments[i], joinType);
+                // keep fetch in same joins registry; allow alias if you want
+                current = resolveFetch(ctx, current, segment, joinType, declaredExplicitly, explicitAlias);
             } else {
-                current = resolveJoin(ctx, current, segments[i], joinType, true);
+                current = resolveJoin(ctx, current, segment, joinType, declaredExplicitly, explicitAlias);
             }
         }
 
@@ -75,42 +78,25 @@ public final class PathResolver {
             JoinNode parent,
             String field,
             JoinType joinType,
-            boolean declaredExplicitly
+            boolean declaredExplicitly,
+            String explicitAlias
     ) {
-        JoinKey key = new JoinKey(parent, field, joinType);
+        JoinKey key = new JoinKey(parent, field, joinType, declaredExplicitly ? explicitAlias : null);
         return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, declaredExplicitly));
     }
 
-//    private static JoinNode resolveJoin(
-//            QueryContext ctx,
-//            JoinNode parent,
-//            String field,
-//            JoinType joinType
-//    ) {
-//        System.out.println("PathResolver.resolveJoin :: field = " + field);
-//        From<?, ?> parentFrom = (From<?, ?>) parent.getFrom();
-//
-//        Join<?, ?> join = joinType == null
-//                ? parentFrom.join(field)
-//                : parentFrom.join(field, joinType);
-//
-//        JoinKey key = new JoinKey(parent, field, joinType);
-//        return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, join));
-//    }
     private static JoinNode resolveFetch(
             QueryContext ctx,
             JoinNode parent,
             String field,
-            JoinType joinType
+            JoinType joinType,
+            boolean declaredExplicitly,
+            String explicitAlias
     ) {
         FetchParent<?, ?> parentFetch = (FetchParent<?, ?>) parent.getFrom();
+        Fetch<?, ?> fetch = joinType == null ? parentFetch.fetch(field) : parentFetch.fetch(field, joinType);
 
-        Fetch<?, ?> fetch = joinType == null
-                ? parentFetch.fetch(field)
-                : parentFetch.fetch(field, joinType);
-
-        JoinKey key = new JoinKey(parent, field, joinType);
-
+        JoinKey key = new JoinKey(parent, field, joinType, declaredExplicitly ? explicitAlias : null);
         return ctx.getJoins().computeIfAbsent(key, k -> new FetchNode(k, fetch));
     }
 
@@ -149,8 +135,7 @@ public final class PathResolver {
 
         // Stop BEFORE the terminal field
         for (int i = index; i < end; i++) {
-            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT, false);
-
+            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT, false, null);
             System.out.println(String.format("DEBUG :: PathResolver.resolvePath  - calling %s - resolveJoin(%s)  = %s", i, segments[i], current));
         }
 

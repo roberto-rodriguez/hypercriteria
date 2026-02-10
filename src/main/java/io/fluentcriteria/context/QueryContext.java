@@ -1,11 +1,13 @@
 package io.fluentcriteria.context;
 
 import io.fluentcriteria.util.AliasInfo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder; 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Root;
 import lombok.Getter;
 
@@ -20,6 +22,7 @@ public class QueryContext {
     private final EntityManager entityManager;
     private final Class<?> rootType;
     private final boolean distinct;
+    private final List<JoinSpec> explicitJoinSpecs;
 
     //--------- Calculated during initialization ---------
     // Alias → JavaType
@@ -44,20 +47,20 @@ public class QueryContext {
             EntityManager entityManager,
             Class<?> rootType,
             boolean distinct,
-            LinkedHashMap<String, Class> aliasTypeMap
+            LinkedHashMap<String, Class> aliasTypeMap,
+            List<JoinSpec> explicitJoinSpecs
     ) {
         this.entityManager = entityManager;
         this.rootType = rootType;
         this.distinct = distinct;
         this.aliasTypeMap = aliasTypeMap;
+        this.explicitJoinSpecs = explicitJoinSpecs;
     }
 
     public void complete(
             CriteriaBuilder criteriaBuilder,
             Root<?> root,
-            String rootAlias,
-            LinkedHashMap<String, AliasInfo> fetchInfoMap,
-            LinkedHashMap<String, AliasInfo> joinInfoMap
+            String rootAlias
     ) {
         this.criteriaBuilder = criteriaBuilder;
         this.root = root;
@@ -67,30 +70,51 @@ public class QueryContext {
                 .alias(rootAlias)
                 .build();
 
-        explicitJoinRegistration(fetchInfoMap, true);
-        explicitJoinRegistration(joinInfoMap, false);
+        explicitJoinRegistration();
     }
 
-    private void explicitJoinRegistration(
-            LinkedHashMap<String, AliasInfo> joinInfoMap,
-            boolean processingFetch
-    ) {
-        for (Map.Entry<String, AliasInfo> e : joinInfoMap.entrySet()) {
-            String joinPath = e.getKey();
-            AliasInfo aliasInfo = e.getValue();
-
+    private void explicitJoinRegistration() {
+        for (JoinSpec spec : explicitJoinSpecs) {
             JoinNode joinNode = PathResolver.resolveJoinPath(
                     this,
-                    joinPath,
-                    aliasInfo.getJoinType(),
-                    processingFetch
+                    spec.getPath(),
+                    spec.getJoinType(),
+                    spec.isFetch(),
+                    true, // declaredExplicitly
+                    spec.getAlias() // explicitAlias dimension for JoinKey
             );
 
-            joinNode.setAlias(aliasInfo.getAlias());
-            aliases.put(aliasInfo.getAlias(), joinNode);
+            // root spec: alias should bind to root node
+            if (spec.getPath().isBlank()) {
+                joinNode = rootNode;
+            }
+
+            if (spec.getAlias() != null) {
+                joinNode.setAlias(spec.getAlias());
+                aliases.put(spec.getAlias(), joinNode);
+            }
         }
     }
 
+//    private void explicitJoinRegistration(
+//            LinkedHashMap<String, AliasInfo> joinInfoMap,
+//            boolean processingFetch
+//    ) {
+//        for (Map.Entry<String, AliasInfo> e : joinInfoMap.entrySet()) {
+//            String joinPath = e.getKey();
+//            AliasInfo aliasInfo = e.getValue();
+//
+//            JoinNode joinNode = PathResolver.resolveJoinPath(
+//                    this,
+//                    joinPath,
+//                    aliasInfo.getJoinType(),
+//                    processingFetch
+//            );
+//
+//            joinNode.setAlias(aliasInfo.getAlias());
+//            aliases.put(aliasInfo.getAlias(), joinNode);
+//        }
+//    }
     //Joins that were declared explicitly but were never used
     public void initializeUnusedExplicitJoins() {
         System.out.println("initializeUnusedExplicitJoins");

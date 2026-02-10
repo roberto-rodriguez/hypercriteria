@@ -232,18 +232,24 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
     }
 
     @Override
-    User duplicateFetchPathIsIgnored() {
+    User duplicateFetchPathThrowsException() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> cq = cb.createQuery(User.class);
         Root<User> root = cq.from(User.class);
 
+        root.fetch("payments", JoinType.LEFT);
         root.fetch("payments", JoinType.LEFT);
         return entityManager.createQuery(cq).getSingleResult();
     }
 
     @Override
     User joinAndFetchSamePath() {
-        return duplicateFetchPathIsIgnored();
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        root.fetch("payments", JoinType.LEFT);
+        return entityManager.createQuery(cq).getSingleResult();
     }
 
     @Override

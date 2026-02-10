@@ -174,7 +174,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
     }
 
     @Override
-    User duplicateFetchPathIsIgnored() {
+    User duplicateFetchPathThrowsException() {
         return FluentCriteria.using(entityManager)
                 .select()
                 .from(User.class)

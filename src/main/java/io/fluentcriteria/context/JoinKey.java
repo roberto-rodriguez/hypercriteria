@@ -4,10 +4,6 @@ import io.fluentcriteria.util.ObjectUtils;
 import javax.persistence.criteria.JoinType;
 import lombok.ToString;
 
-/**
- *
- * @author rrodriguez
- */
 @ToString
 public final class JoinKey {
 
@@ -15,10 +11,14 @@ public final class JoinKey {
     public final String field;
     public final JoinType joinType;
 
-    public JoinKey(JoinNode parent, String field, JoinType joinType) {
+    // NEW: distinguishes explicit joins with different aliases
+    public final String explicitAlias;
+
+    public JoinKey(JoinNode parent, String field, JoinType joinType, String explicitAlias) {
         this.parent = parent;
         this.field = field;
         this.joinType = joinType;
+        this.explicitAlias = explicitAlias;
     }
 
     @Override
@@ -32,11 +32,12 @@ public final class JoinKey {
         JoinKey that = (JoinKey) o;
         return ObjectUtils.equals(parent, that.parent)
                 && ObjectUtils.equals(field, that.field)
-                && joinType == that.joinType;
+                && joinType == that.joinType
+                && ObjectUtils.equals(explicitAlias, that.explicitAlias);
     }
 
     @Override
     public int hashCode() {
-        return ObjectUtils.hash(parent, field, joinType);
+        return ObjectUtils.hash(parent, field, joinType, explicitAlias);
     }
 }
