@@ -116,7 +116,7 @@ public class Criteria {
     }
 
     public Criteria innerJoinFetch(String fetchPath, String alias) {
-        return fetch(fetchPath, alias, JoinType.LEFT);
+        return fetch(fetchPath, alias, JoinType.INNER);
     }
 
     private Criteria fetch(String joinPath, String alias, JoinType joinType) {
@@ -344,7 +344,11 @@ public class Criteria {
 
     private void setAliasType(String alias, Class<?> type) {
         // Alias collision check
-        if (alias != null && aliasTypeMap.containsKey(alias)) {
+        if (alias == null) {
+            return;
+        }
+
+        if (aliasTypeMap.containsKey(alias)) {
             throw new IllegalArgumentException("Alias '" + alias + "' is duplicated.");
         }
 
