@@ -1,20 +1,16 @@
 package io.fluentcriteria.context;
 
-import io.fluentcriteria.util.AliasInfo;
-import java.util.ArrayList;
+import io.fluentcriteria.util.ObjectUtils;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import lombok.Getter;
 
-/**
- *
- * @author rrodriguez
- */
 @Getter
 public class QueryContext {
 
@@ -36,11 +32,9 @@ public class QueryContext {
 
     //--------- Set after we know the return type ---------
     private CriteriaBuilder criteriaBuilder;
-//
     private Root<?> root;
 
     private String rootAlias;
-
     private JoinNode rootNode;
 
     public QueryContext(
@@ -65,6 +59,7 @@ public class QueryContext {
         this.criteriaBuilder = criteriaBuilder;
         this.root = root;
         this.rootAlias = rootAlias;
+
         this.rootNode = JoinNode.builder()
                 .from(root)
                 .alias(rootAlias)
@@ -75,13 +70,14 @@ public class QueryContext {
 
     private void explicitJoinRegistration() {
         for (JoinSpec spec : explicitJoinSpecs) {
+
             JoinNode joinNode = PathResolver.resolveJoinPath(
                     this,
                     spec.getPath(),
                     spec.getJoinType(),
                     spec.isFetch(),
-                    true, // declaredExplicitly
-                    spec.getAlias() // explicitAlias dimension for JoinKey
+                    true, // declaredExplicitly (but PathResolver will apply only to last segment)
+                    spec.getAlias() // explicitAlias dimension (applied only to last segment)
             );
 
             // root spec: alias should bind to root node
@@ -96,38 +92,13 @@ public class QueryContext {
         }
     }
 
-//    private void explicitJoinRegistration(
-//            LinkedHashMap<String, AliasInfo> joinInfoMap,
-//            boolean processingFetch
-//    ) {
-//        for (Map.Entry<String, AliasInfo> e : joinInfoMap.entrySet()) {
-//            String joinPath = e.getKey();
-//            AliasInfo aliasInfo = e.getValue();
-//
-//            JoinNode joinNode = PathResolver.resolveJoinPath(
-//                    this,
-//                    joinPath,
-//                    aliasInfo.getJoinType(),
-//                    processingFetch
-//            );
-//
-//            joinNode.setAlias(aliasInfo.getAlias());
-//            aliases.put(aliasInfo.getAlias(), joinNode);
-//        }
-//    }
     //Joins that were declared explicitly but were never used
     public void initializeUnusedExplicitJoins() {
-        System.out.println("initializeUnusedExplicitJoins");
         for (Map.Entry<JoinKey, JoinNode> entry : joins.entrySet()) {
             JoinNode joinNode = entry.getValue();
-
-            System.out.println("initializeUnusedExplicitJoins joinNode = " + joinNode);
-            System.out.println("initializeUnusedExplicitJoins joinNode.needsLazyInitialization() = " + joinNode.needsLazyInitialization());
-
             if (joinNode.needsLazyInitialization()) {
                 joinNode.toFrom(this);
             }
         }
     }
-
 }
