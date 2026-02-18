@@ -9,16 +9,16 @@ import javax.persistence.criteria.Expression;
  *
  * @author rrodriguez
  */
-public abstract class ExpressionPredicate extends BasePredicate {
+public abstract class PredicateWithExpression extends BasePredicate {
 
     protected BaseExpression expression;
 
-    public ExpressionPredicate(String fieldPath) {
+    public PredicateWithExpression(String fieldPath) {
         this.expression
                 = new Field(fieldPath);
     }
 
-    public ExpressionPredicate(BaseExpression expression) {
+    public PredicateWithExpression(BaseExpression expression) {
         this.expression = expression;
     }
 

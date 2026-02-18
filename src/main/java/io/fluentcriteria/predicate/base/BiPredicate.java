@@ -7,27 +7,27 @@ import io.fluentcriteria.expression.base.BaseExpression;
  * @author rrodriguez
  * @param <T>
  */
-public abstract class ComparablePredicate<T extends Comparable<T>> extends PredicateWithExpression {
+public abstract class BiPredicate extends PredicateWithExpression {
 
-    protected T value;
+    protected Object value;
     protected BaseExpression expressionValue;
 
-    public ComparablePredicate(String fieldPath, T value) {
+    public BiPredicate(String fieldPath, Object value) {
         super(fieldPath);
         this.value = value;
     }
 
-    public ComparablePredicate(BaseExpression expression, T value) {
+    public BiPredicate(BaseExpression expression, Object value) {
         super(expression);
         this.value = value;
     }
 
-    public ComparablePredicate(String fieldPath, BaseExpression expressionValue) {
+    public BiPredicate(String fieldPath, BaseExpression expressionValue) {
         super(fieldPath);
         this.expressionValue = expressionValue;
     }
 
-    public ComparablePredicate(BaseExpression expression, BaseExpression expressionValue) {
+    public BiPredicate(BaseExpression expression, BaseExpression expressionValue) {
         super(expression);
         this.expressionValue = expressionValue;
     }

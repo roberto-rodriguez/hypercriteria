@@ -8,7 +8,7 @@ import io.fluentcriteria.predicate.base.BasePredicate;
  *
  * @author rrodriguez
  */
-public class WhereBuilder extends ExpressionPredicateBuilder {
+public class WhereBuilder extends CriteriaPredicateBuilder {
 
     public WhereBuilder(Criteria criteria, BaseExpression leftExpression) {
         super(criteria, leftExpression);

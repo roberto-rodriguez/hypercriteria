@@ -1,7 +1,6 @@
 package io.fluentcriteria.predicate;
 
-import io.fluentcriteria.FluentCriteria;
-import static io.fluentcriteria.FluentCriteria.Predicates.greaterThan;
+import io.fluentcriteria.FluentCriteria; 
 import static io.fluentcriteria.FluentCriteria.abs;
 import io.sample.model.Payment;
 import java.util.List;

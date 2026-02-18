@@ -5,11 +5,17 @@
  */
 package io.fluentcriteria.expression.base;
 
+import io.fluentcriteria.Criteria;
 import io.fluentcriteria.context.JoinNode;
 import io.fluentcriteria.context.PathExpression;
 import io.fluentcriteria.context.PathResolver;
 import io.fluentcriteria.context.QueryContext;
+import io.fluentcriteria.expression.Field;
+import io.fluentcriteria.predicate.Equal;
 import io.fluentcriteria.predicate.GreaterThan;
+import io.fluentcriteria.predicate.base.BasePredicate;
+import io.fluentcriteria.predicate.IsTrue;
+import io.fluentcriteria.predicate.builder.PredicateBuilder;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.persistence.criteria.CriteriaQuery;
@@ -21,7 +27,7 @@ import javax.persistence.criteria.Selection;
  *
  * @author rrodriguez
  */
-public abstract class BaseExpression {
+public abstract class BaseExpression implements PredicateBuilder<BasePredicate> {
 
     protected PathExpression pathExpression;
 
@@ -156,13 +162,46 @@ public abstract class BaseExpression {
     }
 
     //------- Predicate builder
+    @Override
+    public IsTrue isTrue(BaseExpression expressionValue) {
+        return new IsTrue(expressionValue);
+    }
+
+    @Override
+    public IsTrue isTrueField(String fieldPath) {
+        return new IsTrue(new Field(fieldPath));
+    }
+
+    //Greater Than
+    @Override
     public <T extends Comparable<T>> GreaterThan greaterThan(T value) {
         return new GreaterThan<>(this, value);
     }
 
-    public <T extends Comparable<T>> GreaterThan greaterThan(BaseExpression expressionValue) {
+    @Override
+    public GreaterThan greaterThan(BaseExpression expressionValue) {
         return new GreaterThan<>(this, expressionValue);
     }
-    
-    // Rest of predicate methods here
+
+    @Override
+    public GreaterThan greaterThanField(String fieldPath) {
+        return greaterThan(new Field(fieldPath));
+    }
+
+    //Equal
+    @Override
+    public Equal equal(Object value) {
+        return new Equal(this, value);
+    }
+
+    @Override
+    public Equal equal(BaseExpression expressionValue) {
+        return new Equal(this, expressionValue);
+    }
+
+    @Override
+    public Equal equalField(String fieldPath) {
+        return equal(new Field(fieldPath));
+    }
+
 }

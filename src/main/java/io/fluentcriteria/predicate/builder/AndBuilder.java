@@ -9,7 +9,7 @@ import io.fluentcriteria.predicate.base.BasePredicate;
  *
  * @author rrodriguez
  */
-public class AndBuilder extends ExpressionPredicateBuilder {
+public class AndBuilder extends CriteriaPredicateBuilder {
 
     public AndBuilder(Criteria criteria, BaseExpression leftExpression) {
         super(criteria, leftExpression);
@@ -19,5 +19,6 @@ public class AndBuilder extends ExpressionPredicateBuilder {
     protected Criteria setPredicate(BasePredicate predicate) {
         return criteria.and(predicate);
     }
+ 
 
 }

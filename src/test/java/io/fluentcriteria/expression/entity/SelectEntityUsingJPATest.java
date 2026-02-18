@@ -2,6 +2,7 @@ package io.fluentcriteria.expression.entity;
 
 import io.sample.model.Address;
 import io.sample.model.Payment;
+import io.sample.model.State;
 import io.sample.model.User;
 import io.utility.TypeUtil;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 /**
@@ -260,5 +262,55 @@ class SelectEntityUsingJPATest extends BaseSelectEntityTest {
 
         root.fetch("address", JoinType.LEFT);
         return entityManager.createQuery(cq).getSingleResult();
+    }
+
+    @Override
+    List<User> listUsers_twoExplicitJoinsSamePathDifferentAlias() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> u = cq.from(User.class);
+
+// Two separate joins to the same collection association
+        Join<User, Payment> p1 = u.join("payments", JoinType.LEFT);
+        Join<User, Payment> p2 = u.join("payments", JoinType.LEFT);
+
+// Predicates: p1.amount > 0 AND p2.amount > 0
+        Predicate pred = cb.and(
+                cb.greaterThan(p1.get("amount"), 0D),
+                cb.greaterThan(p2.get("amount"), 0D)
+        );
+
+        cq.select(u)
+                .where(pred);
+
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    List<User> listUsers_innerJoinDeclaredButNeverReferenced_excludesRows() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        root.join("payments", JoinType.INNER);
+        return entityManager.createQuery(cq).getResultList();
+    }
+
+    @Override
+    List<User> listUsers_explicitJoinAndImplicitJoinSamePath() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> root = cq.from(User.class);
+
+        Join<User, Address> addressJoin = root.join("address", JoinType.LEFT);
+        Join<Address, State> stateJoin = root.join("state", JoinType.LEFT);
+
+        Predicate pred = cb.equal(stateJoin.get("code"), "GA");
+
+        cq.select(root)
+                .where(pred);
+
+        return entityManager.createQuery(cq).getResultList();
     }
 }

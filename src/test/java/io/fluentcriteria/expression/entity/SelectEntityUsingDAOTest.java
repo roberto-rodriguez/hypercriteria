@@ -167,13 +167,42 @@ class SelectEntityUsingDAOTest extends BaseSelectEntityTest {
                 .leftJoinFetch("payments")
                 .getSingleResult(User.class);
     }
-    
-     @Override
+
+    @Override
     User innerFetchToOne() {
         return userDAO
                 .select()
                 .from(User.class)
                 .leftJoinFetch("address")
                 .getSingleResult(User.class);
+    }
+
+    @Override
+    List<User> listUsers_twoExplicitJoinsSamePathDifferentAlias() {
+        return userDAO
+                .select()
+                .leftJoin("payments", "p1")
+                .leftJoin("payments", "p2")
+                .where("p1.amount").greaterThan(0D)
+                .and("p2.amount").greaterThan(0D)
+                .getResultList(User.class);
+    }
+
+    @Override
+    List<User> listUsers_innerJoinDeclaredButNeverReferenced_excludesRows() {
+        return userDAO
+                .select()
+                .innerJoin("payments", "p1")
+                .getResultList(User.class);
+    }
+
+    @Override
+    List<User> listUsers_explicitJoinAndImplicitJoinSamePath() {
+        return userDAO
+                .select()
+                .from(User.class)
+                .where("address.state.code").equal("GA")
+                .leftJoin("address", "a")
+                .getResultList(User.class);
     }
 }

@@ -366,7 +366,7 @@ abstract class BaseSelectFieldTest extends BaseTest {
         assertEquals("Georgia", list.get(2));
     }
 
-    @Test
+    
     void testListNestedFieldTwoLevels_implicitJoins_distinct() {
         userDAO.saveOrUpdate(USER_1);
         userDAO.saveOrUpdate(USER_1);

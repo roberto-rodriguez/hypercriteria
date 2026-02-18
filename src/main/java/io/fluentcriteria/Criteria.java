@@ -9,9 +9,8 @@ import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.criterion.Order;
 import io.fluentcriteria.expression.base.BaseExpression;
 import io.fluentcriteria.predicate.base.BasePredicate;
-import io.fluentcriteria.predicate.builder.ExpressionPredicateBuilder;
+import io.fluentcriteria.predicate.builder.CriteriaPredicateBuilder;
 import io.fluentcriteria.predicate.builder.WhereBuilder;
-import io.fluentcriteria.util.AliasInfo;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -143,11 +142,11 @@ public class Criteria {
         return and(predicate);
     }
 
-    public ExpressionPredicateBuilder where(BaseExpression expression) {
+    public CriteriaPredicateBuilder where(BaseExpression expression) {
         return new WhereBuilder(this, expression);
     }
 
-    public ExpressionPredicateBuilder where(String fieldPath) {
+    public CriteriaPredicateBuilder where(String fieldPath) {
         return new WhereBuilder(this, field(fieldPath));
     }
 
@@ -161,16 +160,16 @@ public class Criteria {
             if (this.predicate.get() instanceof Or) {
                 throw new IllegalArgumentException("Ambiguos combination of OR and AND predicates. Consider using nested and/or instead.");
             }
-            this.predicate = Optional.of(FluentCriteria.Predicates.and(this.predicate.get(), predicate));
+            this.predicate = Optional.of(FluentCriteria.and(this.predicate.get(), predicate));
         }
         return this;
     }
 
-    public ExpressionPredicateBuilder and(BaseExpression expression) {
+    public CriteriaPredicateBuilder and(BaseExpression expression) {
         return new AndBuilder(this, expression);
     }
 
-    public ExpressionPredicateBuilder and(String fieldPath) {
+    public CriteriaPredicateBuilder and(String fieldPath) {
         return new AndBuilder(this, field(fieldPath));
     }
 
@@ -185,16 +184,16 @@ public class Criteria {
             if (this.predicate.get() instanceof Or orPredicate) {
                 orPredicate.add(predicate);
             }
-            this.predicate = Optional.of(FluentCriteria.Predicates.or(this.predicate.get(), predicate));
+            this.predicate = Optional.of(FluentCriteria.or(this.predicate.get(), predicate));
         }
         return this;
     }
 
-    public ExpressionPredicateBuilder or(BaseExpression expression) {
+    public CriteriaPredicateBuilder or(BaseExpression expression) {
         return new OrBuilder(this, expression);
     }
 
-    public ExpressionPredicateBuilder or(String fieldPath) {
+    public CriteriaPredicateBuilder or(String fieldPath) {
         return new OrBuilder(this, field(fieldPath));
     }
 

@@ -8,7 +8,7 @@ import io.fluentcriteria.predicate.base.BasePredicate;
  *
  * @author rrodriguez
  */
-public class OrBuilder extends ExpressionPredicateBuilder {
+public class OrBuilder extends CriteriaPredicateBuilder {
 
     public OrBuilder(Criteria criteria, BaseExpression leftExpression) {
         super(criteria, leftExpression);

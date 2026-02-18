@@ -6,8 +6,7 @@
 package io.fluentcriteria.expression;
 
 import io.fluentcriteria.context.QueryContext;
-import io.fluentcriteria.expression.base.BaseExpression;
-import io.fluentcriteria.predicate.GreaterThan;
+import io.fluentcriteria.expression.base.BaseExpression; 
 import javax.persistence.criteria.Expression;
 
 /**
