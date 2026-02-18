@@ -80,13 +80,13 @@ public class Restrictions {
     }
 
     // Junctions 
-    public static Conjunction and(Criterion... predicates) {
-        return new Conjunction(predicates);
-    }
-
-    public static Disjunction or(Criterion... predicates) {
-        return new Disjunction(predicates);
-    }
+//    public static Conjunction and(Criterion... predicates) {
+//        return new Conjunction(predicates);
+//    }
+//
+//    public static Disjunction or(Criterion... predicates) {
+//        return new Disjunction(predicates);
+//    }
 
     // Inclussion
     //TODO make this generic and accept ...

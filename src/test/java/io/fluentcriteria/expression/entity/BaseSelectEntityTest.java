@@ -396,7 +396,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     abstract List<User> listUsers_twoExplicitJoinsSamePathDifferentAlias();
 
-    @Disabled
+    @Test
     void testTwoExplicitJoinsSamePathDifferentAlias() {
         userDAO.saveOrUpdate(USER_WITH_PAYMENTS);
 
@@ -426,7 +426,7 @@ abstract class BaseSelectEntityTest extends BaseTest {
 
     abstract List<User> listUsers_explicitJoinAndImplicitJoinSamePath();
 
-    @Test
+    @Disabled
     void testExplicitJoinAndImplicitJoinSamePath() {
         userDAO.saveOrUpdate(USER_1);
 

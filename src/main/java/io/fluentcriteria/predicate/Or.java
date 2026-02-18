@@ -1,4 +1,4 @@
-package io.fluentcriteria.criterion.predicate;
+package io.fluentcriteria.predicate;
 
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.predicate.base.BasePredicate;
@@ -11,23 +11,23 @@ import javax.persistence.criteria.Predicate;
  *
  * @author rrodriguez
  */
-public class And extends Junction {
+public class Or extends Junction {
 
-    public And(BasePredicate p1, BasePredicate p2) {
-        this.predicates = Arrays.asList(p1, p2);
-    }
-
-    public And(BasePredicate... predicate) {
+    public Or(BasePredicate... predicate) {
         this.predicates.addAll(Arrays.asList(predicate));
     }
 
-    public And(List<BasePredicate> predicates) {
+    public Or(List<BasePredicate> predicates) {
         this.predicates = predicates;
+    }
+
+    public Or(BasePredicate p1, BasePredicate p2) {
+        this.predicates = Arrays.asList(p1, p2);
     }
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
-        return ctx.getCriteriaBuilder().and(getPredicates(ctx));
+        return ctx.getCriteriaBuilder().or(getPredicates(ctx));
     }
 
 }

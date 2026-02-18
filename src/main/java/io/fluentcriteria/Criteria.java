@@ -25,8 +25,8 @@ import lombok.Getter;
 import io.fluentcriteria.util.TypeUtil;
 import static io.fluentcriteria.FluentCriteria.field;
 import io.fluentcriteria.context.JoinSpec;
-import io.fluentcriteria.criterion.predicate.And;
-import io.fluentcriteria.criterion.predicate.Or;
+import io.fluentcriteria.predicate.And;
+import io.fluentcriteria.predicate.Or;
 import io.fluentcriteria.predicate.builder.AndBuilder;
 import io.fluentcriteria.predicate.builder.OrBuilder;
 

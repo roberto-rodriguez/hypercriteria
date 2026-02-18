@@ -4,13 +4,13 @@
  * and open the template in the editor.
  */
 package io.fluentcriteria.expression.base;
-
-import io.fluentcriteria.Criteria;
+ 
 import io.fluentcriteria.context.JoinNode;
 import io.fluentcriteria.context.PathExpression;
 import io.fluentcriteria.context.PathResolver;
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.expression.Field;
+import io.fluentcriteria.predicate.And;
 import io.fluentcriteria.predicate.Equal;
 import io.fluentcriteria.predicate.GreaterThan;
 import io.fluentcriteria.predicate.base.BasePredicate;
@@ -161,7 +161,7 @@ public abstract class BaseExpression implements PredicateBuilder<BasePredicate> 
         return pathExpression;
     }
 
-    //------- Predicate builder
+    //------- Predicate builder 
     @Override
     public IsTrue isTrue(BaseExpression expressionValue) {
         return new IsTrue(expressionValue);

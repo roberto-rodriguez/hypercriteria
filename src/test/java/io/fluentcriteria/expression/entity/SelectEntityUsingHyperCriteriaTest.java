@@ -1,6 +1,7 @@
 package io.fluentcriteria.expression.entity;
 
 import io.fluentcriteria.FluentCriteria;
+import static io.fluentcriteria.FluentCriteria.field;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
