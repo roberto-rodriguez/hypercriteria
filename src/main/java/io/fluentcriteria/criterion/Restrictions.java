@@ -6,7 +6,7 @@
 package io.fluentcriteria.criterion;
 
 import io.fluentcriteria.criterion.predicate.base.Criterion;
-import io.fluentcriteria.criterion.predicate.Between;
+import io.fluentcriteria.predicate.Between;
 import io.fluentcriteria.predicate.Equal;
 import io.fluentcriteria.criterion.predicate.GreaterOrEqual;
 import io.fluentcriteria.predicate.GreaterThan;

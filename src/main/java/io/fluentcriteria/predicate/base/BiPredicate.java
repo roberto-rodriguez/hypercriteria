@@ -9,26 +9,25 @@ import io.fluentcriteria.expression.base.BaseExpression;
  */
 public abstract class BiPredicate extends PredicateWithExpression {
 
-    protected Object value;
-    protected BaseExpression expressionValue;
+    protected ExpressionValue expressionValue;
 
     public BiPredicate(String fieldPath, Object value) {
         super(fieldPath);
-        this.value = value;
+        this.expressionValue = ExpressionValue.fromValue(value);
     }
 
     public BiPredicate(BaseExpression expression, Object value) {
         super(expression);
-        this.value = value;
+        this.expressionValue = ExpressionValue.fromValue(value);
     }
 
-    public BiPredicate(String fieldPath, BaseExpression expressionValue) {
+    public BiPredicate(String fieldPath, BaseExpression expression) {
         super(fieldPath);
-        this.expressionValue = expressionValue;
+        this.expressionValue = ExpressionValue.fromExpression(expression);
     }
 
     public BiPredicate(BaseExpression expression, BaseExpression expressionValue) {
         super(expression);
-        this.expressionValue = expressionValue;
+        this.expressionValue = ExpressionValue.fromExpression(expression);
     }
 }

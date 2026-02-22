@@ -35,9 +35,9 @@ public class Equal extends BiPredicate {
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
-        if (expressionValue != null) {
+        if (expressionValue.isExpression()) {
             return ctx.getCriteriaBuilder().equal(getExpression(ctx), expressionValue.toExpression(ctx));
         }
-        return ctx.getCriteriaBuilder().equal(getExpression(ctx), value);
+        return ctx.getCriteriaBuilder().equal(getExpression(ctx), expressionValue.toValue());
     }
 }

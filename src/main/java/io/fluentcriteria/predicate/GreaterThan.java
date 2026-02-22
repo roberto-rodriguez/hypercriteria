@@ -35,9 +35,9 @@ public class GreaterThan<T extends Comparable<T>> extends ComparablePredicate<T>
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
-        if (expressionValue != null) {
+        if (expressionValue.isExpression()) {
             return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), expressionValue.toExpression(ctx));
         }
-        return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), value);
+        return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), expressionValue.toValue());
     }
 }
