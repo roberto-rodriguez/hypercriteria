@@ -1,13 +1,11 @@
 package io.fluentcriteria.context;
 
-import io.fluentcriteria.util.ObjectUtils;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import lombok.Getter;
 
@@ -71,23 +69,31 @@ public class QueryContext {
     private void explicitJoinRegistration() {
         for (JoinSpec spec : explicitJoinSpecs) {
 
+            boolean hasOn = spec.getOnPredicate().isPresent();
+
             JoinNode joinNode = PathResolver.resolveJoinPath(
                     this,
                     spec.getPath(),
                     spec.getJoinType(),
                     spec.isFetch(),
-                    true, // declaredExplicitly (but PathResolver will apply only to last segment)
-                    spec.getAlias() // explicitAlias dimension (applied only to last segment)
+                    true,
+                    spec.getAlias(),
+                    hasOn
             );
 
-            // root spec: alias should bind to root node
             if (spec.getPath().isBlank()) {
                 joinNode = rootNode;
             }
 
+            // bind alias -> JoinNode
             if (spec.getAlias() != null) {
                 joinNode.setAlias(spec.getAlias());
                 aliases.put(spec.getAlias(), joinNode);
+            }
+
+            // attach ON predicate to the *terminal join node*
+            if (!spec.isFetch() && hasOn) {
+                joinNode.setOnPredicate(spec.getOnPredicate().get());
             }
         }
     }

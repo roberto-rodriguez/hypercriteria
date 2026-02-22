@@ -13,7 +13,8 @@ public final class PathResolver {
             JoinType joinType,
             boolean processingFetch,
             boolean declaredExplicitly,
-            String explicitAlias
+            String explicitAlias,
+            boolean hasOnPredicate
     ) {
         if (joinPath.isBlank()) {
             // Special case when creating root with alias. Example .from(User.class, "u")
@@ -57,11 +58,13 @@ public final class PathResolver {
             // Only the LAST segment uses declaredExplicitly + explicitAlias.
             boolean segmentExplicit = declaredExplicitly && isLast;
             String segmentAlias = segmentExplicit ? explicitAlias : null;
+            // ON applies only to last segment, and only for non-fetch
+            boolean segmentHasOn = segmentExplicit && isLast && hasOnPredicate && !processingFetch;
 
             if (processingFetch) {
                 current = resolveFetch(ctx, current, segment, joinType, segmentExplicit, segmentAlias);
             } else {
-                current = resolveJoin(ctx, current, segment, joinType, segmentExplicit, segmentAlias);
+                current = resolveJoin(ctx, current, segment, joinType, segmentExplicit, segmentAlias, segmentHasOn);
             }
         }
 
@@ -74,9 +77,10 @@ public final class PathResolver {
             String field,
             JoinType joinType,
             boolean declaredExplicitly,
-            String explicitAlias
+            String explicitAlias,
+            boolean hasOnPredicate
     ) {
-        // ✅ If implicit, try to reuse an existing explicit join (unambiguous)
+        // If implicit, try to reuse explicit join, but ONLY if it has NO ON
         if (!declaredExplicitly) {
             JoinNode reusable = findReusableJoin(ctx, parent, field, joinType);
             if (reusable != null) {
@@ -84,7 +88,14 @@ public final class PathResolver {
             }
         }
 
-        JoinKey key = new JoinKey(parent, field, joinType, declaredExplicitly ? explicitAlias : null);
+        JoinKey key = new JoinKey(
+                parent,
+                field,
+                joinType,
+                declaredExplicitly ? explicitAlias : null,
+                hasOnPredicate
+        );
+
         return ctx.getJoins().computeIfAbsent(key, k -> new JoinNode(k, declaredExplicitly));
     }
 
@@ -101,7 +112,7 @@ public final class PathResolver {
         FetchParent<?, ?> parentFetch = (FetchParent<?, ?>) parent.getFrom();
         Fetch<?, ?> fetch = joinType == null ? parentFetch.fetch(field) : parentFetch.fetch(field, joinType);
 
-        JoinKey key = new JoinKey(parent, field, joinType, declaredExplicitly ? explicitAlias : null);
+        JoinKey key = new JoinKey(parent, field, joinType, declaredExplicitly ? explicitAlias : null, /*hasOnPredicate = */ false);
         return ctx.getJoins().computeIfAbsent(key, k -> new FetchNode(k, fetch));
     }
 
@@ -129,7 +140,7 @@ public final class PathResolver {
 
         for (int i = index; i < end; i++) {
             // implicit join resolution: declaredExplicitly=false, explicitAlias=null
-            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT, false, null);
+            current = resolveJoin(ctx, current, segments[i], JoinType.LEFT, false, null, /*hasOnPredicate = */ false);
         }
 
         return current;
@@ -150,7 +161,8 @@ public final class PathResolver {
 
             if (k.parent == parent
                     && (k.field == null ? field == null : k.field.equals(field))
-                    && k.joinType == joinType) {
+                    && k.joinType == joinType
+                    && !k.hasOnPredicate) {
 
                 if (found != null) {
                     // Ambiguous: multiple joins match (usually different explicitAlias)

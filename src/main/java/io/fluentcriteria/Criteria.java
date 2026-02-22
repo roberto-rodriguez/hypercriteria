@@ -66,6 +66,16 @@ public class Criteria {
     /* =======================
       Builder methods
        ======================= */
+    public Criteria usingConstructor(String constructorName) {
+        this.constructorName = Optional.of(constructorName);
+        return this;
+    }
+
+    public Criteria distinct() {
+        this.distinct = true;
+        return this;
+    }
+
     public Criteria from(Class entityType) {
         return from(entityType, "");
     }
@@ -105,6 +115,15 @@ public class Criteria {
         return this;
     }
 
+    public Criteria on(BasePredicate onPredicate) {
+        if (explicitJoinSpecs.isEmpty()) {
+            throw new IllegalArgumentException("On clause needs to be applied after a join");
+        }
+        JoinSpec last = explicitJoinSpecs.get(explicitJoinSpecs.size() - 1);
+        last.setOnPredicate(onPredicate);
+        return this;
+    }
+
     public Criteria leftJoinFetch(String fetchPath) {
         return fetch(fetchPath, null, JoinType.LEFT);
     }
@@ -125,16 +144,6 @@ public class Criteria {
         Class javaType = TypeUtil.resolveJavaType(joinPath, this);
         setAliasType(alias, javaType);
         explicitJoinSpecs.add(new JoinSpec(joinPath, alias, joinType, true, javaType));
-        return this;
-    }
-
-    public Criteria usingConstructor(String constructorName) {
-        this.constructorName = Optional.of(constructorName);
-        return this;
-    }
-
-    public Criteria distinct() {
-        this.distinct = true;
         return this;
     }
 

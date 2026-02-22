@@ -1,7 +1,10 @@
 package io.fluentcriteria.context;
 
+import io.fluentcriteria.predicate.base.BasePredicate;
 import io.fluentcriteria.util.ObjectUtils;
+import java.util.Optional;
 import javax.persistence.criteria.From;
+import javax.persistence.criteria.Join;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,9 +29,15 @@ public class JoinNode {
     public From<?, ?> from;       // JPA object (assigned later)
     public boolean declaredExplicitly;
 
+    public Optional<BasePredicate> onPredicate = Optional.empty();
+
     public JoinNode(JoinKey key, boolean declaredExplicitly) {
         this.key = key;
         this.declaredExplicitly = declaredExplicitly;
+    }
+
+    public void setOnPredicate(BasePredicate p) {
+        this.onPredicate = Optional.ofNullable(p);
     }
 
     //Joins that were declared explicitly but were never used
@@ -81,6 +90,10 @@ public class JoinNode {
                 this.from = parentFrom.join(key.field, key.joinType);
             }
 
+            if (onPredicate.isPresent()) {
+                Join<?, ?> j = (javax.persistence.criteria.Join<?, ?>) this.from;
+                j.on(onPredicate.get().toPredicate(ctx));
+            }
         }
 
         if (alias != null) {

@@ -5,13 +5,14 @@ import static io.fluentcriteria.FluentCriteria.field;
 import io.sample.model.Payment;
 import io.sample.model.User;
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  *
  * @author rrodriguez
  */
-class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
-
+class SelectEntityTest extends BaseSelectEntityTest {
+    
     @Override
     Object selectEntity() {
         return FluentCriteria.using(entityManager)
@@ -19,7 +20,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .from(User.class)
                 .getSingleResult();
     }
-
+    
     @Override
     Object selectNestedEntity(Class rootType, String path) {
         return FluentCriteria.using(entityManager)
@@ -27,7 +28,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .from(rootType)
                 .getSingleResult();
     }
-
+    
     @Override
     Object selectEntityWithFetchPath(String fetchPath) {
         return FluentCriteria.using(entityManager)
@@ -36,7 +37,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch(fetchPath)
                 .getSingleResult();
     }
-
+    
     @Override
     List<User> listEntities() {
         return FluentCriteria.using(entityManager)
@@ -44,7 +45,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .from(User.class)
                 .getResultList();
     }
-
+    
     @Override
     List<User> listDistinctEntities() {
         return FluentCriteria.using(entityManager)
@@ -54,7 +55,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoin("payments", "p")
                 .getResultList();
     }
-
+    
     @Override
     List<User> listDistinctEntitiesWithLeftJoinPath(String joinPath) {
         return FluentCriteria.using(entityManager)
@@ -64,7 +65,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoin(joinPath, "a")
                 .getResultList();
     }
-
+    
     @Override
     List<User> listDistinctEntitiesWithInnerJoinPath(String joinPath) {
         return FluentCriteria.using(entityManager)
@@ -74,7 +75,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .innerJoin(joinPath, "a")
                 .getResultList();
     }
-
+    
     @Override
     List<User> listDistinctEntitiesWithLeftFetchPath(String fetchPath) {
         return FluentCriteria.using(entityManager)
@@ -84,7 +85,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch(fetchPath)
                 .getResultList();
     }
-
+    
     @Override
     List<User> listDistinctEntitiesWithInnerFetchPath(String fetchPath) {
         return FluentCriteria.using(entityManager)
@@ -94,7 +95,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .innerJoinFetch(fetchPath)
                 .getResultList();
     }
-
+    
     @Override
     User selectUserWithMultipleFetches() {
         return FluentCriteria.using(entityManager)
@@ -104,7 +105,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("address")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User duplicatedAlias_throwsException() {
         return FluentCriteria.using(entityManager)
@@ -114,14 +115,14 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoin("address", "a")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User noFromClause_throwsException() {
         return FluentCriteria.using(entityManager)
                 .select()
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     Long fetchWithProjection_throwsException() {
         return FluentCriteria.using(entityManager)
@@ -130,7 +131,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("payments", "a")
                 .getSingleResult(Long.class);
     }
-
+    
     @Override
     User fetchOneToOneAddress() {
         return FluentCriteria.using(entityManager)
@@ -139,7 +140,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("address")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User fetchNestedManyToOne() {
         return FluentCriteria.using(entityManager)
@@ -149,7 +150,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("address.state")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     Payment fetchCollectionThenToOne() {
         return FluentCriteria.using(entityManager)
@@ -159,7 +160,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("user.address")
                 .getSingleResult(Payment.class);
     }
-
+    
     @Override
     User fetchMultipleRelationsMixed() {
         return FluentCriteria.using(entityManager)
@@ -172,7 +173,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("a.state", "s")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User duplicateFetchPathThrowsException() {
         return FluentCriteria.using(entityManager)
@@ -182,7 +183,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("payments")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User joinAndFetchSamePath() {
         return FluentCriteria.using(entityManager)
@@ -193,7 +194,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .where("p.id").greaterThan(0) //Make sure still produces only one join
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     User innerFetchToOne() {
         return FluentCriteria.using(entityManager)
@@ -202,7 +203,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .leftJoinFetch("address")
                 .getSingleResult(User.class);
     }
-
+    
     @Override
     List<User> listUsers_twoExplicitJoinsSamePathDifferentAlias() {
         return FluentCriteria.using(entityManager)
@@ -214,7 +215,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .and("p2.amount").greaterThan(0D)
                 .getResultList(User.class);
     }
-
+    
     @Override
     List<User> listUsers_innerJoinDeclaredButNeverReferenced_excludesRows() {
         return FluentCriteria.using(entityManager)
@@ -223,7 +224,7 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .innerJoin("payments", "p1")
                 .getResultList(User.class);
     }
-
+    
     @Override
     List<User> listUsers_explicitJoinAndImplicitJoinSamePath() {
         return FluentCriteria.using(entityManager)
@@ -231,6 +232,69 @@ class SelectEntityUsingHyperCriteriaTest extends BaseSelectEntityTest {
                 .from(User.class)
                 .where("address.state.code").equal("GA")
                 .leftJoin("address", "a")
+                .getResultList(User.class);
+    }
+
+    //----------------------------------------------------------------------
+    //-------------------------- Testing 'ON' clause ----------------
+    // ---------------------------------------------------------------------
+    @Override
+    void on_withoutJoin_throws() {
+        assertThrows(IllegalArgumentException.class, ()
+                -> FluentCriteria.using(entityManager)
+                        .select()
+                        .from(User.class)
+                        .on(field("firstName").equal("John")) // any predicate, should throw before use
+                        .getResultList(User.class)
+        );
+    }
+    
+    @Override
+    List<User> listUsers_innerJoinPayments_onAmountGreaterThan(double amount) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .from(User.class)
+                .innerJoin("payments", "p")
+                .on(field("p.amount").greaterThan(amount))
+                .distinct()
+                .getResultList(User.class);
+    }
+    
+    @Override
+    List<User> listUsers_leftJoinWithOn_thenImplicitWhereOnPaymentsAmountGreaterThan(double amount) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .from(User.class)
+                .leftJoin("payments", "p")
+                .on(field("p.amount").greaterThan(1D))
+                // implicit join created from field path "payments.amount"
+                .where("payments.amount").greaterThan(amount)
+                .distinct()
+                .getResultList(User.class);
+    }
+    
+    @Override
+    List<User> listUsers_leftJoinP1WithOn_thenLeftJoinP2WithoutOn_whereP2AmountGreaterThan(double amount) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .from(User.class)
+                .leftJoin("payments", "p1")
+                .on(field("p1.amount").greaterThan(1D))
+                .leftJoin("payments", "p2")
+                .where("p2.amount").greaterThan(amount)
+                .distinct()
+                .getResultList(User.class);
+    }
+    
+    @Override
+    List<User> listUsers_onCalledTwice_lastOneWins(double firstThreshold, double secondThreshold) {
+        return FluentCriteria.using(entityManager)
+                .select()
+                .from(User.class)
+                .innerJoin("payments", "p")
+                .on(field("p.amount").greaterThan(firstThreshold))
+                .on(field("p.amount").greaterThan(secondThreshold)) // overrides previous
+                .distinct()
                 .getResultList(User.class);
     }
 }
