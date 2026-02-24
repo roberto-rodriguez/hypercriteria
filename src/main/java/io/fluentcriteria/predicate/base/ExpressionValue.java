@@ -3,13 +3,13 @@ package io.fluentcriteria.predicate.base;
 import io.fluentcriteria.context.QueryContext;
 import io.fluentcriteria.expression.base.BaseExpression;
 import javax.persistence.criteria.Expression;
-import lombok.Getter;
 
 /**
  *
  * @author rrodriguez
  *
- * Wrapper for either an Expression or a Value
+ * Wrapper for either an Expression or a Value where the Value has to be
+ * COmparable
  * @param <T>
  */
 public class ExpressionValue<T> {
@@ -26,7 +26,7 @@ public class ExpressionValue<T> {
         return new ExpressionValue(exp, null);
     }
 
-    public static ExpressionValue fromValue(Object value) {
+    public static <T> ExpressionValue fromValue(T value) {
         return new ExpressionValue(null, value);
     }
 
@@ -38,8 +38,7 @@ public class ExpressionValue<T> {
         return expression.toExpression(ctx);
     }
 
-    public Object toValue() {
+    public T toValue() {
         return value;
     }
-
 }

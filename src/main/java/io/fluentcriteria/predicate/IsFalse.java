@@ -9,15 +9,15 @@ import javax.persistence.criteria.Predicate;
  *
  * @author rrodriguez
  */
-public class IsTrue extends PredicateWithExpression {
+public class IsFalse extends PredicateWithExpression {
 
-    public IsTrue(BaseExpression expression) {
+    public IsFalse(BaseExpression expression) {
         super(expression);
     }
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
-        return ctx.getCriteriaBuilder().isTrue(getExpression(ctx));
+        return ctx.getCriteriaBuilder().isFalse(getExpression(ctx));
     }
 
 }

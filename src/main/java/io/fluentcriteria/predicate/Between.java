@@ -6,9 +6,8 @@
 package io.fluentcriteria.predicate;
 
 import io.fluentcriteria.context.QueryContext;
-import io.fluentcriteria.expression.Field;
 import io.fluentcriteria.expression.base.BaseExpression;
-import io.fluentcriteria.predicate.base.ComparableExpressionValue;
+import io.fluentcriteria.predicate.base.ExpressionValueComparable;
 import io.fluentcriteria.predicate.base.PredicateWithExpression;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
@@ -20,27 +19,19 @@ import javax.persistence.criteria.Predicate;
  */
 public class Between<T extends Comparable<T>> extends PredicateWithExpression {
 
-    protected ComparableExpressionValue<T> expressionValueStart;
-    protected ComparableExpressionValue<T> expressionValueEnd;
-
-    public Between(String fieldPath, T start, T end) {
-        this(new Field(fieldPath), start, end);
-    }
+    protected ExpressionValueComparable<T> expressionValueStart;
+    protected ExpressionValueComparable<T> expressionValueEnd;
 
     public Between(BaseExpression expression, T start, T end) {
         super(expression);
-        this.expressionValueStart = ComparableExpressionValue.fromValue(start);
-        this.expressionValueEnd = ComparableExpressionValue.fromValue(end);
-    }
-
-    public Between(String fieldPath, BaseExpression expressionStart, BaseExpression expressionEnd) {
-        this(new Field(fieldPath), expressionStart, expressionEnd);
+        this.expressionValueStart = ExpressionValueComparable.fromValue(start);
+        this.expressionValueEnd = ExpressionValueComparable.fromValue(end);
     }
 
     public Between(BaseExpression expression, BaseExpression expressionStart, BaseExpression expressionEnd) {
         super(expression);
-        this.expressionValueStart = ComparableExpressionValue.fromExpression(expressionStart);
-        this.expressionValueEnd = ComparableExpressionValue.fromExpression(expressionEnd);
+        this.expressionValueStart = ExpressionValueComparable.fromExpression(expressionStart);
+        this.expressionValueEnd = ExpressionValueComparable.fromExpression(expressionEnd);
     }
 
     @Override

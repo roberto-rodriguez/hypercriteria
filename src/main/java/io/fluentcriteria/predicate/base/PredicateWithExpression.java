@@ -14,8 +14,7 @@ public abstract class PredicateWithExpression extends BasePredicate {
     protected BaseExpression expression;
 
     public PredicateWithExpression(String fieldPath) {
-        this.expression
-                = new Field(fieldPath);
+        this.expression = new Field(fieldPath);
     }
 
     public PredicateWithExpression(BaseExpression expression) {

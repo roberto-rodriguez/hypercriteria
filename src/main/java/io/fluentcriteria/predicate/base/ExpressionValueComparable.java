@@ -12,22 +12,22 @@ import javax.persistence.criteria.Expression;
  * COmparable
  * @param <C>
  */
-public class ComparableExpressionValue<C extends Comparable<C>> {
+public class ExpressionValueComparable<C extends Comparable<C>> {
 
     protected C value;
     protected BaseExpression expression;
 
-    private ComparableExpressionValue(BaseExpression expression, C value) {
+    private ExpressionValueComparable(BaseExpression expression, C value) {
         this.value = value;
         this.expression = expression;
     }
 
-    public static ComparableExpressionValue fromExpression(BaseExpression exp) {
-        return new ComparableExpressionValue(exp, null);
+    public static ExpressionValueComparable fromExpression(BaseExpression exp) {
+        return new ExpressionValueComparable(exp, null);
     }
 
-    public static <C extends Comparable<C>> ComparableExpressionValue fromValue(C value) {
-        return new ComparableExpressionValue(null, value);
+    public static <C extends Comparable<C>> ExpressionValueComparable fromValue(C value) {
+        return new ExpressionValueComparable(null, value);
     }
 
     public boolean isExpression() {

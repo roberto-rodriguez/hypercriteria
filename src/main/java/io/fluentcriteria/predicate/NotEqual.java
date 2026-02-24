@@ -13,23 +13,22 @@ import javax.persistence.criteria.Predicate;
 /**
  *
  * @author rrodriguez
- * @param <T>
  */
-public class Equal extends PredicateWithValue {
+public class NotEqual extends PredicateWithValue {
  
-    public Equal(BaseExpression expression, Object value) {
+    public NotEqual(BaseExpression expression, Object value) {
         super(expression, value);
-    }
- 
-    public Equal(BaseExpression expression, BaseExpression expressionValue) {
+    } 
+
+    public NotEqual(BaseExpression expression, BaseExpression expressionValue) {
         super(expression, expressionValue);
     }
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
         if (expressionValue.isExpression()) {
-            return ctx.getCriteriaBuilder().equal(getExpression(ctx), expressionValue.toExpression(ctx));
+            return ctx.getCriteriaBuilder().notEqual(getExpression(ctx), expressionValue.toExpression(ctx));
         }
-        return ctx.getCriteriaBuilder().equal(getExpression(ctx), expressionValue.toValue());
+        return ctx.getCriteriaBuilder().notEqual(getExpression(ctx), expressionValue.toValue());
     }
 }

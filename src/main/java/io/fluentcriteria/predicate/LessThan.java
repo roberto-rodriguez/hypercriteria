@@ -15,21 +15,29 @@ import javax.persistence.criteria.Predicate;
  * @author rrodriguez
  * @param <T>
  */
-public class GreaterThan<T extends Comparable<T>> extends ComparablePredicate<T> {
+public class LessThan<T extends Comparable<T>> extends ComparablePredicate<T> {
 
-    public GreaterThan(BaseExpression expression, T value) {
+    public LessThan(String fieldPath, T value) {
+        super(fieldPath, value);
+    }
+
+    public LessThan(BaseExpression expression, T value) {
         super(expression, value);
     }
 
-    public GreaterThan(BaseExpression expression, BaseExpression expressionValue) {
+    public LessThan(String fieldPath, BaseExpression expressionValue) {
+        super(fieldPath, expressionValue);
+    }
+
+    public LessThan(BaseExpression expression, BaseExpression expressionValue) {
         super(expression, expressionValue);
     }
 
     @Override
     public Predicate toPredicate(QueryContext ctx) {
         if (expressionValue.isExpression()) {
-            return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), expressionValue.toExpression(ctx));
+            return ctx.getCriteriaBuilder().lessThan(getExpression(ctx), expressionValue.toExpression(ctx));
         }
-        return ctx.getCriteriaBuilder().greaterThan(getExpression(ctx), expressionValue.toValue());
+        return ctx.getCriteriaBuilder().lessThan(getExpression(ctx), expressionValue.toValue());
     }
 }
